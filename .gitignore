@@ -52,4 +52,4 @@ frontend/yarn-error.log*
 
 /MtdrSpring/backend/DockerfileDev
 
-.context
+.context/
