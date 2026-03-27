@@ -1,20 +1,33 @@
 #!/bin/bash
 
-# Instructions:
-# 1. cp build-local.sh.template build-local.sh
-# 2. Fill in database credentials
-# 3. Download your team's ATP wallet from OCI Console:
-#    Autonomous Database → your DB → DB Connection → Download Wallet
-#    Unzip it into:  backend/wallet-local/
-# 4. Run this script instead of build.sh:  ./build-local.sh
+# Hey! If you're setting this up for the first time, follow these steps:
+#
+# 1. Copy this file: cp build-local.sh.template build-local.sh
+#    (build-local.sh is gitignored so your credentials stay local)
+#
+# 2. We use a separate dev schema on the same ADB so local changes don't
+#    touch production data. If TODOUSER_DEV doesn't exist yet on the DB,
+#    go to OCI Console -> your ADB -> Database Actions -> SQL (as ADMIN) and run:
+#
+#        CREATE USER TODOUSER_DEV IDENTIFIED BY "pick-a-password";
+#        GRANT CONNECT, RESOURCE TO TODOUSER_DEV;
+#        GRANT UNLIMITED TABLESPACE TO TODOUSER_DEV;
+#
+#    Then use those credentials below. Ask Jozef if you need the ADB name/access.
+#
+# 3. Get the wallet: OCI Console -> ADB -> DB Connection -> Download Wallet
+#    Unzip it and rename the folder to wallet-local, place it at backend/wallet-local/
+#    Same wallet works for both prod and dev schemas.
+#
+# 4. Fill in your DB_PASSWORD and DB_URL below, then run: ./build-local.sh
 
 export IMAGE_NAME=todolistapp-springboot
 export IMAGE_VERSION=local
 
-# fill manually, ask Jozef hehe
-DB_USER="YOUR_DB_USER"
-DB_PASSWORD="YOUR_DB_PASSWORD"
-DB_URL="jdbc:oracle:thin:@YOURTEAMATP_tp?TNS_ADMIN=/mtdrworkshop/creds"
+# Dev schema, keep this as TODOUSER_DEV, never use the prod TODOUSER here
+DB_USER="TODOUSER_DEV"
+DB_PASSWORD="YOUR_DEV_DB_PASSWORD"
+DB_URL="URL_HERE"
 
 mvn clean package spring-boot:repackage
 
