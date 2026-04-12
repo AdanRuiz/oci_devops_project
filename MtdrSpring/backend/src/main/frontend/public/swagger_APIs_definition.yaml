@@ -4,14 +4,7 @@
 ## Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 swagger: "2.0"
 info:
-  description: "Simple REST APIs used for the todo application.
-  Every backend should implement these APIs.
-  This document in YAML can be edited using swagger-editor
-  (there is a docker image) or through Swagger plugin in VS Code.
-  There is a swagger-ui server:
-  http://130.61.67.158:8780/swagger-ui/
-  that exposes the
-  "
+  description: "Simple REST APIs used for the todo application. Every backend should implement these APIs. This document in YAML can be edited using swagger-editor (there is a docker image) or through Swagger plugin in VS Code. There is a swagger-ui server: http://130.61.67.158:8780/swagger-ui/ that exposes the"
   version: "1.0.0"
   title: "My Todo React app"
   contact:
