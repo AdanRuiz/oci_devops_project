@@ -1,6 +1,6 @@
 package com.springboot.MyTodoList.repository;
 
-import com.springboot.MyTodoList.model.User;
+import com.springboot.MyTodoList.model.SprintKpiSnapshot;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,11 +12,7 @@ import java.util.UUID;
 @Repository
 @Transactional
 @EnableTransactionManagement
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface SprintKpiSnapshotRepository extends JpaRepository<SprintKpiSnapshot, UUID> {
 
-    Optional<User> findByEmail(String email);
-
-    Optional<User> findByTelegramChatId(String telegramChatId);
-
-    Optional<User> findByOciIamId(String ociIamId);
+    Optional<SprintKpiSnapshot> findBySprint_Id(UUID sprintId);
 }
