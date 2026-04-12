@@ -6,13 +6,11 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import client from '../../api/client';
+import { STATUS_COLOR, PRIORITY_COLOR } from '../../constants/taskEnums';
 
 const fetchTask    = (id) => client.get(`/tasks/${id}`).then(r => r.data);
 const fetchHistory = (id) => client.get(`/tasks/${id}/history`).then(r => r.data);
 const fetchLogs    = (id) => client.get(`/tasks/${id}/work-logs`).then(r => r.data);
-
-const STATUS_COLOR   = { TODO: 'default', IN_PROGRESS: 'primary', BLOCKED: 'error', DONE: 'success' };
-const PRIORITY_COLOR = { LOW: 'default', MEDIUM: 'warning', HIGH: 'error' };
 
 export default function TaskDetail() {
     const { taskId } = useParams();
@@ -24,12 +22,12 @@ export default function TaskDetail() {
     });
 
     const { data: history = [] } = useQuery({
-        queryKey: ['task-history', taskId],
+        queryKey: ['task', taskId, 'history'],
         queryFn:  () => fetchHistory(taskId),
     });
 
     const { data: logs = [] } = useQuery({
-        queryKey: ['task-logs', taskId],
+        queryKey: ['task', taskId, 'logs'],
         queryFn:  () => fetchLogs(taskId),
     });
 

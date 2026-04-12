@@ -6,13 +6,12 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import client from '../../api/client';
+import { PRIORITY_COLOR } from '../../constants/taskEnums';
 
-const fetchSprint = (id)     => client.get(`/sprints/${id}`).then(r => r.data);
+const fetchSprint = (id)       => client.get(`/sprints/${id}`).then(r => r.data);
 const fetchTasks  = (sprintId) => client.get(`/sprints/${sprintId}/tasks`).then(r => r.data);
 
 const COLUMNS = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
-
-const PRIORITY_COLOR = { LOW: 'default', MEDIUM: 'warning', HIGH: 'error' };
 
 const COLUMN_LABEL = {
     TODO:        'To Do',

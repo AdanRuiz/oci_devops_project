@@ -65,14 +65,9 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 		String messageTextFromTelegram = update.getMessage().getText();
 		long chatId = update.getMessage().getChatId();
 
-		BotActions actions =  new BotActions(telegramClient,toDoItemService,deepSeekService);
+		BotActions actions = new BotActions(telegramClient, toDoItemService, deepSeekService);
 		actions.setRequestText(messageTextFromTelegram);
 		actions.setChatId(chatId);
-		if(actions.getTodoService()==null){
-			logger.info("todosvc error");
-			actions.setTodoService(toDoItemService);
-		}
-
 
 		actions.fnStart();
 		actions.fnDone();
@@ -88,7 +83,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 
 	@AfterBotRegistration
     public void afterRegistration(BotSession botSession) {
-        System.out.println("Registered bot running state is: " + botSession.isRunning());
+        logger.info("Registered bot running state is: {}", botSession.isRunning());
     }
 
 }

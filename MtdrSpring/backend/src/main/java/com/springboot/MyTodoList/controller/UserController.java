@@ -25,15 +25,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable UUID id) {
-        try {
-            return userService.getUserById(id);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return userService.getUserById(id);
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User newUser) throws Exception {
+    public ResponseEntity<User> addUser(@RequestBody User newUser) {
         User saved = userService.addUser(newUser);
         HttpHeaders headers = new HttpHeaders();
         headers.set("location", saved.getId().toString());
@@ -43,13 +39,9 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable UUID id) {
-        try {
-            User updated = userService.updateUser(id, user);
-            if (updated == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(updated, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        User updated = userService.updateUser(id, user);
+        if (updated == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

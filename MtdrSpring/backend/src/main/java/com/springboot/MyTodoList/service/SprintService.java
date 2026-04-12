@@ -3,6 +3,8 @@ package com.springboot.MyTodoList.service;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.SprintStatus;
 import com.springboot.MyTodoList.repository.SprintRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Service
 public class SprintService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SprintService.class);
 
     @Autowired
     private SprintRepository sprintRepository;
@@ -48,6 +52,7 @@ public class SprintService {
             sprintRepository.deleteById(id);
             return true;
         } catch (Exception e) {
+            logger.error("Failed to delete sprint {}", id, e);
             return false;
         }
     }

@@ -20,13 +20,8 @@ public class DeepSeekService{
 
     public String generateText(String prompt) throws IOException, org.apache.hc.core5.http.ParseException {
         String requestBody = String.format("{\"model\": \"deepseek-chat\",\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", prompt);
-
-        try {
-            httpPost.setEntity(new StringEntity(requestBody));
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            return EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-            throw e;
-        }
+        httpPost.setEntity(new StringEntity(requestBody));
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+        return EntityUtils.toString(response.getEntity());
     }
 }

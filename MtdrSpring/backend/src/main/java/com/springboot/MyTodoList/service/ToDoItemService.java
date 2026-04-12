@@ -4,6 +4,8 @@ import com.springboot.MyTodoList.model.ChangeSource;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.repository.ToDoItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,8 @@ import java.util.UUID;
 
 @Service
 public class ToDoItemService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ToDoItemService.class);
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
@@ -60,6 +64,7 @@ public class ToDoItemService {
             toDoItemRepository.deleteById(id);
             return true;
         } catch (Exception e) {
+            logger.error("Failed to delete task {}", id, e);
             return false;
         }
     }

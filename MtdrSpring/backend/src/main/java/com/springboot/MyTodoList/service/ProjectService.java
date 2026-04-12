@@ -2,6 +2,8 @@ package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Project;
 import com.springboot.MyTodoList.repository.ProjectRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,8 @@ import java.util.UUID;
 
 @Service
 public class ProjectService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -44,6 +48,7 @@ public class ProjectService {
             projectRepository.deleteById(id);
             return true;
         } catch (Exception e) {
+            logger.error("Failed to delete project {}", id, e);
             return false;
         }
     }

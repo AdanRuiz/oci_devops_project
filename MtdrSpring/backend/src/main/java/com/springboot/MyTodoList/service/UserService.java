@@ -2,6 +2,8 @@ package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -46,6 +50,7 @@ public class UserService {
             userRepository.deleteById(id);
             return true;
         } catch (Exception e) {
+            logger.error("Failed to delete user {}", id, e);
             return false;
         }
     }

@@ -41,15 +41,11 @@ public class ToDoItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable UUID id) {
-        try {
-            return toDoItemService.getItemById(id);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return toDoItemService.getItemById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Task> addTask(@RequestBody Task task) throws Exception {
+    public ResponseEntity<Task> addTask(@RequestBody Task task) {
         Task saved = toDoItemService.addToDoItem(task);
         HttpHeaders headers = new HttpHeaders();
         headers.set("location", saved.getId().toString());

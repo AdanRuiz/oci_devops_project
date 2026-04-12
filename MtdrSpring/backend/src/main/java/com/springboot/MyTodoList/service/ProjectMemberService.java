@@ -2,6 +2,8 @@ package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.ProjectMember;
 import com.springboot.MyTodoList.repository.ProjectMemberRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,8 @@ import java.util.UUID;
 
 @Service
 public class ProjectMemberService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProjectMemberService.class);
 
     @Autowired
     private ProjectMemberRepository projectMemberRepository;
@@ -44,6 +48,7 @@ public class ProjectMemberService {
             projectMemberRepository.deleteByProject_IdAndUser_Id(projectId, userId);
             return true;
         } catch (Exception e) {
+            logger.error("Failed to remove user {} from project {}", userId, projectId, e);
             return false;
         }
     }
