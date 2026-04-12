@@ -3,6 +3,9 @@
 
 # Log file
 *.log
+*.log.*.gz
+*.log.*.tmp
+logs.log*
 
 # BlueJ files
 *.ctxt
@@ -53,3 +56,4 @@ frontend/yarn-error.log*
 /MtdrSpring/backend/DockerfileDev
 
 .context/
+.playwright-mcp/
