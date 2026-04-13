@@ -273,15 +273,16 @@ export default function DashboardView({
                             onClick={onViewBoard}
                             sx={{
                                 textTransform: 'none',
-                                color: '#1A1A1A',
-                                borderColor: '#e9e7e7',
-                                bgcolor: '#e9e7e7',
-                                fontWeight: 700,
-                                fontSize: '0.8rem',
-                                px: '14px',
-                                py: '5px',
+                                color: '#2B2B2B',
+                                borderColor: '#e0dedc',
+                                bgcolor: '#e0dedc',
+                                fontWeight: 500,
+                                fontSize: '0.85rem',
+                                px: '16px',
+                                py: '6px',
                                 borderRadius: '4px',
-                                '&:hover': { borderColor: '#999', bgcolor: 'transparent' },
+                                boxShadow: 'none',
+                                '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc', boxShadow: 'none' },
                             }}
                         >
                             View Board
