@@ -1,14 +1,7 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import {
     Box, CircularProgress, Divider, FormControl, InputLabel,
     MenuItem, Select, Typography,
 } from '@mui/material';
-import client from '../../api/client';
-
-const fetchProjects = ()           => client.get('/projects').then(r => r.data);
-const fetchSprints  = (projectId)  => client.get(`/projects/${projectId}/sprints`).then(r => r.data);
-const fetchKpi      = (sprintId)   => client.get(`/sprints/${sprintId}/kpi`).then(r => r.data);
 
 function KpiRow({ label, value, unit = '' }) {
     return (
@@ -21,27 +14,10 @@ function KpiRow({ label, value, unit = '' }) {
     );
 }
 
-export default function KpiDashboard() {
-    const [projectId, setProjectId] = useState('');
-    const [sprintId,  setSprintId]  = useState('');
-
-    const { data: projects = [] } = useQuery({
-        queryKey: ['projects'],
-        queryFn:  fetchProjects,
-    });
-
-    const { data: sprints = [] } = useQuery({
-        queryKey: ['sprints', projectId],
-        queryFn:  () => fetchSprints(projectId),
-        enabled:  !!projectId,
-    });
-
-    const { data: kpi, isLoading: loadingKpi } = useQuery({
-        queryKey: ['kpi', sprintId],
-        queryFn:  () => fetchKpi(sprintId),
-        enabled:  !!sprintId,
-    });
-
+export default function KpiDashboardView({
+    projects, sprints, projectId, sprintId,
+    kpi, loadingKpi, onProjectChange, onSprintChange,
+}) {
     return (
         <Box>
             <Typography variant="h5" gutterBottom>KPI Dashboard</Typography>
@@ -52,7 +28,7 @@ export default function KpiDashboard() {
                     <Select
                         value={projectId}
                         label="Project"
-                        onChange={e => { setProjectId(e.target.value); setSprintId(''); }}
+                        onChange={e => onProjectChange(e.target.value)}
                     >
                         {projects.map(p => (
                             <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
@@ -65,7 +41,7 @@ export default function KpiDashboard() {
                     <Select
                         value={sprintId}
                         label="Sprint"
-                        onChange={e => setSprintId(e.target.value)}
+                        onChange={e => onSprintChange(e.target.value)}
                     >
                         {sprints.map(s => (
                             <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>

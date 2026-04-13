@@ -1,42 +1,15 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
     Box, Button, Chip, CircularProgress, Divider,
     List, ListItem, ListItemButton, ListItemText, Typography,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import client from '../../api/client';
-
-const fetchProject = (id) => client.get(`/projects/${id}`).then(r => r.data);
-const fetchSprints  = (id) => client.get(`/projects/${id}/sprints`).then(r => r.data);
-const fetchMembers  = (id) => client.get(`/projects/${id}/members`).then(r => r.data);
 
 const STATUS_COLOR = { UPCOMING: 'default', ACTIVE: 'primary', COMPLETED: 'success' };
 
-export default function ProjectDetail() {
-    const { projectId } = useParams();
-    const navigate      = useNavigate();
-
-    const { data: project, isLoading: loadingProject } = useQuery({
-        queryKey: ['project', projectId],
-        queryFn:  () => fetchProject(projectId),
-    });
-
-    const { data: sprints = [], isLoading: loadingSprints } = useQuery({
-        queryKey: ['sprints', projectId],
-        queryFn:  () => fetchSprints(projectId),
-    });
-
-    const { data: members = [] } = useQuery({
-        queryKey: ['members', projectId],
-        queryFn:  () => fetchMembers(projectId),
-    });
-
-    if (loadingProject) return <CircularProgress />;
-
+export default function ProjectDetailView({ project, sprints, members, loadingSprints, onBack, onSprintSelect }) {
     return (
         <Box>
-            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/projects')} sx={{ mb: 2 }}>
+            <Button startIcon={<ArrowBackIcon />} onClick={onBack} sx={{ mb: 2 }}>
                 Projects
             </Button>
 
@@ -55,9 +28,7 @@ export default function ProjectDetail() {
                     )}
                     {sprints.map(s => (
                         <ListItem key={s.id} disablePadding>
-                            <ListItemButton
-                                onClick={() => navigate(`/projects/${projectId}/sprints/${s.id}`)}
-                            >
+                            <ListItemButton onClick={() => onSprintSelect(s.id)}>
                                 <ListItemText
                                     primary={s.name}
                                     secondary={`${s.startDate} → ${s.endDate}`}

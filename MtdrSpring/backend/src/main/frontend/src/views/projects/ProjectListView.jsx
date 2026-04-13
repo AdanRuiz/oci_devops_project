@@ -1,46 +1,22 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import {
-    Box, Button, CircularProgress, Dialog, DialogActions, DialogContent,
+    Box, Button, Dialog, DialogActions, DialogContent,
     DialogTitle, List, ListItem, ListItemButton, ListItemText, TextField, Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import client from '../../api/client';
 
-const fetchProjects = () => client.get('/projects').then(r => r.data);
-const createProject  = (data) => client.post('/projects', data);
-
-export default function Projects() {
-    const navigate    = useNavigate();
-    const queryClient = useQueryClient();
-
+export default function ProjectListView({ projects, onCreate, onSelect, isCreating }) {
     const [open, setOpen]               = useState(false);
     const [name, setName]               = useState('');
     const [description, setDescription] = useState('');
 
-    const { data: projects = [], isLoading, isError } = useQuery({
-        queryKey: ['projects'],
-        queryFn: fetchProjects,
-    });
-
-    const create = useMutation({
-        mutationFn: createProject,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['projects'] });
-            setOpen(false);
-            setName('');
-            setDescription('');
-        },
-    });
-
-    const handleCreate = () => {
+    const handleCreate = async () => {
         if (!name.trim()) return;
-        create.mutate({ name, description });
+        await onCreate({ name, description });
+        setOpen(false);
+        setName('');
+        setDescription('');
     };
-
-    if (isLoading) return <CircularProgress />;
-    if (isError)   return <Typography color="error">Failed to load projects.</Typography>;
 
     return (
         <Box>
@@ -57,7 +33,7 @@ export default function Projects() {
                 )}
                 {projects.map(p => (
                     <ListItem key={p.id} disablePadding>
-                        <ListItemButton onClick={() => navigate(`/projects/${p.id}`)}>
+                        <ListItemButton onClick={() => onSelect(p.id)}>
                             <ListItemText primary={p.name} secondary={p.description} />
                         </ListItemButton>
                     </ListItem>
@@ -88,7 +64,7 @@ export default function Projects() {
                     <Button
                         variant="contained"
                         onClick={handleCreate}
-                        disabled={create.isPending || !name.trim()}
+                        disabled={isCreating || !name.trim()}
                     >
                         Create
                     </Button>

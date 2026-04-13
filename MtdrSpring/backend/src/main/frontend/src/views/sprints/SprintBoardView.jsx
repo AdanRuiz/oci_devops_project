@@ -1,15 +1,9 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
     Box, Button, Card, CardActionArea, CardContent,
-    Chip, CircularProgress, Grid, Typography,
+    Chip, Grid, Typography,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import client from '../../api/client';
 import { PRIORITY_COLOR } from '../../constants/taskEnums';
-
-const fetchSprint = (id)       => client.get(`/sprints/${id}`).then(r => r.data);
-const fetchTasks  = (sprintId) => client.get(`/sprints/${sprintId}/tasks`).then(r => r.data);
 
 const COLUMNS = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
 
@@ -20,29 +14,10 @@ const COLUMN_LABEL = {
     DONE:        'Done',
 };
 
-export default function SprintBoard() {
-    const { projectId, sprintId } = useParams();
-    const navigate = useNavigate();
-
-    const { data: sprint, isLoading: loadingSprint } = useQuery({
-        queryKey: ['sprint', sprintId],
-        queryFn:  () => fetchSprint(sprintId),
-    });
-
-    const { data: tasks = [], isLoading: loadingTasks } = useQuery({
-        queryKey: ['tasks', 'sprint', sprintId],
-        queryFn:  () => fetchTasks(sprintId),
-    });
-
-    if (loadingSprint || loadingTasks) return <CircularProgress />;
-
+export default function SprintBoardView({ sprint, tasks, onBack, onTaskSelect }) {
     return (
         <Box>
-            <Button
-                startIcon={<ArrowBackIcon />}
-                onClick={() => navigate(`/projects/${projectId}`)}
-                sx={{ mb: 2 }}
-            >
+            <Button startIcon={<ArrowBackIcon />} onClick={onBack} sx={{ mb: 2 }}>
                 {sprint?.name ?? 'Sprint'}
             </Button>
 
@@ -63,7 +38,7 @@ export default function SprintBoard() {
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                 {colTasks.map(task => (
                                     <Card key={task.id} variant="outlined">
-                                        <CardActionArea onClick={() => navigate(`/tasks/${task.id}`)}>
+                                        <CardActionArea onClick={() => onTaskSelect(task.id)}>
                                             <CardContent>
                                                 <Typography variant="body2" fontWeight="medium">
                                                     {task.title}

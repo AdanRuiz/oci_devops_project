@@ -1,41 +1,14 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
-    Box, Button, Chip, CircularProgress, Divider,
+    Box, Button, Chip, Divider,
     List, ListItem, ListItemText, Typography,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import client from '../../api/client';
 import { STATUS_COLOR, PRIORITY_COLOR } from '../../constants/taskEnums';
 
-const fetchTask    = (id) => client.get(`/tasks/${id}`).then(r => r.data);
-const fetchHistory = (id) => client.get(`/tasks/${id}/history`).then(r => r.data);
-const fetchLogs    = (id) => client.get(`/tasks/${id}/work-logs`).then(r => r.data);
-
-export default function TaskDetail() {
-    const { taskId } = useParams();
-    const navigate   = useNavigate();
-
-    const { data: task, isLoading } = useQuery({
-        queryKey: ['task', taskId],
-        queryFn:  () => fetchTask(taskId),
-    });
-
-    const { data: history = [] } = useQuery({
-        queryKey: ['task', taskId, 'history'],
-        queryFn:  () => fetchHistory(taskId),
-    });
-
-    const { data: logs = [] } = useQuery({
-        queryKey: ['task', taskId, 'logs'],
-        queryFn:  () => fetchLogs(taskId),
-    });
-
-    if (isLoading) return <CircularProgress />;
-
+export default function TaskDetailView({ task, history, logs, onBack }) {
     return (
         <Box>
-            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} sx={{ mb: 2 }}>
+            <Button startIcon={<ArrowBackIcon />} onClick={onBack} sx={{ mb: 2 }}>
                 Back
             </Button>
 
