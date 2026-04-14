@@ -32,11 +32,11 @@ public class OracleConfiguration {
         OracleDataSource ds = new OracleDataSource();
         ds.setDriverType(env.getProperty("driver_class_name"));
         logger.info("Using Driver " + env.getProperty("driver_class_name"));
-        ds.setURL(env.getProperty("db_url"));
-        logger.info("Using URL: " + env.getProperty("db_url"));
-        ds.setUser(env.getProperty("db_user"));
-        logger.info("Using Username " + env.getProperty("db_user"));
-        ds.setPassword(env.getProperty("dbpassword"));
+        ds.setURL(env.getProperty("DB_URL"));
+        logger.info("Using URL: " + env.getProperty("DB_URL"));
+        ds.setUser(env.getProperty("DB_USER"));
+        logger.info("Using Username " + env.getProperty("DB_USER"));
+        ds.setPassword(env.getProperty("DB_PASSWORD"));
         return ds;
     }
 }
