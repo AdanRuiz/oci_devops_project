@@ -21,6 +21,13 @@ const BAR = {
     done:       '#4e4137',
 };
 
+const STATUS_BADGE = {
+    TODO:        { bgcolor: '#e2e3e5', color: '#383d41', label: 'To Do' },
+    IN_PROGRESS: { bgcolor: '#fff3cd', color: '#856404', label: 'In Progress' },
+    BLOCKED:     { bgcolor: '#f8d7da', color: '#721c24', label: 'Blocked' },
+    DONE:        { bgcolor: '#cee6b4', color: '#2E7D1F', label: 'Done' },
+};
+
 /* ── Sub-components ───────────────────────────────────────── */
 
 function SectionTitle({ children }) {
@@ -176,16 +183,13 @@ function TaskItem({ status, title }) {
                     sx={{
                         px: '10px',
                         py: '3px',
-                        bgcolor: '#cee6b4',
+                        bgcolor: (STATUS_BADGE[status] ?? STATUS_BADGE.TODO).bgcolor,
                         borderRadius: '10px',
                         flexShrink: 0,
                     }}
                 >
-                    <Typography sx={{ fontSize: '0.72rem', color: '#2E7D1F', fontWeight: 500 }}>
-                        {status === 'IN_PROGRESS' ? 'In Progress'
-                            : status === 'BLOCKED' ? 'Blocked'
-                            : status === 'TODO'    ? 'To Do'
-                            : 'Done'}
+                    <Typography sx={{ fontSize: '0.72rem', color: (STATUS_BADGE[status] ?? STATUS_BADGE.TODO).color, fontWeight: 500 }}>
+                        {(STATUS_BADGE[status] ?? STATUS_BADGE.TODO).label}
                     </Typography>
                 </Box>
                 <Typography sx={{ fontSize: '0.875rem', color: '#1A1A1A', flexGrow: 1 }}>
@@ -272,7 +276,6 @@ export default function DashboardView({
                             size="small"
                             onClick={onViewBoard}
                             sx={{
-                                textTransform: 'none',
                                 color: '#2B2B2B',
                                 borderColor: '#e0dedc',
                                 bgcolor: '#e0dedc',
@@ -280,9 +283,7 @@ export default function DashboardView({
                                 fontSize: '0.85rem',
                                 px: '16px',
                                 py: '6px',
-                                borderRadius: '4px',
-                                boxShadow: 'none',
-                                '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc', boxShadow: 'none' },
+                                '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc' },
                             }}
                         >
                             View Board

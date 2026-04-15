@@ -3,7 +3,7 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#323232',
+            main: '#312d2a',
         },
         secondary: {
             main: '#E05A00',
@@ -19,7 +19,7 @@ const theme = createTheme({
         divider: '#E0DBD7',
     },
     typography: {
-        fontFamily: '"Inter", "Oracle Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontFamily: "'OracleSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         h4: { fontWeight: 700 },
         h5: { fontWeight: 700 },
         h6: { fontWeight: 700 },
@@ -29,6 +29,14 @@ const theme = createTheme({
         borderRadius: 6,
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                },
+            },
+        },
         MuiAppBar: {
             styleOverrides: {
                 root: {
@@ -47,10 +55,16 @@ const theme = createTheme({
             },
         },
         MuiButton: {
+            defaultProps: {
+                disableElevation: true,
+            },
             styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                    borderRadius: '6px',
+                },
                 containedPrimary: {
-                    backgroundColor: '#323232',
-                    '&:hover': { backgroundColor: '#1a1a1a' },
+                    '&:hover': { backgroundColor: '#111111' },
                 },
             },
         },

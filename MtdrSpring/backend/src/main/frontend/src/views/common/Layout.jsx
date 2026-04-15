@@ -1,19 +1,20 @@
-import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useActiveProject } from '../../models/ProjectContext';
 import bannerImage from '../../assets/redwood-banner.png';
 import { ReactComponent as DashboardSvg }  from '../../assets/nav-bar/dashboard.svg';
-import { ReactComponent as ProjectsSvg }   from '../../assets/nav-bar/projects.svg';
 import { ReactComponent as KanbanSvg }     from '../../assets/nav-bar/kanban.svg';
 import { ReactComponent as SprintsSvg }    from '../../assets/nav-bar/sprints.svg';
 import { ReactComponent as KpisSvg }       from '../../assets/nav-bar/kpis.svg';
 import { ReactComponent as ProfileSvg }    from '../../assets/nav-bar/profile.svg';
 import { ReactComponent as OracleSvg }     from '../../assets/nav-bar/oracle.svg';
 
-const NAV_ITEMS = [
+// "Projects" removed — switching projects is done via the header button only.
+// Sprints path is resolved at runtime from the active project.
+const STATIC_NAV = [
     { label: 'Dashboard',    path: '/dashboard', Icon: DashboardSvg },
-    { label: 'Projects',     path: '/projects',  Icon: ProjectsSvg  },
     { label: 'Kanban Board', path: '/kanban',    Icon: KanbanSvg    },
-    { label: 'Sprints',      path: '/sprints',   Icon: SprintsSvg   },
+    { label: 'Sprints',      path: null,         Icon: SprintsSvg   },
     { label: 'KPIs',         path: '/kpi',       Icon: KpisSvg      },
     { label: 'Profile',      path: '/profile',   Icon: ProfileSvg   },
 ];
@@ -25,15 +26,28 @@ const NAV_H    = 60;
 
 export default function Layout({
     children,
-    projectTitle = 'Project Management - Name in Progress',
-    userRole     = 'Manager',
-    userEmail    = 'baltazar.servin@oracle.com',
+    userRole  = 'Manager',
+    userEmail = 'baltazar.servin@oracle.com',
 }) {
-    const navigate   = useNavigate();
+    const navigate = useNavigate();
     const { pathname } = useLocation();
-    const currentNav = NAV_ITEMS.findIndex(
-        item => pathname === item.path || pathname.startsWith(item.path + '/')
+    const { activeProject, clearProject } = useActiveProject();
+
+    // Resolve the Sprints path dynamically based on active project
+    const NAV_ITEMS = STATIC_NAV.map(item =>
+        item.label === 'Sprints' && activeProject
+            ? { ...item, path: `/projects/${activeProject.id}` }
+            : item
     );
+
+    const currentNav = NAV_ITEMS.findIndex(
+        item => item.path && (pathname === item.path || pathname.startsWith(item.path + '/'))
+    );
+
+    const handleSwitchProject = () => {
+        clearProject();
+        navigate('/projects');
+    };
 
     const splitY = APPBAR_H + 32 + BANNER_H;
 
@@ -69,7 +83,7 @@ export default function Layout({
                             }}
                             noWrap
                         >
-                            {projectTitle}
+                            {activeProject ? activeProject.name : 'Project Management'}
                         </Typography>
                         <Typography sx={{ fontSize: '0.78rem', color: '#717171', mt: '2px' }}>
                             {userRole} - {userEmail}
@@ -77,32 +91,33 @@ export default function Layout({
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: { xs: '6px', sm: '10px' }, flexShrink: 0 }}>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            sx={{
-                                bgcolor: '#e0dedc', color: '#2B2B2B', borderColor: '#e0dedc',
-                                textTransform: 'none', fontWeight: 500,
-                                fontSize: { xs: '0.72rem', sm: '0.85rem' },
-                                px: { xs: '10px', sm: '16px' },
-                                py: { xs: '4px', sm: '6px' },
-                                borderRadius: '4px', boxShadow: 'none',
-                                '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc', boxShadow: 'none' },
-                            }}
-                        >
-                            Preferences
-                        </Button>
+                        {activeProject && (
+                            <Tooltip title="Go back to project selection">
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    onClick={handleSwitchProject}
+                                    sx={{
+                                        bgcolor: '#e0dedc', color: '#2B2B2B', borderColor: '#e0dedc',
+                                        fontWeight: 500,
+                                        fontSize: { xs: '0.72rem', sm: '0.85rem' },
+                                        px: { xs: '10px', sm: '16px' },
+                                        py: { xs: '4px', sm: '6px' },
+                                        '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc' },
+                                    }}
+                                >
+                                    Switch Project
+                                </Button>
+                            </Tooltip>
+                        )}
                         <Button
                             variant="contained"
                             size="small"
                             sx={{
-                                bgcolor: '#312d2a', color: '#FFFFFF',
-                                textTransform: 'none', fontWeight: 700,
+                                fontWeight: 700,
                                 fontSize: { xs: '0.72rem', sm: '0.85rem' },
                                 px: { xs: '10px', sm: '18px' },
                                 py: { xs: '4px', sm: '6px' },
-                                borderRadius: '4px', boxShadow: 'none',
-                                '&:hover': { bgcolor: '#111111', boxShadow: 'none' },
                             }}
                         >
                             Sign Out
@@ -116,7 +131,7 @@ export default function Layout({
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    mb: `${NAV_H}px`,
+                    mb: activeProject ? `${NAV_H}px` : 0,
                     display: 'flex',
                     flexDirection: 'column',
                 }}
@@ -150,8 +165,8 @@ export default function Layout({
                 </Box>
             </Box>
 
-            {/* ── Custom Bottom Navigation ── */}
-            <Box
+            {/* ── Custom Bottom Navigation — only shown when a project is active ── */}
+            {activeProject && <Box
                 sx={{
                     position: 'fixed',
                     bottom: 0,
@@ -171,7 +186,7 @@ export default function Layout({
                     return (
                         <Box
                             key={label}
-                            onClick={() => navigate(path)}
+                            onClick={() => path && navigate(path)}
                             sx={{
                                 position: 'relative',
                                 display: 'flex',
@@ -236,7 +251,7 @@ export default function Layout({
                         <OracleSvg />
                     </Box>
                 </Box>
-            </Box>
+            </Box>}
         </Box>
     );
 }

@@ -1,13 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: #F5F4F2;
+@font-face {
+  font-family: 'OracleSans';
+  src: url('./assets/fonts/OracleBrandVF_Tb_WghtWdth.ttf') format('truetype');
+  font-weight: 100 900;
 }

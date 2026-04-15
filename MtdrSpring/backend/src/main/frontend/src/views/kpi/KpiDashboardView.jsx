@@ -15,28 +15,20 @@ function KpiRow({ label, value, unit = '' }) {
 }
 
 export default function KpiDashboardView({
-    projects, sprints, projectId, sprintId,
-    kpi, loadingKpi, onProjectChange, onSprintChange,
+    projectName, sprints, sprintId,
+    kpi, loadingKpi, onSprintChange,
 }) {
     return (
         <Box>
             <Typography variant="h5" gutterBottom>KPI Dashboard</Typography>
+            {projectName && (
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Project: <strong>{projectName}</strong>
+                </Typography>
+            )}
 
-            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+            <Box sx={{ mb: 3 }}>
                 <FormControl sx={{ minWidth: 220 }} size="small">
-                    <InputLabel>Project</InputLabel>
-                    <Select
-                        value={projectId}
-                        label="Project"
-                        onChange={e => onProjectChange(e.target.value)}
-                    >
-                        {projects.map(p => (
-                            <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-
-                <FormControl sx={{ minWidth: 220 }} size="small" disabled={!projectId}>
                     <InputLabel>Sprint</InputLabel>
                     <Select
                         value={sprintId}
@@ -53,7 +45,7 @@ export default function KpiDashboardView({
             {loadingKpi && <CircularProgress />}
 
             {!sprintId && (
-                <Typography color="text.secondary">Select a project and sprint to view KPIs.</Typography>
+                <Typography color="text.secondary">Select a sprint to view KPIs.</Typography>
             )}
 
             {sprintId && !loadingKpi && !kpi && (
