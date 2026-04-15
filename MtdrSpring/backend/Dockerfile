@@ -1,7 +1,18 @@
 FROM openjdk:22-jdk
 #COPY pom.xml /tmp/
 #COPY src /tmp/src/
+RUN mkdir -p /mtdrworkshop/creds
+COPY wallet/ /mtdrworkshop/creds
 WORKDIR /tmp/
 EXPOSE 8080
 COPY target/MyTodoList-0.0.1-SNAPSHOT.jar MyTodoList.jar
+
+ENV ui_username="admin"
+ENV ui_password="none0001"
+
+ENV db_user="ADMIN"
+ENV dbpassword="Hielofrio123-"
+ENV db_url="jdbc:oracle:thin:@reacttodok7toc_tp?TNS_ADMIN=/mtdrworkshop/creds"
+ENV driver_class_name="oracle.jdbc.OracleDriver"
+
 ENTRYPOINT ["java","-jar","MyTodoList.jar"]
