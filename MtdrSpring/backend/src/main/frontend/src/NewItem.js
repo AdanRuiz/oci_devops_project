@@ -1,62 +1,34 @@
-/*
-## MyToDoReact version 1.0.
-##
-## Copyright (c) 2022 Oracle, Inc.
-## Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
-*/
-/*
- * Component that supports creating a new todo item.
- * @author  jean.de.lavarene@oracle.com
- */
-
 import React, { useState } from "react";
-import Button from '@mui/material/Button';
-
 
 function NewItem(props) {
   const [item, setItem] = useState('');
+
   function handleSubmit(e) {
-    // console.log("NewItem.handleSubmit("+e+")");
-    if (!item.trim()) {
-      return;
-    }
-    // addItem makes the REST API call:
+    e.preventDefault();
+    if (!item.trim()) return;
     props.addItem(item);
     setItem("");
-    e.preventDefault();
   }
-  function handleChange(e) {
-    setItem(e.target.value);
-  }
+
   return (
-    <div id="newinputform">
-    <form>
+    <div className="new-item-wrap">
+      <span className="new-item-prefix">+</span>
       <input
-        id="newiteminput"
-        placeholder="New item"
+        className="new-item-input"
+        placeholder="Add a new task…"
         type="text"
         autoComplete="off"
         value={item}
-        onChange={handleChange}
-        // No need to click on the "ADD" button to add a todo item. You
-        // can simply press "Enter":
-        onKeyDown={event => {
-          if (event.key === 'Enter') {
-            handleSubmit(event);
-          }
-        }}
+        onChange={e => setItem(e.target.value)}
+        onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }}
       />
-      <span>&nbsp;&nbsp;</span>
-      <Button
-        className="AddButton"
-        variant="contained"
-        disabled={props.isInserting}
-        onClick={!props.isInserting ? handleSubmit : null}
-        size="small"
+      <button
+        className="add-btn"
+        disabled={props.isInserting || !item.trim()}
+        onClick={handleSubmit}
       >
         {props.isInserting ? 'Adding…' : 'Add'}
-      </Button>
-    </form>
+      </button>
     </div>
   );
 }

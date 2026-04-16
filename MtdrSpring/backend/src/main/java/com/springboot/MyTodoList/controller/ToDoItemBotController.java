@@ -6,7 +6,9 @@ import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.util.BotActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -27,6 +29,9 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 	
 	private final BotProps botProps;
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	@Value("${telegram.bot.token}")
 	private String telegramBotToken;
 
@@ -41,7 +46,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
     }
 
 
-	public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, DeepSeekService ds) {
+	public ToDoItemBotController(BotProps bp, ToDoItemService tsvc, DeepSeekService ds) {
 		this.botProps = bp;
 		telegramClient = new OkHttpTelegramClient(getBotToken());
 		toDoItemService = tsvc;
@@ -62,8 +67,11 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 
 		String messageTextFromTelegram = update.getMessage().getText();
 		long chatId = update.getMessage().getChatId();
+		String fromUsername = update.getMessage().getFrom() != null ? update.getMessage().getFrom().getUserName() : "unknown";
+		String fromName = update.getMessage().getFrom() != null ? update.getMessage().getFrom().getFirstName() : "unknown";
+		logger.info("📨 Message from {} (@{}) — chatId: {}", fromName, fromUsername, chatId);
 
-		BotActions actions =  new BotActions(telegramClient,toDoItemService,deepSeekService);
+		BotActions actions = new BotActions(telegramClient, toDoItemService, deepSeekService, jdbcTemplate);
 		actions.setRequestText(messageTextFromTelegram);
 		actions.setChatId(chatId);
 		if(actions.getTodoService()==null){
