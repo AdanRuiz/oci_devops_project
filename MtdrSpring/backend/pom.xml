@@ -18,7 +18,7 @@
 		<version.lib.ojdbc>21.1.0.0</version.lib.ojdbc>
 		<frontend-src-dir>${project.basedir}/src/main/frontend</frontend-src-dir>
 		<node.version>v23.9.0</node.version>
-		<npm.version>8.1.2</npm.version>
+		<npm.version>10.9.2</npm.version>
 	</properties>
 	<dependencies>
 		<dependency>
