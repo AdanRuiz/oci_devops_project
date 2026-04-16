@@ -7,6 +7,7 @@ import com.springboot.MyTodoList.util.BotActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -18,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
+@ConditionalOnExpression("'${telegram.bot.token:}'.length() > 0")
 public class ToDoItemBotController  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
 	private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
@@ -63,14 +65,9 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 		String messageTextFromTelegram = update.getMessage().getText();
 		long chatId = update.getMessage().getChatId();
 
-		BotActions actions =  new BotActions(telegramClient,toDoItemService,deepSeekService);
+		BotActions actions = new BotActions(telegramClient, toDoItemService, deepSeekService);
 		actions.setRequestText(messageTextFromTelegram);
 		actions.setChatId(chatId);
-		if(actions.getTodoService()==null){
-			logger.info("todosvc error");
-			actions.setTodoService(toDoItemService);
-		}
-
 
 		actions.fnStart();
 		actions.fnDone();
@@ -86,7 +83,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 
 	@AfterBotRegistration
     public void afterRegistration(BotSession botSession) {
-        System.out.println("Registered bot running state is: " + botSession.isRunning());
+        logger.info("Registered bot running state is: {}", botSession.isRunning());
     }
 
 }
