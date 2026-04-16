@@ -1,8 +1,6 @@
 package com.springboot.MyTodoList.service;
 
-import com.springboot.MyTodoList.model.ChangeSource;
-import com.springboot.MyTodoList.model.Task;
-import com.springboot.MyTodoList.model.User;
+import com.springboot.MyTodoList.model.*;
 import com.springboot.MyTodoList.repository.ToDoItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,27 +67,14 @@ public class ToDoItemService {
         }
     }
 
-    /**
-     * Updates a task. When changedBy is provided, sets the session-level app_ctx
-     * so that trg_task_au can record the correct actor in task_state_histories.
-     *
-     * The DB triggers own:
-     *   - temporal columns (entered_in_progress_at, blocked_at, completed_at,
-     *                        assigned_at, sprint_added_at)
-     *   - rework_count increment
-     *   - task_state_histories insertion
-     *   - task_assignment_histories rotation
-     *   - sprints.planned_task_count maintenance
-     */
+    // DB triggers own temporal columns, history tables, and rework_count.
+    // changedBy must be set before save so trg_task_au can record the actor.
     public Task updateToDoItem(UUID id, Task updates, User changedBy, ChangeSource source) {
         Optional<Task> existing = toDoItemRepository.findById(id);
         if (!existing.isPresent()) return null;
 
         Task task = existing.get();
 
-        // Set session context so trg_task_au knows who made this change.
-        // Must be called before the JPA save (which issues the UPDATE).
-        // If status is changing and changedBy is null, the trigger will raise ORA-20001.
         if (changedBy != null) {
             String hexId = changedBy.getId().toString().replace("-", "");
             String src = (source != null ? source : ChangeSource.WEB).name();
@@ -113,4 +98,5 @@ public class ToDoItemService {
     public Task updateToDoItem(UUID id, Task updates) {
         return updateToDoItem(id, updates, null, null);
     }
+
 }

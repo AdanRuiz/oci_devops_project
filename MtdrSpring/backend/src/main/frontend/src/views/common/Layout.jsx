@@ -9,8 +9,6 @@ import { ReactComponent as KpisSvg }       from '../../assets/nav-bar/kpis.svg';
 import { ReactComponent as ProfileSvg }    from '../../assets/nav-bar/profile.svg';
 import { ReactComponent as OracleSvg }     from '../../assets/nav-bar/oracle.svg';
 
-// "Projects" removed — switching projects is done via the header button only.
-// Sprints path is resolved at runtime from the active project.
 const STATIC_NAV = [
     { label: 'Dashboard',    path: '/dashboard', Icon: DashboardSvg },
     { label: 'Kanban Board', path: '/kanban',    Icon: KanbanSvg    },
@@ -33,16 +31,19 @@ export default function Layout({
     const { pathname } = useLocation();
     const { activeProject, clearProject } = useActiveProject();
 
-    // Resolve the Sprints path dynamically based on active project
     const NAV_ITEMS = STATIC_NAV.map(item =>
         item.label === 'Sprints' && activeProject
             ? { ...item, path: `/projects/${activeProject.id}` }
             : item
     );
 
-    const currentNav = NAV_ITEMS.findIndex(
-        item => item.path && (pathname === item.path || pathname.startsWith(item.path + '/'))
-    );
+    const currentNav = NAV_ITEMS.findIndex((item, i) => {
+        if (!item.path) return false;
+        if (pathname === item.path || pathname.startsWith(item.path + '/')) return true;
+        // Tasks live under /tasks/:id but belong to the Sprints section
+        if (item.label === 'Sprints' && pathname.startsWith('/tasks/')) return true;
+        return false;
+    });
 
     const handleSwitchProject = () => {
         clearProject();
@@ -59,7 +60,6 @@ export default function Layout({
             background: `linear-gradient(to bottom, ${PAGE_BG} ${splitY}px, #ffffff ${splitY}px)`,
         }}>
 
-            {/* ── AppBar ── */}
             <AppBar
                 position="sticky"
                 elevation={0}
@@ -98,12 +98,12 @@ export default function Layout({
                                     size="small"
                                     onClick={handleSwitchProject}
                                     sx={{
-                                        bgcolor: '#e0dedc', color: '#2B2B2B', borderColor: '#e0dedc',
+                                        bgcolor: '#ffffff', color: '#2B2B2B', borderColor: '#e0dedc',
                                         fontWeight: 500,
                                         fontSize: { xs: '0.72rem', sm: '0.85rem' },
                                         px: { xs: '10px', sm: '16px' },
                                         py: { xs: '4px', sm: '6px' },
-                                        '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc' },
+                                        '&:hover': { bgcolor: '#e0dedc', borderColor: '#e0dedc' },
                                     }}
                                 >
                                     Switch Project
@@ -126,7 +126,7 @@ export default function Layout({
                 </Toolbar>
             </AppBar>
 
-            {/* ── Main content ── */}
+            {/* Main content */}
             <Box
                 component="main"
                 sx={{
@@ -165,7 +165,7 @@ export default function Layout({
                 </Box>
             </Box>
 
-            {/* ── Custom Bottom Navigation — only shown when a project is active ── */}
+            {/* Custom Bottom Navigation */}
             {activeProject && <Box
                 sx={{
                     position: 'fixed',
@@ -193,7 +193,6 @@ export default function Layout({
                                 alignItems: 'center',
                                 justifyContent: { xs: 'center', sm: 'flex-start' },
                                 gap: '7px',
-                                // mobile: evenly share space; desktop: auto width
                                 flex: { xs: 1, sm: 'none' },
                                 px: { xs: 0, sm: '16px' },
                                 cursor: 'pointer',
@@ -228,7 +227,7 @@ export default function Layout({
                                 <Icon />
                             </Box>
 
-                            {/* Label — hidden on mobile */}
+                            {/* Labels (hidden on mobile) */}
                             <Typography sx={{
                                 display: { xs: 'none', sm: 'block' },
                                 fontSize: '0.82rem',

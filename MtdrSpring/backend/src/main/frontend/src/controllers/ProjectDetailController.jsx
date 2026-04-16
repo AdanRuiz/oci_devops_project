@@ -19,9 +19,7 @@ export default function ProjectDetailController() {
         <ProjectDetailView
             project={project}
             sprints={sprints}
-            members={members}
             loadingSprints={loadingSprints}
-            onBack={() => navigate('/projects')}
             onSprintSelect={(sprintId) => navigate(`/projects/${projectId}/sprints/${sprintId}`)}
         />
     );

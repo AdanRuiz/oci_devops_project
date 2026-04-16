@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.controller;
 
+import com.springboot.MyTodoList.dto.DeveloperStatDto;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.SprintKpiSnapshot;
 import com.springboot.MyTodoList.service.SprintKpiSnapshotService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,5 +36,10 @@ public class SprintKpiSnapshotController {
         if (sprint == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         SprintKpiSnapshot snapshot = sprintKpiSnapshotService.compute(sprint);
         return new ResponseEntity<>(snapshot, HttpStatus.OK);
+    }
+
+    @GetMapping("/developer-stats")
+    public ResponseEntity<List<DeveloperStatDto>> getDeveloperStats(@PathVariable UUID sprintId) {
+        return ResponseEntity.ok(sprintKpiSnapshotService.getDeveloperStats(sprintId));
     }
 }

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
-    Box, Button, Card, CardActionArea, CardContent,
+    Box, Button, Card, CardContent,
     Dialog, DialogActions, DialogContent, DialogTitle,
     Grid, TextField, Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import { ORANGE_ACCENT, outlinedButtonSx, containedButtonSx } from '../../styles/theme';
 
 export default function ProjectSelectorView({ projects, onCreate, onSelect, isCreating }) {
     const [open, setOpen]               = useState(false);
@@ -22,7 +23,6 @@ export default function ProjectSelectorView({ projects, onCreate, onSelect, isCr
 
     return (
         <Box>
-            {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
                 <Box>
                     <Typography variant="h5" fontWeight={700} sx={{ color: '#1A1A1A' }}>
@@ -33,16 +33,16 @@ export default function ProjectSelectorView({ projects, onCreate, onSelect, isCr
                     </Typography>
                 </Box>
                 <Button
-                    variant="contained"
+                    variant="outlined"
+                    size="small"
                     startIcon={<AddIcon />}
                     onClick={() => setOpen(true)}
-                    sx={{ fontWeight: 600 }}
+                    sx={outlinedButtonSx}
                 >
                     New Project
                 </Button>
             </Box>
 
-            {/* Empty state */}
             {projects.length === 0 && (
                 <Box sx={{
                     textAlign: 'center', py: 8,
@@ -55,68 +55,56 @@ export default function ProjectSelectorView({ projects, onCreate, onSelect, isCr
                 </Box>
             )}
 
-            {/* Project cards */}
             <Grid container spacing={2}>
                 {projects.map((project) => (
                     <Grid item xs={12} sm={6} md={4} key={project.id}>
                         <Card
                             elevation={0}
                             sx={{
-                                border: '1px solid #e8e5e2',
+                                border: '1px solid #E8E8E8',
                                 borderRadius: '8px',
-                                transition: 'box-shadow 0.15s ease, border-color 0.15s ease',
-                                '&:hover': {
-                                    boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
-                                    borderColor: '#E8A535',
-                                },
+                                boxShadow: 'none',
+                                bgcolor: '#fbf9f8',
+                                height: '100%',
+                                cursor: 'pointer',
+                                transition: 'border-color 0.15s, background-color 0.15s',
+                                '&:hover': { borderColor: '#d0cecc', bgcolor: '#f5f3f1' },
                             }}
+                            onClick={() => onSelect(project)}
                         >
-                            <CardActionArea onClick={() => onSelect(project)} sx={{ p: 0 }}>
-                                {/* Accent bar */}
-                                <Box sx={{ height: '4px', bgcolor: '#E05A00', borderRadius: '8px 8px 0 0' }} />
-                                <CardContent sx={{ p: 3 }}>
-                                    <Typography
-                                        variant="h6"
-                                        fontWeight={700}
-                                        sx={{ color: '#1A1A1A', mb: 0.5, fontSize: '1rem' }}
-                                        noWrap
-                                    >
-                                        {project.name}
+                            <CardContent sx={{ p: '20px !important' }}>
+                                <Box sx={{ height: '3px', bgcolor: ORANGE_ACCENT, borderRadius: '10px', mb: '14px' }} />
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px', mb: '10px' }}>
+                                    <FolderOpenIcon sx={{ fontSize: '1rem', color: '#717171' }} />
+                                    <Typography sx={{ fontSize: '0.9rem', color: '#1A1A1A' }}>
+                                        Project
                                     </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            color: '#717171',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            minHeight: '2.5em',
-                                        }}
-                                    >
-                                        {project.description || 'No description provided.'}
-                                    </Typography>
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            display: 'inline-block',
-                                            mt: 2,
-                                            color: '#E05A00',
-                                            fontWeight: 600,
-                                        }}
-                                    >
-                                        Open Project →
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
+                                </Box>
+                                <Typography
+                                    sx={{
+                                        fontWeight: 700,
+                                        fontSize: 'clamp(1.3rem, 2.5vw, 1.6rem)',
+                                        lineHeight: 1.2,
+                                        color: '#1A1A1A',
+                                        mb: '10px',
+                                    }}
+                                    noWrap
+                                >
+                                    {project.name}
+                                </Typography>
+                                <Typography sx={{ fontSize: '0.82rem', color: '#717171' }}>
+                                    {project.description || 'No description provided.'}
+                                </Typography>
+                            </CardContent>
                         </Card>
                     </Grid>
                 ))}
             </Grid>
 
-            {/* Create project dialog */}
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-                <DialogTitle>New Project</DialogTitle>
+                <DialogTitle sx={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>
+                    New Project
+                </DialogTitle>
                 <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
                     <TextField
                         label="Name"
@@ -134,12 +122,16 @@ export default function ProjectSelectorView({ projects, onCreate, onSelect, isCr
                         rows={3}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpen(false)}>Cancel</Button>
+                <DialogActions sx={{ px: '24px', pb: '16px' }}>
+                    <Button onClick={() => setOpen(false)} variant="outlined" size="small" sx={outlinedButtonSx}>
+                        Cancel
+                    </Button>
                     <Button
                         variant="contained"
+                        size="small"
                         onClick={handleCreate}
                         disabled={isCreating || !name.trim()}
+                        sx={containedButtonSx}
                     >
                         Create
                     </Button>

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -41,7 +42,9 @@ public class Sprint {
     @Column(name = "END_DATE", nullable = false)
     private LocalDate endDate;
 
-    // Maintained by trg_task_sprint_count — JPA must not write this column.
-    @Column(name = "PLANNED_TASK_COUNT", nullable = false, insertable = false, updatable = false)
+    @Formula("(SELECT COUNT(*) FROM TASKS t WHERE t.SPRINT_ID = ID)")
     private int plannedTaskCount = 0;
+
+    @Formula("(SELECT COUNT(*) FROM TASKS t WHERE t.SPRINT_ID = ID AND t.STATUS = 'DONE')")
+    private int doneTaskCount = 0;
 }

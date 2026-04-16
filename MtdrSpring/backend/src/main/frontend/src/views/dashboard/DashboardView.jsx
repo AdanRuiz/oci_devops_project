@@ -3,8 +3,6 @@ import {
 } from '@mui/material';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 
-
-/* ── Design tokens ────────────────────────────────────────── */
 const ORANGE_ACCENT  = '#F77E47';
 
 const STAT_BORDERS = {
@@ -27,8 +25,6 @@ const STATUS_BADGE = {
     BLOCKED:     { bgcolor: '#f8d7da', color: '#721c24', label: 'Blocked' },
     DONE:        { bgcolor: '#cee6b4', color: '#2E7D1F', label: 'Done' },
 };
-
-/* ── Sub-components ───────────────────────────────────────── */
 
 function SectionTitle({ children }) {
     return (
@@ -203,8 +199,6 @@ function TaskItem({ status, title }) {
     );
 }
 
-/* ── Main view ────────────────────────────────────────────── */
-
 export default function DashboardView({
     userName,
     activeSprintName,
@@ -278,12 +272,12 @@ export default function DashboardView({
                             sx={{
                                 color: '#2B2B2B',
                                 borderColor: '#e0dedc',
-                                bgcolor: '#e0dedc',
+                                bgcolor: '#ffffff',
                                 fontWeight: 500,
                                 fontSize: '0.85rem',
                                 px: '16px',
                                 py: '6px',
-                                '&:hover': { bgcolor: '#F5F3F1', borderColor: '#e0dedc' },
+                                '&:hover': { bgcolor: '#e0dedc', borderColor: '#e0dedc' },
                             }}
                         >
                             View Board
