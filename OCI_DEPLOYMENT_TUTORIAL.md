@@ -21,6 +21,45 @@ kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworks
 
 ---
 
+## Stop Resources
+
+**1. Undeploy the app from Kubernetes:**
+```bash
+cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
+. undeploy.sh
+```
+
+**2. Stop the OKE nodes:**
+- OCI Console → search "Instances"
+- Set compartment to `reacttodo`
+- Select all instances → Stop
+
+---
+
+## Resume After Stopping
+
+**1. Start the OKE nodes:**
+- OCI Console → search "Instances"
+- Set compartment to `reacttodo`
+- Select all instances → Start
+- Wait ~2 min for nodes to become Ready
+
+**2. Redeploy the app:**
+```bash
+cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
+. deploy.sh
+kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
+```
+
+**3. Verify:**
+```bash
+kubectl get pods -n mtdrworkshop
+pods
+services
+```
+
+---
+
 ## Rebuild From Scratch
 
 Use this section if the OKE cluster was deleted and needs to be fully recreated.
