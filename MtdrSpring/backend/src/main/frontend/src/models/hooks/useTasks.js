@@ -4,6 +4,7 @@ import { fetchTasks, fetchTask, fetchTaskHistory, fetchTaskWorkLogs } from '../a
 export const useSprintTasks = (sprintId) => useQuery({
     queryKey: ['tasks', 'sprint', sprintId],
     queryFn: () => fetchTasks(sprintId),
+    enabled: !!sprintId,
 });
 
 export const useTask = (taskId) => useQuery({

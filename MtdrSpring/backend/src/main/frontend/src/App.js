@@ -10,6 +10,7 @@ import ProjectDetailController from './controllers/ProjectDetailController';
 import SprintBoardController from './controllers/SprintBoardController';
 import TaskDetailController from './controllers/TaskDetailController';
 import KpiDashboardController from './controllers/KpiDashboardController';
+import KanbanBoardController from './controllers/KanbanBoardController';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -48,6 +49,7 @@ function App() {
                                 <Route path="/dashboard" element={<RequireProject><DashboardController /></RequireProject>} />
                                 <Route path="/tasks/:taskId" element={<RequireProject><TaskDetailController /></RequireProject>} />
                                 <Route path="/kpi" element={<RequireProject><KpiDashboardController /></RequireProject>} />
+                                <Route path="/kanban" element={<KanbanBoardController />} />
                             </Routes>
                         </Layout>
                     </ProjectProvider>
