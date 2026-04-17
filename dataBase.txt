@@ -1,0 +1,131 @@
+CREATE TABLE userGeneral (
+    userID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    phone VARCHAR2(20) NOT NULL,
+    email VARCHAR2(100) NOT NULL,
+    name VARCHAR2(50) NOT NULL,
+    lastName VARCHAR2(50) NOT NULL,
+    password VARCHAR2(256) NOT NULL
+);
+
+CREATE TABLE projectManager (
+    managerID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    userID NUMBER NOT NULL,
+    CONSTRAINT fk_projectManager_user
+        FOREIGN KEY (userID) REFERENCES userGeneral(userID)
+);
+
+CREATE TABLE team (
+    teamID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR2(50) NOT NULL,
+    managerID NUMBER NOT NULL,
+    CONSTRAINT fk_team_manager
+        FOREIGN KEY (managerID) REFERENCES projectManager(managerID)
+);
+
+CREATE TABLE project (
+    projectID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR2(100) NOT NULL,
+    description VARCHAR2(300) NOT NULL,
+    teamID NUMBER NOT NULL,
+    CONSTRAINT fk_project_team
+        FOREIGN KEY (teamID) REFERENCES team(teamID)
+);
+
+CREATE TABLE developer (
+    developerID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    userID NUMBER NOT NULL,
+    managerID NUMBER NOT NULL,
+    teamID NUMBER NOT NULL,
+    CONSTRAINT fk_developer_user
+        FOREIGN KEY (userID) REFERENCES userGeneral(userID),
+    CONSTRAINT fk_developer_manager
+        FOREIGN KEY (managerID) REFERENCES projectManager(managerID),
+    CONSTRAINT fk_developer_team
+        FOREIGN KEY (teamID) REFERENCES team(teamID)
+);
+
+CREATE TABLE task (
+    taskID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR2(200) NOT NULL,
+    description VARCHAR2(300) NOT NULL,
+    status VARCHAR2(20) NOT NULL,
+    taskType VARCHAR2(30) NOT NULL,
+    startDate TIMESTAMP NOT NULL,
+    deadline TIMESTAMP NOT NULL,
+    developerID NUMBER NOT NULL,
+    estimatedTime NUMBER NOT NULL,
+    timeSpent NUMBER,
+    priority VARCHAR2(20) NOT NULL,
+    projectID NUMBER NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    sprint INT, 
+
+    CONSTRAINT chk_task_status
+        CHECK (status IN (
+            'open',
+            'in_progress',
+            'closed'
+        )),
+
+    CONSTRAINT chk_task_tasktype
+        CHECK (taskType IN (
+            'documentation',
+            'bug-fixed',
+            'review',
+            'new-feature',
+            'improved-feature'
+        )),
+
+    CONSTRAINT chk_task_priority
+        CHECK (priority IN (
+            'LOW',
+            'MEDIUM',
+            'HIGH'
+        )),
+
+    CONSTRAINT fk_task_developer
+        FOREIGN KEY (developerID) REFERENCES developer(developerID),
+
+    CONSTRAINT fk_task_project
+        FOREIGN KEY (projectID) REFERENCES project(projectID)
+);
+
+CREATE TABLE comments (
+    commentID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    taskID NUMBER,
+    userID NUMBER,
+    role VARCHAR2(20) CHECK (role IN ('USER','ASSISTANT')),
+    message CLOB NOT NULL,
+    embedding VECTOR(1536),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_comment_task
+        FOREIGN KEY (taskID) REFERENCES task(taskID),
+    CONSTRAINT fk_comment_user
+        FOREIGN KEY (userID) REFERENCES userGeneral(userID)
+);
+
+CREATE TABLE task_log (
+    auditID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    taskID NUMBER NOT NULL,
+    fieldName VARCHAR2(50) NOT NULL,
+    oldValue VARCHAR2(1000),
+    newValue VARCHAR2(1000),
+    actionType VARCHAR2(20) NOT NULL,
+    changedBy NUMBER,
+    changedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    changeReason VARCHAR2(200),
+
+    CONSTRAINT chk_task_log_action
+        CHECK (actionType IN (
+            'INSERT',
+            'UPDATE',
+            'DELETE'
+        )),
+
+    CONSTRAINT fk_task_log_task
+        FOREIGN KEY (taskID) REFERENCES task(taskID),
+
+    CONSTRAINT fk_task_log_user
+        FOREIGN KEY (changedBy) REFERENCES userGeneral(userID)
+);

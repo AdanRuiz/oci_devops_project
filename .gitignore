@@ -49,3 +49,16 @@ frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 /MtdrSpring/backend/wallet
+
+# Docker dev files
+/DockerfileDev
+/MtdrSpring/backend/DockerfileDev
+
+# env files with secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# accidental npm lockfiles outside frontend
+/package-lock.json
+/MtdrSpring/backend/package-lock.json

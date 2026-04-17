@@ -1,0 +1,48 @@
+### 1. GET all users (check existing data)
+GET http://localhost:8080/users
+
+###
+
+### 2. POST a stamped user (oci-proof test)
+POST http://localhost:8080/adduser
+Content-Type: application/json
+
+{
+  "phone": "0000000000",
+  "email": "oci-proof-20260416@test.com",
+  "name": "OCI",
+  "lastName": "Proof",
+  "password": "test1234"
+}
+
+###
+
+### 3. GET all users again (confirm new user appears)
+GET http://localhost:8080/users
+
+###
+
+### 4. GET specific user by ID (replace 1 with the ID from the location header)
+GET http://localhost:8080/users/1
+
+###
+
+### 5. GET all todos (confirms todolist table too)
+GET http://localhost:8080/todolist
+
+###
+
+### 6. POST a stamped todo item
+POST http://localhost:8080/todolist
+Content-Type: application/json
+
+{
+  "description": "oci-proof-20260416",
+  "creation_ts": "2026-04-16T06:00:00Z",
+  "done": false
+}
+
+###
+
+### 7. Unit test endpoint (built-in test)
+GET http://localhost:8081/unitTestAdd

@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.util;
 
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.DeepSeekService;
+import com.springboot.MyTodoList.service.TaskService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class BotActions{
     boolean exit;
 
     ToDoItemService todoService;
+    TaskService taskService;
     DeepSeekService deepSeekService;
 
-    public BotActions(TelegramClient tc,ToDoItemService ts, DeepSeekService ds){
+    public BotActions(TelegramClient tc,ToDoItemService ts, TaskService taskSvc, DeepSeekService ds){
         telegramClient = tc;
         todoService = ts;
+        taskService = taskSvc;
         deepSeekService = ds;
         exit  = false;
     }
@@ -212,6 +215,43 @@ public class BotActions{
             return;
         logger.info("Adding item by BotHelper");
         BotHelper.sendMessageToTelegram(chatId, BotMessages.TYPE_NEW_TODO_ITEM.getMessage(), telegramClient);
+        exit = true;
+    }
+
+    public void fnAddTask() {
+        if (exit || requestText == null) {
+            return;
+        }
+
+        String trimmed = requestText.trim();
+        String lowered = trimmed.toLowerCase();
+        String slashCommand = BotCommands.ADD_TASK.getCommand();
+        String plainCommand = slashCommand.substring(1);
+
+        if (!(lowered.startsWith(slashCommand) || lowered.startsWith(plainCommand))) {
+            return;
+        }
+
+        String taskName;
+        if (lowered.startsWith(slashCommand)) {
+            taskName = trimmed.substring(slashCommand.length()).trim();
+        } else {
+            taskName = trimmed.substring(plainCommand.length()).trim();
+        }
+
+        if (taskName.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.TASK_ADD_USAGE.getMessage(), telegramClient);
+            exit = true;
+            return;
+        }
+
+        try {
+            taskService.addTaskFromBot(taskName);
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.TASK_ADDED.getMessage(), telegramClient);
+        } catch (Exception e) {
+            logger.error("Error adding task to DB", e);
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.TASK_ADD_FAILED.getMessage(), telegramClient);
+        }
         exit = true;
     }
 
