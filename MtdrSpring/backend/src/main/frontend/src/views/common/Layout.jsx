@@ -17,6 +17,9 @@ const STATIC_NAV = [
     { label: 'Profile',      path: '/profile',   Icon: ProfileSvg   },
 ];
 
+export const APP_USER_EMAIL = 'baltazar.servin@oracle.com';
+export const APP_USER_ROLE  = 'Manager';
+
 const PAGE_BG  = '#f1efed';
 const APPBAR_H = 88;
 const BANNER_H = 10;
@@ -24,8 +27,8 @@ const NAV_H    = 60;
 
 export default function Layout({
     children,
-    userRole  = 'Manager',
-    userEmail = 'baltazar.servin@oracle.com',
+    userRole  = APP_USER_ROLE,
+    userEmail = APP_USER_EMAIL,
 }) {
     const navigate = useNavigate();
     const { pathname } = useLocation();
