@@ -19,6 +19,12 @@ kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrwork
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
 ```
 
+> If `build.sh` fails with `denied: Anonymous users are only allowed read access`, log in to OCIR first:
+> ```bash
+> docker login mx-queretaro-1.ocir.io -u 'axeeisoondbm/a01644644@tec.mx' -p '<auth-token>'
+> ```
+> Auth token: OCI Console → Profile → Tokens and keys → Auth tokens → Generate token.
+
 ---
 
 ## Stop Resources
