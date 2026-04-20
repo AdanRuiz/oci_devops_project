@@ -57,3 +57,4 @@ frontend/yarn-error.log*
 
 .context/
 .playwright-mcp/
+.claude/
