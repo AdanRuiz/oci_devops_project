@@ -14,6 +14,7 @@ import KanbanBoardController from './controllers/KanbanBoardController';
 import ProfileController from './controllers/ProfileController';
 import { useAuth } from 'react-oidc-context';
 import AuthView, { AuthCallbackRoute } from './controllers/AuthView';
+import CreateUserView from './controllers/CreateUserView';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -47,7 +48,7 @@ function RequireAuth({ children }) {
         return <div>Authentication error: {auth.error.message}</div>;
     }
 
-    return auth.isAuthenticated ? children : <Navigate to="/auth" replace />;
+    return auth.isAuthenticated ? children : <Navigate to="/auth/sign-in" replace />;
 }
 
 function ProtectedAppRoutes() {
@@ -78,7 +79,8 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/auth" element={<AuthView />} />
+                        <Route path="/auth/sign-in" element={<AuthView />} />
+                        <Route path="/auth/create-user" element={<CreateUserView />} />
                         <Route path="/callback" element={<AuthCallbackRoute />} />
                         <Route
                             path="/*"

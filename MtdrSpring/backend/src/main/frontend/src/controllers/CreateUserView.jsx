@@ -1,88 +1,70 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     Alert,
     Box,
     Button,
     Card,
+    IconButton,
+    InputAdornment,
     Stack,
     TextField,
     Typography,
 } from '@mui/material';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 
 const PAGE_BG = '#f4e7bf';
 const CARD_BG = '#fbf9f8';
 const TEXT_MAIN = '#312d2a';
 const TEXT_SUBTLE = '#6f6a66';
+
 function BackgroundOrnament({ sx }) {
     return (
         <Box
             aria-hidden
             sx={{
                 position: 'absolute',
-                inset: 0,
                 opacity: 0.35,
                 pointerEvents: 'none',
+                backgroundImage: `
+                    repeating-radial-gradient(circle at center, transparent 0 12px, rgba(97, 89, 76, 0.18) 12px 15px, transparent 15px 28px),
+                    repeating-radial-gradient(circle at center, transparent 0 16px, rgba(97, 89, 76, 0.12) 16px 19px, transparent 19px 32px)
+                `,
+                ...sx,
             }}
         />
     );
 }
 
-export function AuthCallbackRoute() {
+export default function CreateUserView() {
     const auth = useAuth();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (auth.isAuthenticated) {
-            navigate('/', { replace: true });
-        }
-    }, [auth.isAuthenticated, navigate]);
-
-    if (auth.error) {
-        return (
-            <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: 3, bgcolor: '#F5F4F2' }}>
-                <Alert severity="error" sx={{ maxWidth: 520 }}>
-                    Authentication error: {auth.error.message}
-                </Alert>
-            </Box>
-        );
-    }
-
-    return (
-        <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: 3, bgcolor: '#F5F4F2' }}>
-            <Typography sx={{ color: TEXT_SUBTLE, fontSize: '0.95rem' }}>
-                Completing sign in...
-            </Typography>
-        </Box>
-    );
-}
-
-export default function AuthView() {
-    const auth = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [identifier, setIdentifier] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [submitError, setSubmitError] = useState('');
+    const [submitSuccess, setSubmitSuccess] = useState('');
 
-    useEffect(() => {
-        if (location.state?.identifier) {
-            setIdentifier(location.state.identifier);
-        }
-    }, [location.state]);
-
-    const handleSignIn = () => {
+    const handleCreateAccount = () => {
         setSubmitError('');
-        const trimmedIdentifier = identifier.trim();
+        setSubmitSuccess('');
 
-        if (!trimmedIdentifier) {
-            setSubmitError('Enter your username or email to continue.');
+        const trimmedEmail = email.trim();
+
+        if (!trimmedEmail) {
+            setSubmitError('Enter an email to create your account.');
             return;
         }
 
-        navigate(`/auth/sign-on?identifier=${encodeURIComponent(trimmedIdentifier)}`, {
-            state: { identifier: trimmedIdentifier },
-        });
+        if (!password.trim()) {
+            setSubmitError('Enter a password to create your account.');
+            return;
+        }
+
+        setSubmitSuccess('Account details captured. Connect this screen to your user-creation API when the endpoint is ready.');
     };
 
     if (auth.isAuthenticated) {
@@ -136,37 +118,88 @@ export default function AuthView() {
                     }}
                 >
                     <Stack spacing={3}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconButton
+                                aria-label="Back"
+                                onClick={() => navigate('/auth/sign-in')}
+                                sx={{ color: TEXT_MAIN, border: '1px solid #e3ddd6' }}
+                            >
+                                <ArrowBackRoundedIcon fontSize="small" />
+                            </IconButton>
+                            <Typography sx={{ color: TEXT_SUBTLE, fontSize: '0.92rem', fontWeight: 500 }}>
+                                Create your account
+                            </Typography>
+                        </Box>
+
                         <Typography
                             align="center"
                             sx={{
                                 color: TEXT_MAIN,
                                 fontWeight: 700,
-                                fontSize: { xs: '2rem', sm: '3.1rem' },
+                                fontSize: { xs: '2rem', sm: '3rem' },
                                 letterSpacing: '-0.03em',
                                 lineHeight: 1.05,
                             }}
                         >
-                            Sign in to Oracle
+                            Create Account
                         </Typography>
 
                         <Box>
                             <Typography sx={{ color: TEXT_SUBTLE, fontSize: '0.98rem', mb: 1.2 }}>
-                                Username or email
+                                Email
                             </Typography>
                             <TextField
                                 fullWidth
+                                type="email"
                                 variant="standard"
-                                value={identifier}
-                                placeholder="Username"
-                                onChange={(event) => setIdentifier(event.target.value)}
+                                value={email}
+                                placeholder="name@example.com"
+                                onChange={(event) => setEmail(event.target.value)}
+                                InputProps={{
+                                    disableUnderline: false,
+                                    sx: {
+                                        fontSize: '1rem',
+                                        fontWeight: 700,
+                                        color: TEXT_MAIN,
+                                        pb: 0.5,
+                                        '&:before': { borderBottomColor: '#bdb6af' },
+                                        '&:after': { borderBottomColor: TEXT_MAIN },
+                                    },
+                                }}
+                            />
+                        </Box>
+
+                        <Box>
+                            <Typography sx={{ color: TEXT_SUBTLE, fontSize: '0.98rem', mb: 1.2 }}>
+                                Password
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                type={showPassword ? 'text' : 'password'}
+                                variant="standard"
+                                value={password}
+                                placeholder="Create password"
+                                onChange={(event) => setPassword(event.target.value)}
                                 onKeyDown={(event) => {
                                     if (event.key === 'Enter') {
                                         event.preventDefault();
-                                        handleSignIn();
+                                        handleCreateAccount();
                                     }
                                 }}
                                 InputProps={{
                                     disableUnderline: false,
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                                onClick={() => setShowPassword((value) => !value)}
+                                                edge="end"
+                                                sx={{ color: TEXT_SUBTLE }}
+                                            >
+                                                {showPassword ? <VisibilityOffRoundedIcon /> : <VisibilityRoundedIcon />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
                                     sx: {
                                         fontSize: '1rem',
                                         fontWeight: 700,
@@ -185,16 +218,15 @@ export default function AuthView() {
                             </Alert>
                         )}
 
-                        {auth.error && (
-                            <Alert severity="error">
-                                Authentication error: {auth.error.message}
+                        {submitSuccess && (
+                            <Alert severity="success">
+                                {submitSuccess}
                             </Alert>
                         )}
 
                         <Button
                             variant="contained"
-                            onClick={handleSignIn}
-                            disabled={auth.isLoading}
+                            onClick={handleCreateAccount}
                             sx={{
                                 minHeight: 60,
                                 bgcolor: TEXT_MAIN,
@@ -204,69 +236,8 @@ export default function AuthView() {
                                 '&:hover': { bgcolor: '#1f1c1a' },
                             }}
                         >
-                            {auth.isLoading ? 'Loading...' : 'Next'}
-                        </Button>
-
-                        <Typography
-                            sx={{
-                                color: '#00688c',
-                                textAlign: 'center',
-                                fontSize: '0.98rem',
-                                fontWeight: 500,
-                            }}
-                        >
-                            Forgot username?
-                        </Typography>
-                    </Stack>
-                </Card>
-
-                <Card
-                    elevation={0}
-                    sx={{
-                        bgcolor: CARD_BG,
-                        borderRadius: '8px',
-                        border: '1px solid #ebe8e3',
-                        boxShadow: '0 16px 48px rgba(70, 58, 46, 0.08)',
-                        px: { xs: 3, sm: 5.5 },
-                        py: { xs: 4, sm: 4.5 },
-                    }}
-                >
-                    <Stack spacing={3} alignItems="center">
-                        <Typography
-                            align="center"
-                            sx={{
-                                color: TEXT_MAIN,
-                                fontWeight: 700,
-                                fontSize: { xs: '1.8rem', sm: '2.2rem' },
-                                letterSpacing: '-0.025em',
-                                lineHeight: 1.1,
-                            }}
-                        >
-                            Don&apos;t have an Oracle Account?
-                        </Typography>
-
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => navigate('/auth/create-user')}
-                            sx={{
-                                minHeight: 58,
-                                borderColor: '#4a423d',
-                                color: '#171412',
-                                fontWeight: 700,
-                                fontSize: '0.98rem',
-                                '&:hover': {
-                                    borderColor: '#2f2a27',
-                                    bgcolor: 'rgba(49, 45, 42, 0.03)',
-                                },
-                            }}
-                        >
                             Create Account
                         </Button>
-
-                        <Typography align="center" sx={{ color: TEXT_MAIN, fontSize: '0.92rem' }}>
-                            © Oracle | Terms of Use | Privacy Policy
-                        </Typography>
                     </Stack>
                 </Card>
             </Stack>
