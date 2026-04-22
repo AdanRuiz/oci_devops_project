@@ -1,5 +1,6 @@
 import { AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from 'react-oidc-context';
 import { useActiveProject } from '../../models/ProjectContext';
 import bannerImage from '../../assets/redwood-banner.png';
 import { ReactComponent as DashboardSvg }  from '../../assets/nav-bar/dashboard.svg';
@@ -31,6 +32,7 @@ export default function Layout({
     userEmail = APP_USER_EMAIL,
 }) {
     const navigate = useNavigate();
+    const auth = useAuth();
     const { pathname } = useLocation();
     const { activeProject, clearProject } = useActiveProject();
 
@@ -51,6 +53,11 @@ export default function Layout({
     const handleSwitchProject = () => {
         clearProject();
         navigate('/projects');
+    };
+
+    const handleSignOut = async () => {
+        clearProject();
+        await auth.signoutRedirect();
     };
 
     const splitY = APPBAR_H + 32 + BANNER_H;
@@ -116,6 +123,7 @@ export default function Layout({
                         <Button
                             variant="contained"
                             size="small"
+                            onClick={handleSignOut}
                             sx={{
                                 fontWeight: 700,
                                 fontSize: { xs: '0.72rem', sm: '0.85rem' },

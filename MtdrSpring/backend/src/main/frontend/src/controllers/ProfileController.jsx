@@ -1,12 +1,15 @@
 import { useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import { useActiveProject } from '../models/ProjectContext';
 import { useMembers, useRemoveMember, useInviteMember } from '../models/hooks/useMembers';
-import { APP_USER_EMAIL, APP_USER_ROLE } from '../views/common/Layout';
 import ProfileView from '../views/profile/ProfileView';
 
 export default function ProfileController() {
+    const auth = useAuth();
     const { activeProject } = useActiveProject();
     const projectId = activeProject?.id;
+    const userEmail = auth.user?.profile?.email || auth.user?.profile?.preferred_username || '';
+    const userRole = auth.user?.profile?.job_title || auth.user?.profile?.role || 'Team member';
 
     const [inviteSuccess, setInviteSuccess] = useState(false);
 
@@ -15,7 +18,7 @@ export default function ProfileController() {
     const inviteMutation = useInviteMember(projectId);
 
     const members = allMembers.filter(
-        m => (m.user?.email ?? m.email) !== APP_USER_EMAIL
+        m => (m.user?.email ?? m.email) !== userEmail
     );
 
     const handleInvite = (email) => {
@@ -27,8 +30,8 @@ export default function ProfileController() {
 
     return (
         <ProfileView
-            userEmail={APP_USER_EMAIL}
-            userRole={APP_USER_ROLE}
+            userEmail={userEmail}
+            userRole={userRole}
             projectName={activeProject?.name}
             members={members}
             isLoading={isLoading}

@@ -12,6 +12,8 @@ import TaskDetailController from './controllers/TaskDetailController';
 import KpiDashboardController from './controllers/KpiDashboardController';
 import KanbanBoardController from './controllers/KanbanBoardController';
 import ProfileController from './controllers/ProfileController';
+import { useAuth } from 'react-oidc-context';
+import AuthView, { AuthCallbackRoute } from './controllers/AuthView';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -34,27 +36,59 @@ function RequireProject({ children }) {
     return activeProject ? children : <Navigate to="/projects" replace />;
 }
 
+function RequireAuth({ children }) {
+    const auth = useAuth();
+
+    if (auth.isLoading || auth.activeNavigator) {
+        return <div>Loading authentication...</div>;
+    }
+
+    if (auth.error) {
+        return <div>Authentication error: {auth.error.message}</div>;
+    }
+
+    return auth.isAuthenticated ? children : <Navigate to="/auth" replace />;
+}
+
+function ProtectedAppRoutes() {
+    return (
+        <ProjectProvider>
+            <Layout>
+                <Routes>
+                    <Route path="/" element={<RootRedirect />} />
+                    <Route path="/projects" element={<ProjectSelectorController />} />
+                    <Route path="/projects/:projectId" element={<ProjectDetailController />} />
+                    <Route path="/projects/:projectId/sprints/:sprintId" element={<SprintBoardController />} />
+                    <Route path="/dashboard" element={<RequireProject><DashboardController /></RequireProject>} />
+                    <Route path="/tasks/:taskId" element={<RequireProject><TaskDetailController /></RequireProject>} />
+                    <Route path="/kpi" element={<RequireProject><KpiDashboardController /></RequireProject>} />
+                    <Route path="/kanban" element={<KanbanBoardController />} />
+                    <Route path="/profile" element={<RequireProject><ProfileController /></RequireProject>} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </Layout>
+        </ProjectProvider>
+    );
+}
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
-                    <ProjectProvider>
-                        <Layout>
-                            <Routes>
-                                <Route path="/" element={<RootRedirect />} />
-                                <Route path="/projects" element={<ProjectSelectorController />} />
-                                <Route path="/projects/:projectId" element={<ProjectDetailController />} />
-                                <Route path="/projects/:projectId/sprints/:sprintId" element={<SprintBoardController />} />
-                                <Route path="/dashboard" element={<RequireProject><DashboardController /></RequireProject>} />
-                                <Route path="/tasks/:taskId" element={<RequireProject><TaskDetailController /></RequireProject>} />
-                                <Route path="/kpi" element={<RequireProject><KpiDashboardController /></RequireProject>} />
-                                <Route path="/kanban" element={<KanbanBoardController />} />
-                                <Route path="/profile" element={<RequireProject><ProfileController /></RequireProject>} />
-                            </Routes>
-                        </Layout>
-                    </ProjectProvider>
+                    <Routes>
+                        <Route path="/auth" element={<AuthView />} />
+                        <Route path="/callback" element={<AuthCallbackRoute />} />
+                        <Route
+                            path="/*"
+                            element={(
+                                <RequireAuth>
+                                    <ProtectedAppRoutes />
+                                </RequireAuth>
+                            )}
+                        />
+                    </Routes>
                 </BrowserRouter>
             </QueryClientProvider>
         </ThemeProvider>
