@@ -21,6 +21,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private InvitationService invitationService;
+
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -50,12 +53,22 @@ public class UserService {
      * a new DEVELOPER account on first login using claims from the JWT.
      */
     public User findOrProvision(String ociIamId, String email) {
-        return userRepository.findByOciIamId(ociIamId).orElseGet(() -> {
+        return userRepository.findByOciIamId(ociIamId).map(existing -> {
+            if (existing.getEmail().endsWith("@unknown")) {
+                existing.setEmail(email);
+                return userRepository.save(existing);
+            }
+            return existing;
+        }).orElseGet(() -> {
             User u = new User();
             u.setOciIamId(ociIamId);
             u.setEmail(email);
-            u.setSystemRole(com.springboot.MyTodoList.model.SystemRole.PROJECT_MANAGER);
-            return userRepository.save(u);
+            // New users default to DEVELOPER unless they have a pending invitation
+            // that was created by a manager invite flow; managers are set explicitly.
+            u.setSystemRole(com.springboot.MyTodoList.model.SystemRole.DEVELOPER);
+            User saved = userRepository.save(u);
+            invitationService.fulfillForUser(saved);
+            return saved;
         });
     }
 

@@ -302,6 +302,26 @@ CREATE TABLE sprint_kpi_snapshots (
 );
 
 
+-- -----------------------------------------------------------------------------
+-- 11. INVITATIONS
+--     Pending invitations for users who have not yet logged in.
+--     When a user first signs in via OCI IAM, the backend checks this table
+--     by email and auto-adds them to the corresponding projects as DEVELOPER.
+-- -----------------------------------------------------------------------------
+CREATE TABLE invitations (
+    id         RAW(16)      DEFAULT SYS_GUID() NOT NULL,
+    project_id RAW(16)      NOT NULL,
+    email      VARCHAR2(255) NOT NULL,
+    created_at TIMESTAMP    DEFAULT SYSTIMESTAMP NOT NULL,
+
+    CONSTRAINT pk_invitation         PRIMARY KEY (id),
+    CONSTRAINT fk_inv_project        FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_inv_email      ON invitations (email);
+CREATE INDEX idx_inv_project_id ON invitations (project_id);
+
+
 -- =============================================================================
 -- DATA RETENTION — nightly purge job
 -- Deletes project + sprint + task records older than 365 days.
@@ -316,3 +336,4 @@ CREATE TABLE sprint_kpi_snapshots (
 -- Cascades: projects → sprints → tasks → task_state_histories, task_work_logs
 --           users   → telegram_link_codes, bot_conversations
 -- =============================================================================
+

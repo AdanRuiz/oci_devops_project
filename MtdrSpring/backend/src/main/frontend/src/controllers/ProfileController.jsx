@@ -15,7 +15,7 @@ export default function ProfileController() {
                     : currentUser?.systemRole === 'ADMIN'           ? 'Admin'
                     : 'Developer';
 
-    const [inviteSuccess, setInviteSuccess] = useState(false);
+    const [inviteMessage, setInviteMessage] = useState('');
 
     const { data: allMembers = [], isLoading } = useMembers(projectId);
     const removeMutation = useRemoveMember(projectId);
@@ -26,9 +26,15 @@ export default function ProfileController() {
     );
 
     const handleInvite = (email) => {
-        setInviteSuccess(false);
+        setInviteMessage('');
         inviteMutation.mutate(email, {
-            onSuccess: () => setInviteSuccess(true),
+            onSuccess: (data) => {
+                setInviteMessage(
+                    data?.status === 'added'
+                        ? `${email} was added to the project.`
+                        : `Invitation sent — ${email} will be added when they first sign in.`
+                );
+            },
         });
     };
 
@@ -44,7 +50,8 @@ export default function ProfileController() {
             isRemoving={removeMutation.isPending}
             isInviting={inviteMutation.isPending}
             inviteError={inviteMutation.error?.message}
-            inviteSuccess={inviteSuccess}
+            inviteSuccess={!!inviteMessage}
+            inviteSuccessMessage={inviteMessage}
         />
     );
 }

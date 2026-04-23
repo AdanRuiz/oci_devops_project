@@ -29,7 +29,7 @@ public class UserController {
         String ociIamId = jwt.getSubject();
         String email = jwt.getClaimAsString("email");
         if (email == null) email = jwt.getClaimAsString("preferred_username");
-        if (email == null) email = ociIamId + "@unknown";
+        if (email == null) email = ociIamId.contains("@") ? ociIamId : ociIamId + "@unknown";
         User user = userService.findOrProvision(ociIamId, email);
         return ResponseEntity.ok(user);
     }
