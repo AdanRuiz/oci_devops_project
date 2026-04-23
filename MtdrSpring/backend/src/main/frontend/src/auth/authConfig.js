@@ -1,8 +1,9 @@
 export const oidcConfig = {
-  authority: "https://idcs-a333fea8b68e4aff8867ff6094453a03.identity.oraclecloud.com",
-  client_id: "7809ed300a374eafa7bb9403f8f1ff01",
-  redirect_uri: "http://localhost:3000/callback",
-  scope: "openid profile http://localhost:8080api.read",
+  authority: process.env.REACT_APP_OIDC_AUTHORITY,
+  client_id: process.env.REACT_APP_OIDC_CLIENT_ID,
+  client_secret: process.env.REACT_APP_OIDC_CLIENT_SECRET,
+  redirect_uri: `${window.location.origin}/callback`,
+  scope: "openid profile email",
   automaticSilentRenew: true,
   loadUserInfo: true,
 };

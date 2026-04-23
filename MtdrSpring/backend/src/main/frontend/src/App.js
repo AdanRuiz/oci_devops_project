@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import { ProjectProvider, useActiveProject } from './models/ProjectContext';
+import { CurrentUserProvider } from './models/CurrentUserContext';
 import Layout from './views/common/Layout';
 import DashboardController from './controllers/DashboardController';
 import ProjectSelectorController from './controllers/ProjectSelectorController';
@@ -14,7 +16,7 @@ import KanbanBoardController from './controllers/KanbanBoardController';
 import ProfileController from './controllers/ProfileController';
 import { useAuth } from 'react-oidc-context';
 import AuthView, { AuthCallbackRoute } from './controllers/AuthView';
-import CreateUserView from './controllers/CreateUserView';
+import { setAuthToken } from './models/api/client';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -40,6 +42,10 @@ function RequireProject({ children }) {
 function RequireAuth({ children }) {
     const auth = useAuth();
 
+    useEffect(() => {
+        setAuthToken(auth.user?.access_token ?? null);
+    }, [auth.user]);
+
     if (auth.isLoading || auth.activeNavigator) {
         return <div>Loading authentication...</div>;
     }
@@ -53,6 +59,7 @@ function RequireAuth({ children }) {
 
 function ProtectedAppRoutes() {
     return (
+        <CurrentUserProvider>
         <ProjectProvider>
             <Layout>
                 <Routes>
@@ -69,6 +76,7 @@ function ProtectedAppRoutes() {
                 </Routes>
             </Layout>
         </ProjectProvider>
+        </CurrentUserProvider>
     );
 }
 
@@ -80,7 +88,6 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/auth/sign-in" element={<AuthView />} />
-                        <Route path="/auth/create-user" element={<CreateUserView />} />
                         <Route path="/callback" element={<AuthCallbackRoute />} />
                         <Route
                             path="/*"

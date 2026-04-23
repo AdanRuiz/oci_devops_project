@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { useAuth } from 'react-oidc-context';
 import { useActiveProject } from '../models/ProjectContext';
+import { useCurrentUser } from '../models/CurrentUserContext';
 import { useMembers, useRemoveMember, useInviteMember } from '../models/hooks/useMembers';
 import ProfileView from '../views/profile/ProfileView';
 
 export default function ProfileController() {
     const auth = useAuth();
     const { activeProject } = useActiveProject();
+    const { currentUser } = useCurrentUser();
     const projectId = activeProject?.id;
-    const userEmail = auth.user?.profile?.email || auth.user?.profile?.preferred_username || '';
-    const userRole = auth.user?.profile?.job_title || auth.user?.profile?.role || 'Team member';
+    const userEmail = currentUser?.email ?? auth.user?.profile?.email ?? '';
+    const userRole  = currentUser?.systemRole === 'PROJECT_MANAGER' ? 'Project Manager'
+                    : currentUser?.systemRole === 'ADMIN'           ? 'Admin'
+                    : 'Developer';
 
     const [inviteSuccess, setInviteSuccess] = useState(false);
 

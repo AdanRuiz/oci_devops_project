@@ -41,6 +41,24 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findByOciIamId(String ociIamId) {
+        return userRepository.findByOciIamId(ociIamId);
+    }
+
+    /**
+     * Returns the existing user for this OCI IAM identity, or auto-provisions
+     * a new DEVELOPER account on first login using claims from the JWT.
+     */
+    public User findOrProvision(String ociIamId, String email) {
+        return userRepository.findByOciIamId(ociIamId).orElseGet(() -> {
+            User u = new User();
+            u.setOciIamId(ociIamId);
+            u.setEmail(email);
+            u.setSystemRole(com.springboot.MyTodoList.model.SystemRole.PROJECT_MANAGER);
+            return userRepository.save(u);
+        });
+    }
+
     public User addUser(User newUser) {
         return userRepository.save(newUser);
     }

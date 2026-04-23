@@ -3,6 +3,12 @@
 export IMAGE_NAME=todolistapp-springboot
 export IMAGE_VERSION=0.1
 
+# OCI IAM OIDC config, baked into the React bundle at build time.
+# Set these in Cloud Shell before running build.sh (or export them in your shell profile):
+#   export REACT_APP_OIDC_AUTHORITY=https://idcs-...identity.oraclecloud.com
+#   export REACT_APP_OIDC_CLIENT_ID=<client-id>
+#   export REACT_APP_OIDC_CLIENT_SECRET=<client-secret>
+
 
 if [ -z "$DOCKER_REGISTRY" ]; then
     export DOCKER_REGISTRY=$(state_get DOCKER_REGISTRY)

@@ -2,6 +2,7 @@ import { AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { useActiveProject } from '../../models/ProjectContext';
+import { useCurrentUser } from '../../models/CurrentUserContext';
 import bannerImage from '../../assets/redwood-banner.png';
 import { ReactComponent as DashboardSvg }  from '../../assets/nav-bar/dashboard.svg';
 import { ReactComponent as KanbanSvg }     from '../../assets/nav-bar/kanban.svg';
@@ -18,23 +19,22 @@ const STATIC_NAV = [
     { label: 'Profile',      path: '/profile',   Icon: ProfileSvg   },
 ];
 
-export const APP_USER_EMAIL = 'baltazar.servin@oracle.com';
-export const APP_USER_ROLE  = 'Manager';
-
 const PAGE_BG  = '#f1efed';
 const APPBAR_H = 88;
 const BANNER_H = 10;
 const NAV_H    = 60;
 
-export default function Layout({
-    children,
-    userRole  = APP_USER_ROLE,
-    userEmail = APP_USER_EMAIL,
-}) {
+export default function Layout({ children }) {
     const navigate = useNavigate();
     const auth = useAuth();
     const { pathname } = useLocation();
     const { activeProject, clearProject } = useActiveProject();
+    const { currentUser } = useCurrentUser();
+
+    const userEmail = currentUser?.email ?? auth.user?.profile?.email ?? '';
+    const userRole  = currentUser?.systemRole === 'PROJECT_MANAGER' ? 'Project Manager'
+                    : currentUser?.systemRole === 'ADMIN'           ? 'Admin'
+                    : 'Developer';
 
     const NAV_ITEMS = STATIC_NAV.map(item =>
         item.label === 'Sprints' && activeProject
