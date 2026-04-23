@@ -1,5 +1,5 @@
 import {
-    Box, Button, Card, CardContent, Grid, Typography,
+    Box, Card, CardContent, Grid, Typography,
 } from '@mui/material';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 
@@ -205,7 +205,6 @@ export default function DashboardView({
     stats,
     projectSprints,
     myTasks,
-    onViewBoard,
 }) {
     return (
         <Box>
@@ -263,25 +262,8 @@ export default function DashboardView({
             <Grid container spacing="28px" alignItems="flex-start">
                 {/* Left */}
                 <Grid item xs={12} md={7}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: '17px' }}>
+                    <Box sx={{ mb: '17px' }}>
                         <SectionTitle>Active Sprint Health</SectionTitle>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={onViewBoard}
-                            sx={{
-                                color: '#2B2B2B',
-                                borderColor: '#e0dedc',
-                                bgcolor: '#ffffff',
-                                fontWeight: 500,
-                                fontSize: '0.85rem',
-                                px: '16px',
-                                py: '6px',
-                                '&:hover': { bgcolor: '#e0dedc', borderColor: '#e0dedc' },
-                            }}
-                        >
-                            View Board
-                        </Button>
                     </Box>
 
                     {projectSprints.length === 0 ? (

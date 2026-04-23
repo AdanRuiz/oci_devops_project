@@ -75,7 +75,7 @@ function MemberCard({ member, onRemove, isRemoving }) {
                         </Typography>
                     </Box>
 
-                    <Button
+                    {onRemove && <Button
                         size="small"
                         variant="outlined"
                         onClick={() => setConfirmOpen(true)}
@@ -88,7 +88,7 @@ function MemberCard({ member, onRemove, isRemoving }) {
                         }}
                     >
                         Remove
-                    </Button>
+                    </Button>}
                 </CardContent>
             </Card>
 
@@ -126,7 +126,7 @@ function MemberCard({ member, onRemove, isRemoving }) {
 
 export default function ProfileView({
     userEmail, userRole, projectName,
-    members = [], isLoading,
+    members = [], isLoading, isManager,
     onRemoveMember, onInviteMember,
     isRemoving, isInviting, inviteError, inviteSuccess,
 }) {
@@ -195,35 +195,39 @@ export default function ProfileView({
             <Card sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#ffffff' }}>
                 <CardContent sx={{ p: '28px !important' }}>
 
-                    {/* Invite section */}
-                    <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
-                        Invite member
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: '12px', alignItems: 'flex-start', mb: '32px' }}>
-                        <TextField
-                            size="small"
-                            placeholder="colleague@oracle.com"
-                            type="email"
-                            value={inviteEmail}
-                            onChange={e => setInviteEmail(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && handleInvite()}
-                            error={!!inviteError}
-                            helperText={inviteError ?? (inviteSuccess ? 'Invite sent!' : undefined)}
-                            FormHelperTextProps={{ sx: { color: inviteSuccess && !inviteError ? '#2E7D32' : undefined } }}
-                            sx={{
-                                flexGrow: 1,
-                                '& .MuiOutlinedInput-root': { borderRadius: '8px', fontSize: '0.875rem' },
-                            }}
-                        />
-                        <Button
-                            variant="contained"
-                            disabled={isInviting || !inviteEmail.trim()}
-                            onClick={handleInvite}
-                            sx={{ ...containedButtonSx, flexShrink: 0, py: '8px' }}
-                        >
-                            {isInviting ? 'Sending…' : 'Send invite'}
-                        </Button>
-                    </Box>
+                    {/* Invite section — managers only */}
+                    {isManager && (
+                        <>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
+                                Invite member
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: '12px', alignItems: 'flex-start', mb: '32px' }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="colleague@oracle.com"
+                                    type="email"
+                                    value={inviteEmail}
+                                    onChange={e => setInviteEmail(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && handleInvite()}
+                                    error={!!inviteError}
+                                    helperText={inviteError ?? (inviteSuccess ? 'Invite sent!' : undefined)}
+                                    FormHelperTextProps={{ sx: { color: inviteSuccess && !inviteError ? '#2E7D32' : undefined } }}
+                                    sx={{
+                                        flexGrow: 1,
+                                        '& .MuiOutlinedInput-root': { borderRadius: '8px', fontSize: '0.875rem' },
+                                    }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    disabled={isInviting || !inviteEmail.trim()}
+                                    onClick={handleInvite}
+                                    sx={{ ...containedButtonSx, flexShrink: 0, py: '8px' }}
+                                >
+                                    {isInviting ? 'Sending…' : 'Send invite'}
+                                </Button>
+                            </Box>
+                        </>
+                    )}
 
                     {/* Members list */}
                     <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
@@ -247,7 +251,7 @@ export default function ProfileView({
                             <MemberCard
                                 key={getMemberId(m)}
                                 member={m}
-                                onRemove={onRemoveMember}
+                                onRemove={isManager ? onRemoveMember : null}
                                 isRemoving={isRemoving}
                             />
                         ))}

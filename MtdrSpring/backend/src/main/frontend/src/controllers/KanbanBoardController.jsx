@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActiveProject } from '../models/ProjectContext';
 import { useSprints } from '../models/hooks/useSprints';
 import { useSprintTasks } from '../models/hooks/useTasks';
-import { useUsers } from '../models/hooks/useUsers';
+import { useMembers } from '../models/hooks/useMembers';
 import KanbanView from '../views/kanban/KanbanView';
 
 const STORAGE_KEY = 'kanbanSelectedSprintId';
+
+function pickDefaultSprint(sprints) {
+    if (!sprints.length) return null;
+    return sprints.find(s => s.status === 'ACTIVE')
+        ?? sprints.find(s => s.status === 'UPCOMING')
+        ?? sprints[sprints.length - 1];
+}
 
 export default function KanbanBoardController() {
     const navigate = useNavigate();
@@ -17,7 +24,18 @@ export default function KanbanBoardController() {
 
     const { data: sprints = [] } = useSprints(projectId);
     const { data: tasks = [], isLoading: isTasksLoading } = useSprintTasks(sprintId);
-    const { data: users = [], isLoading: isUsersLoading } = useUsers();
+    const { data: members = [], isLoading: isMembersLoading } = useMembers(projectId);
+
+    // Auto-select a sprint when sprints load and none is selected
+    useEffect(() => {
+        if (sprintId || !sprints.length) return;
+        const defaultSprint = pickDefaultSprint(sprints);
+        if (defaultSprint) {
+            setSprintId(defaultSprint.id);
+            localStorage.setItem(STORAGE_KEY, defaultSprint.id);
+        }
+    }, [sprints, sprintId]);
+    const users = members.map(m => m.user).filter(Boolean);
 
     const handleSprintChange = (id) => {
         setSprintId(id);
@@ -31,7 +49,7 @@ export default function KanbanBoardController() {
             sprintId={sprintId}
             users={users}
             tasks={tasks}
-            isLoading={isTasksLoading || isUsersLoading}
+            isLoading={isTasksLoading || isMembersLoading}
             onSprintChange={handleSprintChange}
             onTaskSelect={(taskId) => navigate(`/tasks/${taskId}`)}
         />

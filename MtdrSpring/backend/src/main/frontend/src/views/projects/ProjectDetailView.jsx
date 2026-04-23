@@ -22,13 +22,25 @@ function formatDate(dateStr) {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function DeleteDialog({ open, sprintName, onClose }) {
-    const [input, setInput] = useState('');
-    const confirmed = input === sprintName;
+function DeleteDialog({ open, sprint, onClose, onConfirm }) {
+    const [input, setInput]       = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const sprintName = sprint?.name ?? '';
+    const confirmed  = input === sprintName;
 
     const handleClose = () => {
         setInput('');
         onClose();
+    };
+
+    const handleDelete = async () => {
+        setSubmitting(true);
+        try {
+            await onConfirm(sprint.id);
+            handleClose();
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -51,7 +63,8 @@ function DeleteDialog({ open, sprintName, onClose }) {
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button
                     variant="contained"
-                    disabled={!confirmed}
+                    disabled={!confirmed || submitting}
+                    onClick={handleDelete}
                     sx={{
                         bgcolor: confirmed ? '#E57373' : '#FDECEA',
                         color: confirmed ? '#fff' : '#E57373',
@@ -59,7 +72,7 @@ function DeleteDialog({ open, sprintName, onClose }) {
                         '&.Mui-disabled': { bgcolor: '#FDECEA', color: '#E57373' },
                     }}
                 >
-                    Delete sprint
+                    {submitting ? 'Deleting…' : 'Delete sprint'}
                 </Button>
             </DialogActions>
         </Dialog>
@@ -175,40 +188,51 @@ function SprintCard({ sprint, onClick, onDeleteClick }) {
                     />
                 </Box>
 
-                <Box
-                    sx={{ display: 'flex', gap: '4px' }}
-                    onClick={e => e.stopPropagation()}
-                >
-                    <IconButton
-                        size="small"
-                        onClick={() => onDeleteClick(sprint)}
-                        sx={{ color: '#E57373', '&:hover': { color: '#C62828' } }}
+                {onDeleteClick && (
+                    <Box
+                        sx={{ display: 'flex', gap: '4px' }}
+                        onClick={e => e.stopPropagation()}
                     >
-                        <DeleteOutlineIcon sx={{ fontSize: '1.1rem' }} />
-                    </IconButton>
-                </Box>
+                        <IconButton
+                            size="small"
+                            onClick={() => onDeleteClick(sprint)}
+                            sx={{ color: '#E57373', '&:hover': { color: '#C62828' } }}
+                        >
+                            <DeleteOutlineIcon sx={{ fontSize: '1.1rem' }} />
+                        </IconButton>
+                    </Box>
+                )}
             </CardContent>
         </Card>
     );
 }
 
-function CreateSprintDialog({ open, onClose }) {
+function CreateSprintDialog({ open, onClose, onSubmit }) {
     const [name, setName]           = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate]     = useState('');
     const [error, setError]         = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     const handleClose = () => {
         setName(''); setStartDate(''); setEndDate(''); setError('');
         onClose();
     };
 
-    const handleSubmit = () => {
-        if (!name.trim())   { setError('Sprint name is required.'); return; }
-        if (!startDate)     { setError('Start date is required.'); return; }
-        if (!endDate)       { setError('End date is required.'); return; }
+    const handleSubmit = async () => {
+        if (!name.trim())        { setError('Sprint name is required.'); return; }
+        if (!startDate)          { setError('Start date is required.'); return; }
+        if (!endDate)            { setError('End date is required.'); return; }
         if (endDate < startDate) { setError('End date must be after start date.'); return; }
-        handleClose();
+        setSubmitting(true); setError('');
+        try {
+            await onSubmit({ name: name.trim(), startDate, endDate });
+            handleClose();
+        } catch {
+            setError('Failed to create sprint. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -248,8 +272,8 @@ function CreateSprintDialog({ open, onClose }) {
                 <Button onClick={handleClose} variant="outlined" size="small" sx={outlinedButtonSx}>
                     Cancel
                 </Button>
-                <Button onClick={handleSubmit} variant="contained" size="small" sx={containedButtonSx}>
-                    Create Sprint
+                <Button onClick={handleSubmit} disabled={submitting} variant="contained" size="small" sx={containedButtonSx}>
+                    {submitting ? 'Creating…' : 'Create Sprint'}
                 </Button>
             </DialogActions>
         </Dialog>
@@ -257,7 +281,7 @@ function CreateSprintDialog({ open, onClose }) {
 }
 
 export default function ProjectDetailView({
-    project, sprints, loadingSprints, onSprintSelect,
+    project, sprints, loadingSprints, isManager, onSprintSelect, onCreateSprint, onDeleteSprint,
 }) {
     const [deletingSprint, setDeletingSprint] = useState(null);
     const [createOpen, setCreateOpen]         = useState(false);
@@ -274,15 +298,17 @@ export default function ProjectDetailView({
                         {project?.name}{sprints.length > 0 ? ` - ${sprints.length} Sprint${sprints.length !== 1 ? 's' : ''}` : ''}
                     </Typography>
                 </Box>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<AddIcon />}
-                    onClick={() => setCreateOpen(true)}
-                    sx={outlinedButtonSx}
-                >
-                    Create Sprint
-                </Button>
+                {isManager && (
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<AddIcon />}
+                        onClick={() => setCreateOpen(true)}
+                        sx={outlinedButtonSx}
+                    >
+                        Create Sprint
+                    </Button>
+                )}
             </Box>
 
             {loadingSprints && <CircularProgress size={24} />}
@@ -296,19 +322,21 @@ export default function ProjectDetailView({
                     key={s.id}
                     sprint={s}
                     onClick={() => onSprintSelect(s.id)}
-                    onDeleteClick={(sprint) => setDeletingSprint(sprint)}
+                    onDeleteClick={isManager ? (sprint) => setDeletingSprint(sprint) : null}
                 />
             ))}
 
             <DeleteDialog
                 open={!!deletingSprint}
-                sprintName={deletingSprint?.name ?? ''}
+                sprint={deletingSprint}
                 onClose={() => setDeletingSprint(null)}
+                onConfirm={onDeleteSprint}
             />
 
             <CreateSprintDialog
                 open={createOpen}
                 onClose={() => setCreateOpen(false)}
+                onSubmit={onCreateSprint}
             />
         </Box>
     );

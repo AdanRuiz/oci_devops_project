@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchTasks, fetchTask, fetchTaskHistory, fetchTaskWorkLogs } from '../api/tasksApi';
+import { fetchTasks, fetchTask, fetchTaskHistory, fetchTaskWorkLogs, createTask, patchTaskStatus, addWorkLog } from '../api/tasksApi';
 
 export const useSprintTasks = (sprintId) => useQuery({
     queryKey: ['tasks', 'sprint', sprintId],
@@ -22,19 +22,12 @@ export const useTaskWorkLogs = (taskId) => useQuery({
     queryFn: () => fetchTaskWorkLogs(taskId),
 });
 
-// Status changes, task creation, and work logs are local-only until auth is implemented.
-
 export const useAddWorkLog = (taskId) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (payload) => Promise.resolve({
-            id: crypto.randomUUID(),
-            workDate: payload.workDate,
-            daysWorked: payload.daysWorked,
-            note: payload.note ?? '',
-        }),
-        onSuccess: (fakeLog) => {
-            queryClient.setQueryData(['task', taskId, 'logs'], (old = []) => [...old, fakeLog]);
+        mutationFn: (payload) => addWorkLog(taskId, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task', taskId, 'logs'] });
         },
     });
 };
@@ -42,15 +35,9 @@ export const useAddWorkLog = (taskId) => {
 export const useCreateTask = (sprintId) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (payload) => Promise.resolve({
-            id: crypto.randomUUID(),
-            title: payload.title,
-            description: payload.description ?? null,
-            priority: payload.priority ?? 'MEDIUM',
-            status: 'TODO',
-        }),
-        onSuccess: (fakeTask) => {
-            queryClient.setQueryData(['tasks', 'sprint', sprintId], (old = []) => [...old, fakeTask]);
+        mutationFn: (payload) => createTask(sprintId, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'sprint', sprintId] });
         },
     });
 };
@@ -58,7 +45,7 @@ export const useCreateTask = (sprintId) => {
 export const useUpdateTaskStatus = (sprintId) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: () => Promise.resolve(),
+        mutationFn: ({ taskId, status }) => patchTaskStatus(taskId, status),
         onMutate: async ({ taskId, status }) => {
             await queryClient.cancelQueries({ queryKey: ['tasks', 'sprint', sprintId] });
             const previous = queryClient.getQueryData(['tasks', 'sprint', sprintId]);
@@ -69,6 +56,9 @@ export const useUpdateTaskStatus = (sprintId) => {
         },
         onError: (_err, _vars, ctx) => {
             if (ctx?.previous) queryClient.setQueryData(['tasks', 'sprint', sprintId], ctx.previous);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'sprint', sprintId] });
         },
     });
 };

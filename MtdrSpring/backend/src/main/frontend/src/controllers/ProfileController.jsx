@@ -3,6 +3,7 @@ import { useAuth } from 'react-oidc-context';
 import { useActiveProject } from '../models/ProjectContext';
 import { useCurrentUser } from '../models/CurrentUserContext';
 import { useMembers, useRemoveMember, useInviteMember } from '../models/hooks/useMembers';
+import { useProjectRole } from '../models/hooks/useProjectRole';
 import ProfileView from '../views/profile/ProfileView';
 
 export default function ProfileController() {
@@ -18,6 +19,7 @@ export default function ProfileController() {
     const [inviteMessage, setInviteMessage] = useState('');
 
     const { data: allMembers = [], isLoading } = useMembers(projectId);
+    const { isManager } = useProjectRole();
     const removeMutation = useRemoveMember(projectId);
     const inviteMutation = useInviteMember(projectId);
 
@@ -46,6 +48,7 @@ export default function ProfileController() {
             members={members}
             isLoading={isLoading}
             onRemoveMember={(userId) => removeMutation.mutate(userId)}
+            isManager={isManager}
             onInviteMember={handleInvite}
             isRemoving={removeMutation.isPending}
             isInviting={inviteMutation.isPending}

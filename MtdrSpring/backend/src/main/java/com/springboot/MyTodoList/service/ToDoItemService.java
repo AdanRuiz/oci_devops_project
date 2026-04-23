@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +98,21 @@ public class ToDoItemService {
     // fail at the DB level with ORA-20001 unless the session actor was already set).
     public Task updateToDoItem(UUID id, Task updates) {
         return updateToDoItem(id, updates, null, null);
+    }
+
+    /** Updates only the status column. Runs in a transaction so lazy fields are never touched. */
+    @Transactional
+    public Task patchStatus(UUID id, TaskStatus status, User actor) {
+        Task task = toDoItemRepository.findById(id).orElse(null);
+        if (task == null) return null;
+
+        if (actor != null) {
+            String hexId = actor.getId().toString().replace("-", "");
+            jdbcTemplate.update("BEGIN app_ctx.set_actor(HEXTORAW(?), ?); END;", hexId, ChangeSource.WEB.name());
+        }
+
+        task.setStatus(status);
+        return toDoItemRepository.save(task);
     }
 
 }

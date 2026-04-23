@@ -101,13 +101,14 @@ export default function KpiDashboardView({
 
     return (
         <Box>
+            {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: '28px' }}>
                 <Box>
                     <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#1A1A1A', mb: '2px' }}>
                         KPI Dashboard
                     </Typography>
                     <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>
-                        Performance metrics per developer
+                        {projectName ?? 'Performance metrics per developer'}
                     </Typography>
                 </Box>
 
@@ -117,17 +118,12 @@ export default function KpiDashboardView({
                         onChange={e => onSprintChange(e.target.value)}
                         displayEmpty
                         sx={{
-                            fontSize: '0.85rem',
-                            fontWeight: 500,
-                            color: '#2B2B2B',
-                            '& .MuiSelect-select': { fontSize: '0.85rem', fontWeight: 500 },
-                            bgcolor: '#fbf9f8',
-                            borderRadius: '8px',
+                            fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B',
+                            bgcolor: '#fbf9f8', borderRadius: '8px',
                             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
                             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
                             '& .MuiSelect-icon': { color: '#2B2B2B' },
-                            '&:hover': { bgcolor: '#fbf9f8' },
                         }}
                     >
                         <MenuItem value="" disabled sx={{ fontSize: '0.85rem', color: '#717171' }}>
@@ -156,25 +152,16 @@ export default function KpiDashboardView({
 
             {sprintId && !loadingStats && (
                 <>
-                    <Grid container spacing="28px" sx={{ mb: '40px' }}>
+                    {/* Row 1: Sprint totals + Per-dev averages */}
+                    <Grid container spacing="28px" sx={{ mb: '28px' }}>
                         <Grid item xs={12} md={6}>
                             <ChartCard title="Sprint Totals">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Total Tasks"
-                                            value={totalTasks}
-                                            description="All tasks assigned this sprint"
-                                            borderColor={STAT_BORDERS.tasks}
-                                        />
+                                        <StatCard label="Total Tasks" value={totalTasks} description="All tasks assigned this sprint" borderColor={STAT_BORDERS.tasks} />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Total Real Hours"
-                                            value={totalHours.toFixed(1)}
-                                            description="Sum of hours logged by all developers"
-                                            borderColor={STAT_BORDERS.hours}
-                                        />
+                                        <StatCard label="Total Real Hours" value={totalHours.toFixed(1)} description="Sum of hours logged by all developers" borderColor={STAT_BORDERS.hours} />
                                     </Grid>
                                 </Grid>
                             </ChartCard>
@@ -184,26 +171,17 @@ export default function KpiDashboardView({
                             <ChartCard title="Per-Developer Averages">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Avg Tasks / Developer"
-                                            value={avgTasks}
-                                            description="Mean completed tasks per developer"
-                                            borderColor={STAT_BORDERS.avgTasks}
-                                        />
+                                        <StatCard label="Avg Tasks / Dev" value={avgTasks} description="Mean completed tasks per developer" borderColor={STAT_BORDERS.avgTasks} />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Avg Hours / Developer"
-                                            value={avgHours}
-                                            description="Mean hours worked per developer"
-                                            borderColor={STAT_BORDERS.avgHours}
-                                        />
+                                        <StatCard label="Avg Hours / Dev" value={avgHours} description="Mean hours worked per developer" borderColor={STAT_BORDERS.avgHours} />
                                     </Grid>
                                 </Grid>
                             </ChartCard>
                         </Grid>
                     </Grid>
 
+                    {/* Row 2: Charts */}
                     {developerStats.length === 0 ? (
                         <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>
                             No developer data found for this sprint.

@@ -1,6 +1,10 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Project;
+import com.springboot.MyTodoList.model.ProjectMember;
+import com.springboot.MyTodoList.model.ProjectRole;
+import com.springboot.MyTodoList.model.User;
+import com.springboot.MyTodoList.repository.ProjectMemberRepository;
 import com.springboot.MyTodoList.repository.ProjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +23,9 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private ProjectMemberRepository projectMemberRepository;
+
     public List<Project> findAll() {
         return projectRepository.findAll();
     }
@@ -27,12 +34,30 @@ public class ProjectService {
         return projectRepository.findByOwner_Id(ownerId);
     }
 
+    public List<Project> findByMemberId(UUID userId) {
+        return projectRepository.findByMembers_User_Id(userId);
+    }
+
     public Optional<Project> findById(UUID id) {
         return projectRepository.findById(id);
     }
 
     public Project save(Project project) {
         return projectRepository.save(project);
+    }
+
+    /** Creates a project and auto-adds the creator as PROJECT_MANAGER member. */
+    public Project createWithOwner(Project project, User owner) {
+        project.setOwner(owner);
+        Project saved = projectRepository.save(project);
+
+        ProjectMember membership = new ProjectMember();
+        membership.setProject(saved);
+        membership.setUser(owner);
+        membership.setRole(ProjectRole.PROJECT_MANAGER);
+        projectMemberRepository.save(membership);
+
+        return saved;
     }
 
     public Project update(UUID id, Project updates) {
