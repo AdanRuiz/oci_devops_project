@@ -998,7 +998,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000026'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-03-12', 5.0);
 
 -- V13-93 | Finalize SRS | Baltazar | DONE  ← SCOPE CREEP: added after sprint started
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by,
+INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
                    created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (
     HEXTORAW('E0000000000000000000000000000027'),
@@ -1177,7 +1177,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000039'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-01', 1.0);
 
 -- V13-131 | Baltazar | DONE  ← SCOPE CREEP: added after sprint started
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (
     HEXTORAW('E000000000000000000000000000003A'),
     'V13-131 Seed dev data for local testing',
