@@ -52,11 +52,11 @@ public class TaskWorkLogController {
         TaskWorkLog workLog = new TaskWorkLog();
         workLog.setTask(task);
         workLog.setUser(user);
-        workLog.setWorkDate(LocalDate.parse((String) body.get("workDate")));
-        Object dw = body.get("daysWorked");
-        workLog.setDaysWorked(dw instanceof Number
-            ? BigDecimal.valueOf(((Number) dw).doubleValue())
-            : new BigDecimal(dw.toString()));
+        workLog.setWorkDate(LocalDate.now());
+        Object hw = body.get("hoursWorked");
+        workLog.setHoursWorked(hw instanceof Number
+            ? BigDecimal.valueOf(((Number) hw).doubleValue())
+            : new BigDecimal(hw.toString()));
         if (body.get("note") != null) workLog.setNote((String) body.get("note"));
 
         TaskWorkLog saved = taskWorkLogService.save(workLog);

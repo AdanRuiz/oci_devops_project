@@ -347,48 +347,50 @@ WHERE curr.rn = 1;
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
--- KPI-O1: Days worked on tasks
--- Uses task_work_logs (days granularity — full day 1.0 or half day 0.5).
+-- KPI-O1: Hours worked on tasks
+-- Uses task_work_logs (hours granularity — entered at task completion
+-- or reassignment, 0.5-step increments up to 100 h per entry).
 -- -----------------------------------------------------------------------------
 
--- Total days worked per task in a sprint
+-- Total hours worked per task in a sprint
 SELECT
     t.id,
     t.title,
     t.status,
     u.email                                             AS assignee,
-    ROUND(SUM(twl.days_worked), 1)                      AS total_days_worked,
+    ROUND(SUM(twl.hours_worked), 2)                     AS total_hours_worked,
     COUNT(twl.id)                                       AS log_entries
 FROM tasks t
 JOIN users u                ON u.id       = t.assignee_id
 LEFT JOIN task_work_logs twl  ON twl.task_id = t.id
 WHERE t.sprint_id = :sprint_id
 GROUP BY t.id, t.title, t.status, u.email
-ORDER BY total_days_worked DESC;
+ORDER BY total_hours_worked DESC;
 
--- Total days worked per developer in a sprint
+-- Total hours worked per developer in a sprint
 SELECT
     u.email,
     COUNT(DISTINCT twl.task_id)                         AS tasks_worked_on,
-    ROUND(SUM(twl.days_worked), 1)                      AS total_days_worked
+    ROUND(SUM(twl.hours_worked), 2)                     AS total_hours_worked
 FROM task_work_logs twl
 JOIN users u ON u.id  = twl.user_id
 JOIN tasks t   ON t.id  = twl.task_id
 WHERE t.sprint_id = :sprint_id
 GROUP BY u.id, u.email
-ORDER BY total_days_worked DESC;
+ORDER BY total_hours_worked DESC;
 
--- Calendar days vs logged days efficiency ratio
+-- Calendar hours vs logged hours efficiency ratio
 -- Flags tasks where elapsed time far exceeds actual effort logged
+-- (calendar_hours = calendar_days * 8 assuming an 8-hour workday)
 SELECT
     t.id,
     t.title,
     u.email                                             AS assignee,
-    ROUND(SUM(twl.days_worked), 1)                      AS days_logged,
-    ROUND(CAST(t.completed_at AS DATE) - CAST(t.entered_in_progress_at AS DATE), 1) AS calendar_days,
+    ROUND(SUM(twl.hours_worked), 2)                     AS hours_logged,
+    ROUND((CAST(t.completed_at AS DATE) - CAST(t.entered_in_progress_at AS DATE)) * 8, 1) AS calendar_hours,
     ROUND(
-        SUM(twl.days_worked)
-        / NULLIF(CAST(t.completed_at AS DATE) - CAST(t.entered_in_progress_at AS DATE), 0) * 100
+        SUM(twl.hours_worked)
+        / NULLIF((CAST(t.completed_at AS DATE) - CAST(t.entered_in_progress_at AS DATE)) * 8, 0) * 100
     , 1)                                                AS effort_ratio_pct
 FROM tasks t
 JOIN users u                ON u.id       = t.assignee_id

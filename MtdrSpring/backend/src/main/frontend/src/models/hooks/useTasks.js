@@ -32,6 +32,16 @@ export const useAddWorkLog = (taskId) => {
     });
 };
 
+export const useLogWork = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ taskId, ...payload }) => addWorkLog(taskId, payload),
+        onSuccess: (_, { taskId }) => {
+            queryClient.invalidateQueries({ queryKey: ['task', taskId, 'logs'] });
+        },
+    });
+};
+
 export const useCreateTask = (sprintId) => {
     const queryClient = useQueryClient();
     return useMutation({

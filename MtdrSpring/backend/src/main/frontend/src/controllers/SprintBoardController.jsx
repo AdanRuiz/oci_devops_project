@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useSprint } from '../models/hooks/useSprints';
-import { useSprintTasks, useUpdateTaskStatus, useCreateTask } from '../models/hooks/useTasks';
+import { useSprintTasks, useUpdateTaskStatus, useCreateTask, useLogWork } from '../models/hooks/useTasks';
 import { useMembers } from '../models/hooks/useMembers';
 import { useActiveProject } from '../models/ProjectContext';
 import SprintBoardView from '../views/sprints/SprintBoardView';
@@ -15,7 +15,8 @@ export default function SprintBoardController() {
     const { data: tasks = [], isLoading: loadingTasks } = useSprintTasks(sprintId);
     const { data: members = [] } = useMembers(projectId);
     const updateStatus = useUpdateTaskStatus(sprintId);
-    const createTask  = useCreateTask(sprintId);
+    const createTask   = useCreateTask(sprintId);
+    const logWork      = useLogWork();
 
     if (loadingSprint || loadingTasks) return <CircularProgress />;
 
@@ -31,6 +32,7 @@ export default function SprintBoardController() {
                 updateStatus.mutate({ taskId, status, changedById })
             }
             onCreateTask={(payload) => createTask.mutateAsync(payload)}
+            onLogWork={(taskId, payload) => logWork.mutateAsync({ taskId, ...payload })}
         />
     );
 }
