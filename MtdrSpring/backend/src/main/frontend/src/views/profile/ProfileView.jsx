@@ -126,7 +126,7 @@ function MemberCard({ member, onRemove, isRemoving }) {
 
 export default function ProfileView({
     userEmail, userRole, projectName,
-    members = [], isLoading, isManager,
+    totalMembers, members = [], isLoading, isManager,
     onRemoveMember, onInviteMember,
     isRemoving, isInviting, inviteError, inviteSuccess,
 }) {
@@ -185,7 +185,7 @@ export default function ProfileView({
                         <Box sx={{ display: 'flex', gap: '48px', pt: '8px', flexWrap: 'wrap' }}>
                             <StatColumn label="Role"    value={userRole} />
                             <StatColumn label="Project" value={projectName} />
-                            <StatColumn label="Team"    value={`${members.length} member${members.length !== 1 ? 's' : ''}`} />
+                            <StatColumn label="Team"    value={`${totalMembers} member${totalMembers !== 1 ? 's' : ''}`} />
                         </Box>
                     </Box>
                 </CardContent>

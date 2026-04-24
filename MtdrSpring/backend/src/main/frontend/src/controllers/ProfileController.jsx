@@ -12,14 +12,13 @@ export default function ProfileController() {
     const { currentUser } = useCurrentUser();
     const projectId = activeProject?.id;
     const userEmail = currentUser?.email ?? auth.user?.profile?.email ?? '';
-    const userRole  = currentUser?.systemRole === 'PROJECT_MANAGER' ? 'Project Manager'
-                    : currentUser?.systemRole === 'ADMIN'           ? 'Admin'
-                    : 'Developer';
-
     const [inviteMessage, setInviteMessage] = useState('');
 
     const { data: allMembers = [], isLoading } = useMembers(projectId);
-    const { isManager } = useProjectRole();
+    const { role, isManager } = useProjectRole();
+    const userRole = role === 'PROJECT_MANAGER' ? 'Project Manager'
+                   : role === 'DEVELOPER'       ? 'Developer'
+                   : 'Developer';
     const removeMutation = useRemoveMember(projectId);
     const inviteMutation = useInviteMember(projectId);
 
@@ -45,6 +44,7 @@ export default function ProfileController() {
             userEmail={userEmail}
             userRole={userRole}
             projectName={activeProject?.name}
+            totalMembers={allMembers.length}
             members={members}
             isLoading={isLoading}
             onRemoveMember={(userId) => removeMutation.mutate(userId)}
