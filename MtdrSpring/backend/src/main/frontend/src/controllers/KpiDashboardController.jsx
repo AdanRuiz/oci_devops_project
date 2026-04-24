@@ -22,6 +22,12 @@ export default function KpiDashboardController() {
     const { data: kpi,           isLoading: loadingKpi   } = useKpi(sprintId);
     const { data: developerStats = [], isLoading: loadingStats } = useDeveloperStats(sprintId);
 
+    // Clear stored sprint when switching projects so stale data isn't shown
+    useEffect(() => {
+        setSprintId('');
+        localStorage.removeItem(STORAGE_KEY);
+    }, [activeProject?.id]);
+
     // Auto-select a sprint when sprints load and none is selected
     useEffect(() => {
         if (sprintId || !sprints.length) return;

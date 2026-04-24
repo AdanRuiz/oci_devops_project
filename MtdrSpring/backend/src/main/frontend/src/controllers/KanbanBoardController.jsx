@@ -26,6 +26,12 @@ export default function KanbanBoardController() {
     const { data: tasks = [], isLoading: isTasksLoading } = useSprintTasks(sprintId);
     const { data: members = [], isLoading: isMembersLoading } = useMembers(projectId);
 
+    // Clear stored sprint when switching projects so stale data isn't shown
+    useEffect(() => {
+        setSprintId('');
+        localStorage.removeItem(STORAGE_KEY);
+    }, [projectId]);
+
     // Auto-select a sprint when sprints load and none is selected
     useEffect(() => {
         if (sprintId || !sprints.length) return;
