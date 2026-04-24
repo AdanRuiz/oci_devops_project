@@ -58,6 +58,15 @@ public class ToDoItemService {
         return toDoItemRepository.save(task);
     }
 
+    public Task addToDoItem(Task task, User createdBy, ChangeSource source) {
+        if (createdBy != null) {
+            String hexId = createdBy.getId().toString().replace("-", "");
+            String src = (source != null ? source : ChangeSource.WEB).name();
+            jdbcTemplate.update("BEGIN app_ctx.set_actor(HEXTORAW(?), ?); END;", hexId, src);
+        }
+        return toDoItemRepository.save(task);
+    }
+
     public boolean deleteToDoItem(UUID id) {
         try {
             toDoItemRepository.deleteById(id);

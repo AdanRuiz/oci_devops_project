@@ -2,8 +2,16 @@ package com.springboot.MyTodoList.util;
 
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.model.TaskStatus;
+import com.springboot.MyTodoList.model.TaskPriority;
+import com.springboot.MyTodoList.model.User;
+import com.springboot.MyTodoList.model.Project;
+import com.springboot.MyTodoList.model.ProjectMember;
+import com.springboot.MyTodoList.repository.UserRepository;
+import com.springboot.MyTodoList.repository.ProjectMemberRepository;
+import com.springboot.MyTodoList.repository.ProjectRepository;
 import com.springboot.MyTodoList.service.DeepSeekService;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.service.telegram.TelegramLinkService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +33,19 @@ public class BotActions {
 
     ToDoItemService todoService;
     DeepSeekService deepSeekService;
+    TelegramLinkService telegramLinkService;
+    UserRepository userRepository;
+    ProjectMemberRepository projectMemberRepository;
+    ProjectRepository projectRepository;
 
-    public BotActions(TelegramClient tc, ToDoItemService ts, DeepSeekService ds) {
+    public BotActions(TelegramClient tc, ToDoItemService ts, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr) {
         telegramClient = tc;
         todoService = ts;
         deepSeekService = ds;
+        telegramLinkService = tls;
+        userRepository = ur;
+        projectMemberRepository = pmr;
+        projectRepository = pr;
         exit = false;
     }
 
@@ -41,16 +57,181 @@ public class BotActions {
     public void setDeepSeekService(DeepSeekService dssvc) { deepSeekService = dssvc; }
     public DeepSeekService getDeepSeekService() { return deepSeekService; }
 
+    public void fnLink() {
+        if (requestText == null || !requestText.startsWith("/link")) return;
+        
+        String[] parts = requestText.split(" ");
+        if (parts.length == 2) {
+            String code = parts[1];
+            boolean linked = telegramLinkService.linkAccount(code, String.valueOf(chatId));
+            if (linked) {
+                BotHelper.sendMessageToTelegram(chatId, "Account successfully linked!", telegramClient);
+            } else {
+                BotHelper.sendMessageToTelegram(chatId, "Invalid or expired linking code.", telegramClient);
+            }
+        } else {
+            BotHelper.sendMessageToTelegram(chatId, "Usage: /link <code>", telegramClient);
+        }
+        exit = true;
+    }
+
     public void fnStart() {
         if (!(requestText.equals(BotCommands.START_COMMAND.getCommand())
                 || requestText.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) || exit)
             return;
 
-        BotHelper.sendMessageToTelegram(chatId, BotMessages.HELLO_MYTODO_BOT.getMessage(), telegramClient,
+        BotHelper.sendMessageToTelegram(chatId, "Welcome to the Oracle Project Manager Bot!\nUse /help to see all available commands.\nIf you haven't linked your account, use /link <code>.", telegramClient,
             ReplyKeyboardMarkup.builder()
-                .keyboardRow(new KeyboardRow(BotLabels.LIST_ALL_ITEMS.getLabel(), BotLabels.ADD_NEW_ITEM.getLabel()))
-                .keyboardRow(new KeyboardRow(BotLabels.SHOW_MAIN_SCREEN.getLabel(), BotLabels.HIDE_MAIN_SCREEN.getLabel()))
+                .keyboardRow(new KeyboardRow("/help", "/status", "/create New Task"))
                 .build());
+        exit = true;
+    }
+
+    public void fnHelp() {
+        if (!requestText.equals("/help") || exit) return;
+        String helpMsg = "Available Commands:\n" +
+                         "/start - View welcome message\n" +
+                         "/link <code> - Link your Telegram account\n" +
+                         "/help - Show available commands\n" +
+                         "/status - Get a quick summary of tasks\n" +
+                         "/create <title> - Create a new task (e.g. /create Fix DB bug)\n" +
+                         "/delete <title> - Delete a task by matching title";
+        BotHelper.sendMessageToTelegram(chatId, helpMsg, telegramClient);
+        exit = true;
+    }
+
+    public void fnStatus() {
+        if (!requestText.equals("/status") || exit) return;
+        
+        User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
+        if (user == null) {
+            BotHelper.sendMessageToTelegram(chatId, "To check status via bot, please link your account first with /link <code>.", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+        if (memberships.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "You are not assigned to any projects.", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        // Use eager fetching or explicitly load project data via its own repository if LazyInitialization happens
+        UUID projectId = memberships.get(0).getProject().getId();
+        Project project = projectRepository.findById(projectId).orElse(null);
+        
+        if (project == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Project not found.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        List<Task> tasks = todoService.findByProjectId(project.getId());
+        long todo = tasks.stream().filter(t -> t.getStatus() == TaskStatus.TODO).count();
+        long inProgress = tasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
+        long blocked = tasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
+        long done = tasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
+        
+        String msg = String.format("📊 Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d", 
+                                   project.getName(), todo, inProgress, blocked, done);
+        BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+        exit = true;
+    }
+
+    public void fnCreate() {
+        if (!requestText.startsWith("/create") || exit) return;
+        
+        User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
+        if (user == null) {
+            BotHelper.sendMessageToTelegram(chatId, "To create tasks via bot, please link your account first with /link <code>.", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        String title = requestText.substring(7).trim();
+        if (title.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "Usage: /create <task title>", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+        if (memberships.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "You are not assigned to any projects. Cannot create task.", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        Project project = projectRepository.findById(memberships.get(0).getProject().getId()).orElse(null);
+        
+        if (project == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Project not found.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        Task t = new Task();
+        t.setTitle(title);
+        t.setProject(project);
+        t.setCreatedBy(user);
+        t.setAssignee(user);
+        t.setPriority(TaskPriority.MEDIUM);
+        t.setStatus(TaskStatus.TODO);
+        
+        try {
+            todoService.addToDoItem(t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+            BotHelper.sendMessageToTelegram(chatId, "✅ Task created successfully:\n" + title, telegramClient);
+        } catch (Exception e) {
+            logger.error("Failed to create task", e);
+            BotHelper.sendMessageToTelegram(chatId, "❌ Failed to create task due to a server error.", telegramClient);
+        }
+        exit = true;
+    }
+
+    public void fnDeleteCommand() {
+        if (!requestText.startsWith("/delete ") || exit) return;
+        
+        User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
+        if (user == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Please link your account first with /link <code>.", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        String title = requestText.substring(8).trim();
+        if (title.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "Usage: /delete <task title>", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+        if (memberships.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "You are not assigned to any projects.", telegramClient);
+            exit = true;
+            return;
+        }
+        
+        UUID projectId = memberships.get(0).getProject().getId();
+        List<Task> tasks = todoService.findByProjectId(projectId);
+        
+        List<Task> matchingTasks = tasks.stream()
+            .filter(t -> t.getTitle().equalsIgnoreCase(title))
+            .collect(Collectors.toList());
+            
+        if (matchingTasks.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "Could not find a task matching: " + title, telegramClient);
+        } else if (matchingTasks.size() > 1) {
+            BotHelper.sendMessageToTelegram(chatId, "Found multiple tasks with that title. Please use the web UI to delete, or ensure task titles are unique.", telegramClient);
+        } else {
+            boolean deleted = todoService.deleteToDoItem(matchingTasks.get(0).getId());
+            if (deleted) {
+                BotHelper.sendMessageToTelegram(chatId, "✅ Task deleted successfully.", telegramClient);
+            } else {
+                BotHelper.sendMessageToTelegram(chatId, "❌ Failed to delete task due to an error.", telegramClient);
+            }
+        }
         exit = true;
     }
 
@@ -191,12 +372,9 @@ public class BotActions {
     public void fnElse() {
         if (exit) return;
 
-        // TODO: Task requires a project and createdBy user.
-        // Look up the user by telegramChatId and assign a default project
-        // before saving. For now this is a no-op until user linking is implemented.
-        logger.warn("Cannot create task from bot message: project and user context required. chatId={}", chatId);
+        logger.warn("Unrecognized command from chatId={}: {}", chatId, requestText);
         BotHelper.sendMessageToTelegram(chatId,
-            "To create tasks via bot, please link your account first with /start.", telegramClient, null);
+            "I didn't understand that command. Use /help to see available commands.", telegramClient, null);
     }
 
     public void fnLLM() {
