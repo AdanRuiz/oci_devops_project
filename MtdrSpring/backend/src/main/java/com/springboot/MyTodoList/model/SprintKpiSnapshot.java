@@ -44,8 +44,8 @@ public class SprintKpiSnapshot {
     @Column(name = "TASKS_COMPLETED", nullable = false)
     private int tasksCompleted = 0;
 
-    @Column(name = "TOTAL_DAYS_WORKED", precision = 8, scale = 1)
-    private BigDecimal totalDaysWorked;
+    @Column(name = "TOTAL_HOURS_WORKED", precision = 8, scale = 2)
+    private BigDecimal totalHoursWorked;
 
     @Column(name = "CALCULATED_AT", nullable = false, updatable = false)
     private LocalDateTime calculatedAt;

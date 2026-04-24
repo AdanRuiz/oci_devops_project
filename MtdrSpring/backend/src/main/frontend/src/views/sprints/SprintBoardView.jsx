@@ -6,7 +6,8 @@ import {
 } from '@dnd-kit/core';
 import {
     Box, Button, Card, CardContent, Dialog, DialogActions,
-    DialogContent, DialogTitle, Grid, MenuItem, TextField, Typography,
+    DialogContent, DialogTitle, Grid, InputAdornment, MenuItem,
+    TextField, Typography,
 } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
 import AddIcon from '@mui/icons-material/Add';
@@ -254,10 +255,99 @@ function AddTaskDialog({ open, members, sprintId, projectId, onClose, onSubmit }
     );
 }
 
-export default function SprintBoardView({ sprint, tasks, members = [], projectId, onBack, onTaskSelect, onStatusChange, onCreateTask }) {
-    const [activeTask, setActiveTask]   = useState(null);
-    const [overId, setOverId]           = useState(null);
-    const [addTaskOpen, setAddTaskOpen] = useState(false);
+function LogHoursDialog({ open, taskTitle, onClose, onConfirm }) {
+    const [hours, setHours]       = useState('');
+    const [note, setNote]         = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError]       = useState('');
+
+    const handleClose = () => {
+        setHours(''); setNote(''); setError('');
+        onClose();
+    };
+
+    const handleConfirm = async () => {
+        const val = parseFloat(hours);
+        if (!hours || isNaN(val) || val <= 0) {
+            setError('Please enter a valid number of hours greater than 0.');
+            return;
+        }
+        if (val > 100) {
+            setError('Hours cannot exceed 100 per entry.');
+            return;
+        }
+        // round to nearest 0.5
+        const rounded = Math.round(val * 2) / 2;
+        setSubmitting(true);
+        setError('');
+        try {
+            await onConfirm({ hoursWorked: rounded, note: note.trim() || null });
+            handleClose();
+        } catch {
+            setError('Failed to log hours. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
+            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>
+                Log Hours
+            </DialogTitle>
+            <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+                {taskTitle && (
+                    <Typography sx={{ fontSize: '0.85rem', color: '#717171', mb: '-4px' }}>
+                        {taskTitle}
+                    </Typography>
+                )}
+                <TextField
+                    label="Hours worked"
+                    type="number"
+                    value={hours}
+                    onChange={e => setHours(e.target.value)}
+                    inputProps={{ min: 0.5, max: 100, step: 0.5 }}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
+                    }}
+                    fullWidth
+                    autoFocus
+                />
+                <TextField
+                    label="Note (optional)"
+                    value={note}
+                    onChange={e => setNote(e.target.value)}
+                    fullWidth
+                    multiline
+                    rows={2}
+                />
+                {error && (
+                    <Typography sx={{ fontSize: '0.82rem', color: '#E57373' }}>{error}</Typography>
+                )}
+            </DialogContent>
+            <DialogActions sx={{ px: '24px', pb: '16px' }}>
+                <Button onClick={handleClose} variant="outlined" size="small" sx={outlinedButtonSx}>
+                    Cancel
+                </Button>
+                <Button
+                    onClick={handleConfirm}
+                    disabled={submitting}
+                    variant="contained"
+                    size="small"
+                    sx={containedButtonSx}
+                >
+                    {submitting ? 'Saving…' : 'Confirm'}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+export default function SprintBoardView({ sprint, tasks, members = [], projectId, onBack, onTaskSelect, onStatusChange, onCreateTask, onLogWork }) {
+    const [activeTask, setActiveTask]       = useState(null);
+    const [overId, setOverId]               = useState(null);
+    const [addTaskOpen, setAddTaskOpen]     = useState(false);
+    const [pendingChange, setPendingChange] = useState(null); // { task, newStatus, changedById }
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -279,7 +369,23 @@ export default function SprintBoardView({ sprint, tasks, members = [], projectId
         const task = tasks.find(t => t.id === active.id);
         if (!task || task.status === newStatus) return;
         const changedById = task.createdBy?.id ?? task.assignee?.id ?? null;
+        if (newStatus === 'DONE') {
+            setPendingChange({ task, newStatus, changedById });
+        } else {
+            onStatusChange(task.id, newStatus, changedById);
+        }
+    };
+
+    const handleLogHoursConfirm = async (payload) => {
+        if (!pendingChange) return;
+        const { task, newStatus, changedById } = pendingChange;
+        await onLogWork(task.id, payload);
         onStatusChange(task.id, newStatus, changedById);
+        setPendingChange(null);
+    };
+
+    const handleLogHoursCancel = () => {
+        setPendingChange(null);
     };
 
     return (
@@ -374,6 +480,13 @@ export default function SprintBoardView({ sprint, tasks, members = [], projectId
                 projectId={projectId}
                 onClose={() => setAddTaskOpen(false)}
                 onSubmit={onCreateTask}
+            />
+
+            <LogHoursDialog
+                open={!!pendingChange}
+                taskTitle={pendingChange?.task?.title}
+                onClose={handleLogHoursCancel}
+                onConfirm={handleLogHoursConfirm}
             />
         </Box>
     );

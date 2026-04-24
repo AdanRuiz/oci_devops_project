@@ -88,7 +88,7 @@ export default function KpiDashboardView({
     developerStats, loadingStats, onSprintChange,
 }) {
     const totalTasks = developerStats.reduce((s, d) => s + d.totalAssigned, 0);
-    const totalHours = developerStats.reduce((s, d) => s + Number(d.totalDaysWorked ?? 0), 0) * 8;
+    const totalHours = developerStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
     const devCount   = developerStats.length || 1;
     const avgTasks   = developerStats.length ? (developerStats.reduce((s, d) => s + d.tasksCompleted, 0) / devCount).toFixed(1) : '—';
     const avgHours   = developerStats.length ? (totalHours / devCount).toFixed(1) : '—';
@@ -96,7 +96,7 @@ export default function KpiDashboardView({
     const chartData = developerStats.map(d => ({
         name: d.email.split('@')[0],
         tasksCompleted: d.tasksCompleted,
-        totalHours: Number((Number(d.totalDaysWorked ?? 0) * 8).toFixed(1)),
+        totalHours: Number(Number(d.totalHoursWorked ?? 0).toFixed(1)),
     }));
 
     return (
