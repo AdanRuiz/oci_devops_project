@@ -85,13 +85,16 @@ function StatBarChart({ data, dataKey, fill, tooltipFormatter }) {
 
 export default function KpiDashboardView({
     projectName, sprints, sprintId,
-    developerStats, loadingStats, onSprintChange,
+    developerStats, currentUserEmail, loadingStats, onSprintChange,
 }) {
     const totalTasks = developerStats.reduce((s, d) => s + d.totalAssigned, 0);
     const totalHours = developerStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
-    const devCount   = developerStats.length || 1;
-    const avgTasks   = developerStats.length ? (developerStats.reduce((s, d) => s + d.tasksCompleted, 0) / devCount).toFixed(1) : '—';
-    const avgHours   = developerStats.length ? (totalHours / devCount).toFixed(1) : '—';
+
+    const myStat = currentUserEmail
+        ? developerStats.find(d => d.email === currentUserEmail) ?? null
+        : null;
+    const myTasks = myStat ? String(myStat.tasksCompleted) : '—';
+    const myHours = myStat ? Number(myStat.totalHoursWorked ?? 0).toFixed(1) : '—';
 
     const chartData = developerStats.map(d => ({
         name: d.email.split('@')[0],
@@ -168,13 +171,13 @@ export default function KpiDashboardView({
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                            <ChartCard title="Per-Developer Averages">
+                            <ChartCard title="Your Stats">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>
-                                        <StatCard label="Avg Tasks / Dev" value={avgTasks} description="Mean completed tasks per developer" borderColor={STAT_BORDERS.avgTasks} />
+                                        <StatCard label="Tasks Completed" value={myTasks} description="Tasks you completed this sprint" borderColor={STAT_BORDERS.avgTasks} />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <StatCard label="Avg Hours / Dev" value={avgHours} description="Mean hours worked per developer" borderColor={STAT_BORDERS.avgHours} />
+                                        <StatCard label="Hours Logged" value={myHours} description="Hours you logged this sprint" borderColor={STAT_BORDERS.avgHours} />
                                     </Grid>
                                 </Grid>
                             </ChartCard>
