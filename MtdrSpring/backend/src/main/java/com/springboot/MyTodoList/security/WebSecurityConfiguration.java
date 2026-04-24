@@ -36,6 +36,13 @@ public class WebSecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/", "/index.html", "/manifest.json", "/favicon.ico",
+                    "/static/**", "/*.js", "/*.css", "/*.map",
+                    "/callback", "/callback/**",
+                    "/dashboard", "/kanban", "/kpi", "/profile",
+                    "/auth/sign-in", "/auth/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .httpBasic(httpBasic -> httpBasic.disable())

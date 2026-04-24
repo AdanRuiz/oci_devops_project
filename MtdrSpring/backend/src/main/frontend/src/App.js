@@ -16,7 +16,7 @@ import KanbanBoardController from './controllers/KanbanBoardController';
 import ProfileController from './controllers/ProfileController';
 import { useAuth } from 'react-oidc-context';
 import AuthView, { AuthCallbackRoute } from './controllers/AuthView';
-import { setAuthToken } from './models/api/client';
+import { setAuthToken, setTokenGetter } from './models/api/client';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -42,8 +42,13 @@ function RequireProject({ children }) {
 function RequireAuth({ children }) {
     const auth = useAuth();
 
+    // Synchronous — runs before any child effects so the axios interceptor
+    // always has the latest token when React Query fires its first requests.
+    setTokenGetter(() => auth.user?.access_token ?? auth.user?.id_token ?? null);
+
     useEffect(() => {
-        setAuthToken(auth.user?.access_token ?? null);
+        const token = auth.user?.access_token ?? auth.user?.id_token ?? null;
+        setAuthToken(token);
     }, [auth.user]);
 
     if (auth.isLoading || auth.activeNavigator) {
