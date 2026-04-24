@@ -184,13 +184,13 @@ VALUES (
     0
 );
 
--- Sprint 3 — Auth via OCI IAM  (ACTIVE)
+-- Sprint 3 — Auth via OCI IAM  (COMPLETED)
 INSERT INTO sprints (id, name, project_id, status, start_date, end_date, planned_task_count)
 VALUES (
     HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
     'Sprint 3 — Auth via OCI IAM (OIDC)',
     HEXTORAW('F18FB987E9A04CA58213404D089F41AA'),
-    'ACTIVE',
+    'COMPLETED',
     DATE '2026-04-13',
     DATE '2026-04-25',
     0
@@ -1134,7 +1134,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000034'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'BLOCKED', 'WEB', TIMESTAMP '2026-03-26 15:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000034'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'BLOCKED', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-28 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000034'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-04 17:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000034'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-04', 11.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000034'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-04', 8.0);
 
 -- V13-126 subtask | Baltazar | DONE
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
@@ -1142,7 +1142,7 @@ VALUES (HEXTORAW('E0000000000000000000000000000035'), 'V13-126 Create project, s
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000035'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000035'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-23 09:30:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000035'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-24 16:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000035'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-03-24', 3.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000035'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-03-24', 1.0);
 
 -- V13-127 | Baltazar | DONE
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
@@ -1174,7 +1174,7 @@ VALUES (HEXTORAW('E0000000000000000000000000000039'), 'V13-130 Write Flyway/Liqu
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000039'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-27 14:30:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000039'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-28 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000039'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-01 15:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000039'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-01', 3.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000039'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-01', 1.0);
 
 -- V13-131 | Baltazar | DONE  ← SCOPE CREEP: added after sprint started
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
@@ -1204,7 +1204,7 @@ VALUES (HEXTORAW('E000000000000000000000000000003B'), 'V13-123 KPI persistence',
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000003B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000003B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-23 10:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000003B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-28 16:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000003B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-03-28', 4.5);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000003B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-03-28', 2.5);
 
 -- V13-132/133/134 subtasks (Ana Paula, quick turnaround)
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
@@ -1238,7 +1238,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 -- Rework: tests failed in CI
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000003F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'DONE', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-01 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000003F'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-07 16:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000003F'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-07', 8.5);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000003F'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-07', 5.5);
 
 -- V13-135/136/137/138 subtasks (jozefhdez)
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
@@ -1260,7 +1260,7 @@ VALUES (HEXTORAW('E0000000000000000000000000000042'), 'V13-137 Wrap deletion in 
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000042'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-27 16:30:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000042'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-28 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000042'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-30 14:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000042'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-03-30', 2.5);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000042'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-03-30', 0.5);
 
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000043'), 'V13-138 Write unit tests for purge logic', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-30 14:30:00', TIMESTAMP '2026-03-30 14:30:00', TIMESTAMP '2026-03-30 14:30:00', TIMESTAMP '2026-03-31 09:00:00', TIMESTAMP '2026-03-31 17:00:00', 0);
@@ -1278,7 +1278,7 @@ VALUES (HEXTORAW('E0000000000000000000000000000044'), 'V13-140 KPI: Cycle time',
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000044'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000044'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-23 11:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000044'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-30 15:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000044'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-03-30', 4.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000044'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-03-30', 2.0);
 
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000045'), 'V13-144 Store entered_in_progress_at and completed_at on task', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 11:30:00', TIMESTAMP '2026-03-25 14:00:00', 0);
@@ -1308,14 +1308,14 @@ VALUES (HEXTORAW('E0000000000000000000000000000048'), 'V13-141 KPI: Effort logge
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000048'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000048'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-24 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000048'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-31 14:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000048'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-03-31', 3.5);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000048'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-03-31', 1.5);
 
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000049'), 'V13-147 Write query summing work_log days per sprint', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-24 10:00:00', TIMESTAMP '2026-03-26 15:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000049'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000049'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-24 10:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000049'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-26 15:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000049'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-03-26', 2.5);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000049'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-03-26', 0.5);
 
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E000000000000000000000000000004A'), 'V13-148 Include planned_task_count in response', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-26 15:30:00', TIMESTAMP '2026-03-26 15:30:00', TIMESTAMP '2026-03-26 15:30:00', TIMESTAMP '2026-03-27 09:00:00', TIMESTAMP '2026-03-27 15:00:00', 0);
@@ -1338,7 +1338,7 @@ VALUES (HEXTORAW('E000000000000000000000000000004C'), 'V13-142 KPI: Blocked task
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000004C'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000004C'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-24 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000004C'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-02 15:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000004C'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-02', 5.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000004C'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-02', 2.0);
 
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count) VALUES (HEXTORAW('E000000000000000000000000000004D'), 'V13-150 Store blocked_at on task', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-24 10:00:00', TIMESTAMP '2026-03-25 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000004D'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
@@ -1489,7 +1489,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E0000000000000000000000000000055'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-26 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000055'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-08 16:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000055'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-08', 4.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000055'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-08', 2.0);
 
 
 -- V13-159 | Build dashboard layout | Luis | DONE
@@ -1508,7 +1508,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E0000000000000000000000000000056'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-26 10:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000056'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-30 15:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000056'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-03-30', 3.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000056'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-03-30', 1.0);
 
 
 -- V13-160 | Fetch and display open tasks | Luis | DONE
@@ -1587,7 +1587,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E000000000000000000000000000005A'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-24 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000005A'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-09 16:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005A'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-09', 5.5);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005A'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-09', 3.5);
 
 
 -- V13-163 | PM dashboard view | Ana Elena | DONE
@@ -1606,7 +1606,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E000000000000000000000000000005B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-24 10:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000005B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-03-27 16:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-03-27', 4.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-03-27', 2.0);
 
 
 -- V13-164 | Cycle time trend chart | Ana Elena | DONE
@@ -1625,7 +1625,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E000000000000000000000000000005C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-28 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000005C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-01 15:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-01', 3.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-01', 1.0);
 
 
 -- V13-165 | Blocked tasks list with counter | Ana Elena | DONE
@@ -1663,7 +1663,7 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E000000000000000000000000000005E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-06 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000005E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-07 14:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-07', 2.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000005E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-07', 1.0);
 
 
 -- V13-167 | Wire up to KPI endpoints | Ana Elena | DONE
@@ -1726,7 +1726,7 @@ VALUES (HEXTORAW('E0000000000000000000000000000063'), 'V13-309 M5 - Design & Arc
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000063'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000063'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-07 09:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000063'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-10 17:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000063'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-10', 2.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000063'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-10', 1.0);
 
 INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000064'), 'V13-310 M7 - Advanced Databases', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-03-23 08:00:00', TIMESTAMP '2026-04-08 09:00:00', TIMESTAMP '2026-04-10 17:00:00', 0);
@@ -1756,104 +1756,171 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000067'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-10 17:00:00');
 INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000067'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-10', 1.0);
 
+-- DevOps Foundations training — Sprint 2 (course 1/5, 5 members × 7 h each)
+-- Baltazar
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000091'), 'Complete DevOps Foundations course 1/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-27 09:00:00', TIMESTAMP '2026-04-08 17:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000091'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000091'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-27 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000091'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-08 17:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000091'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-08', 7.0);
+
+-- Ana Elena
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000092'), 'Complete DevOps Foundations course 1/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-27 09:00:00', TIMESTAMP '2026-04-08 17:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000092'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000092'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-27 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000092'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-08 17:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000092'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-08', 7.0);
+
+-- Luis
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000093'), 'Complete DevOps Foundations course 1/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-27 09:00:00', TIMESTAMP '2026-04-08 17:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000093'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000093'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-27 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000093'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-08 17:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000093'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-08', 7.0);
+
+-- Ana Paula
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000094'), 'Complete DevOps Foundations course 1/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-27 09:00:00', TIMESTAMP '2026-04-08 17:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000094'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000094'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-27 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000094'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-08 17:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000094'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-08', 7.0);
+
+-- jozefhdez
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000095'), 'Complete DevOps Foundations course 1/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-23 09:00:00', TIMESTAMP '2026-03-27 09:00:00', TIMESTAMP '2026-04-08 17:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000095'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-03-23 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000095'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-03-27 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000095'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-08 17:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000095'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-08', 7.0);
+
 
 -- ===========================================================================
 -- SPRINT 3 TASKS
--- Sprint is ACTIVE: 2026-04-13 → 2026-04-25 (today is 2026-04-16)
--- Parent tasks are IN_PROGRESS; subtasks are TODO (unassigned per the .md)
--- This gives us aging WIP on the parents and a full TODO backlog on subtasks.
--- Parent tasks have assigned_at but delayed start → KPI-A2 (time-to-action).
+-- Sprint COMPLETED: 2026-04-13 → 2026-04-25 (completed 2026-04-24)
+-- All tasks marked DONE; state histories and work logs added in section 9.
 -- ===========================================================================
 
 -- ---------------------------------------------------------------------------
 -- V13-170 — OCI IAM Domain | Ana Paula | IN_PROGRESS (aging WIP)
 -- ---------------------------------------------------------------------------
 INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
-                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, rework_count)
+                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000068'),
         'V13-170 OCI IAM Domain',
         'As a DevOps engineer, I need an OCI IAM domain configured with OIDC for the web app.',
-        'IN_PROGRESS', 'HIGH',
+        'DONE', 'HIGH',
         HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
         HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'),
         TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 08:00:00',
-        TIMESTAMP '2026-04-14 09:00:00',  -- started next day → slight time-to-action delay
+        TIMESTAMP '2026-04-14 09:00:00',
+        TIMESTAMP '2026-04-24 16:00:00',
         0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000068'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000068'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-14 09:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000068'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-14', 11.0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E0000000000000000000000000000068'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000068'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-14', 2.0);
 
--- V13-172/173/174/175 subtasks — TODO, unassigned
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000069'), 'V13-172 Create IAM domain in OCI console', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000069'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+-- V13-172/173/174/175 subtasks — DONE
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000069'), 'V13-172 Create IAM domain in OCI console', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000069'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000069'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000069'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000069'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-20', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000006A'), 'V13-173 Register web app as confidential OIDC client', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000006A'), 'V13-173 Register web app as confidential OIDC client', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006A'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006A'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006A'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006A'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-21', 2.5);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000006B'), 'V13-174 Configure redirect URIs for local, staging, and prod', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006B'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000006B'), 'V13-174 Configure redirect URIs for local, staging, and prod', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006B'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-21', 1.5);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000006C'), 'V13-175 Document client_id and discovery URL', 'TODO', 'LOW', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006C'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000006C'), 'V13-175 Document client_id and discovery URL', 'DONE', 'LOW', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006C'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006C'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006C'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006C'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-21', 1.5);
 
 
 -- ---------------------------------------------------------------------------
 -- V13-171 — IAM Groups | Ana Paula | IN_PROGRESS (aging WIP)
 -- ---------------------------------------------------------------------------
 INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
-                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, rework_count)
+                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E000000000000000000000000000006D'),
         'V13-171 IAM Groups',
         'As a DevOps engineer, I need IAM groups for DEVELOPER and PROJECT_MANAGER roles.',
-        'IN_PROGRESS', 'HIGH',
+        'DONE', 'HIGH',
         HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
         HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'),
         TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 08:00:00',
-        TIMESTAMP '2026-04-15 09:00:00',  -- 2-day delay → time-to-action signal
+        TIMESTAMP '2026-04-15 09:00:00',
+        TIMESTAMP '2026-04-24 16:00:00',
         0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000006D'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000006D'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-15 09:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006D'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-15', 4.0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E000000000000000000000000000006D'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006D'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-15', 2.0);
 
--- V13-176/177/178 subtasks — TODO, unassigned
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000006E'), 'V13-176 Create DEVELOPER and PROJECT_MANAGER groups in IAM', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+-- V13-176/177/178 subtasks — DONE
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000006E'), 'V13-176 Create DEVELOPER and PROJECT_MANAGER groups in IAM', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006E'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006E'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006E'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006E'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-22', 2.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000006F'), 'V13-177 Add custom claims to ID token for group membership', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000006F'), 'V13-177 Add custom claims to ID token for group membership', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006F'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006F'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000006F'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000006F'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-22', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000070'), 'V13-178 Test token claims with a test user', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000070'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000070'), 'V13-178 Test token claims with a test user', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000070'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000070'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000070'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000070'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-23', 2.0);
 
 
 -- ---------------------------------------------------------------------------
 -- V13-180 — JWT Validation | jozefhdez | IN_PROGRESS (aging WIP + BLOCKED)
 -- ---------------------------------------------------------------------------
 INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
-                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, blocked_at, rework_count)
+                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, blocked_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000071'),
         'V13-180 Validation of JWT',
         'As a dev, I need Spring Boot to validate JWTs from OCI IAM on every request.',
-        'BLOCKED', 'HIGH',
+        'DONE', 'HIGH',
         HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
         HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'),
         TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 10:00:00',
-        TIMESTAMP '2026-04-15 14:00:00',  -- blocked waiting on IAM domain to be configured first
+        TIMESTAMP '2026-04-15 14:00:00',
+        TIMESTAMP '2026-04-24 16:00:00',
         0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
@@ -1861,189 +1928,310 @@ INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, s
 VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-13 10:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'BLOCKED', 'WEB', TIMESTAMP '2026-04-15 14:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-13', 8.0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'BLOCKED', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-13', 5.0);
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000071'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-21', 4.0);
 
--- V13-182/183/184/185 subtasks — TODO, unassigned
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000072'), 'V13-182 Add Spring Security + OAuth2 Resource Server dependency', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000072'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+-- V13-182/183/184/185 subtasks — DONE
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000072'), 'V13-182 Add Spring Security + OAuth2 Resource Server dependency', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000072'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000072'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000072'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000072'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-21', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000073'), 'V13-183 Configure jwks-uri pointing to OCI IAM JWKS endpoint', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000073'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000073'), 'V13-183 Configure jwks-uri pointing to OCI IAM JWKS endpoint', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000073'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000073'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000073'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000073'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-22', 1.5);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000074'), 'V13-184 Reject requests without valid Bearer token', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000074'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000074'), 'V13-184 Reject requests without valid Bearer token', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000074'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000074'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000074'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000074'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-22', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000075'), 'V13-185 Write integration tests for auth rejection', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000075'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000075'), 'V13-185 Write integration tests for auth rejection', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000075'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000075'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000075'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000075'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-23', 1.0);
 
 
 -- ---------------------------------------------------------------------------
 -- V13-181 — RBAC | Luis | IN_PROGRESS
 -- ---------------------------------------------------------------------------
 INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
-                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, rework_count)
+                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000076'),
         'V13-181 Role Based Access Control',
         'Map IAM group claims to Spring Security authorities and protect PM-only endpoints.',
-        'IN_PROGRESS', 'HIGH',
+        'DONE', 'HIGH',
         HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
         HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'),
         TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 11:00:00',
+        TIMESTAMP '2026-04-24 16:00:00',
         0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000076'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000076'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-13 11:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000076'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-13', 13.0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E0000000000000000000000000000076'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000076'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-13', 5.0);
 
--- V13-186/187/188/189 subtasks — TODO, unassigned
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000077'), 'V13-186 Map IAM group claims to Spring Security authorities', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000077'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+-- V13-186/187/188/189 subtasks — DONE
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000077'), 'V13-186 Map IAM group claims to Spring Security authorities', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000077'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000077'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000077'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000077'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-21', 4.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000078'), 'V13-187 Annotate PM-only endpoints with @PreAuthorize', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000078'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000078'), 'V13-187 Annotate PM-only endpoints with @PreAuthorize', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000078'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000078'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000078'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000078'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-22', 2.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000079'), 'V13-188 Write tests verifying developer cannot call PM endpoints', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000079'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000079'), 'V13-188 Write tests verifying developer cannot call PM endpoints', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000079'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000079'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000079'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000079'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-22', 2.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000007A'), 'V13-189 Return 403 with clear error message on denial', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000007A'), 'V13-189 Return 403 with clear error message on denial', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007A'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007A'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007A'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007A'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-23', 1.0);
 
 
 -- ---------------------------------------------------------------------------
 -- V13-191 — Role Based Navigation | Ana Elena | IN_PROGRESS
 -- ---------------------------------------------------------------------------
 INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
-                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, rework_count)
+                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E000000000000000000000000000007B'),
         'V13-191 Role Based Navigation',
         'As a user, I am redirected to OCI IAM login when I open the app unauthenticated.',
-        'IN_PROGRESS', 'HIGH',
+        'DONE', 'HIGH',
         HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
         HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'),
         TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 09:00:00',
+        TIMESTAMP '2026-04-24 16:00:00',
         0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000007B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E000000000000000000000000000007B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-13 09:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-13', 12.0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E000000000000000000000000000007B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007B'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-13', 1.0);
 
--- V13-193/194/195/196 subtasks — TODO, unassigned
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000007C'), 'V13-193 Integrate OIDC client library (oidc-client-ts) in React', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007C'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+-- V13-193/194/195/196 subtasks — DONE
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000007C'), 'V13-193 Integrate OIDC client library (oidc-client-ts) in React', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007C'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-20', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000007D'), 'V13-194 Implement silent token renewal', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007D'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000007D'), 'V13-194 Implement silent token renewal', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007D'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007D'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007D'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007D'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-21', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000007E'), 'V13-195 Store JWT in memory (not localStorage)', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000007E'), 'V13-195 Store JWT in memory (not localStorage)', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007E'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-21', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E000000000000000000000000000007F'), 'V13-196 Attach Bearer token to all API calls via Axios interceptor', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000007F'), 'V13-196 Attach Bearer token to all API calls via Axios interceptor', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007F'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007F'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000007F'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000007F'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-22', 1.5);
 
 
 -- ---------------------------------------------------------------------------
 -- V13-192 — Role Based Permissions | Ana Elena | IN_PROGRESS
 -- ---------------------------------------------------------------------------
 INSERT INTO tasks (id, title, description, status, priority, project_id, sprint_id, assignee_id, created_by,
-                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, rework_count)
+                   created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
 VALUES (HEXTORAW('E0000000000000000000000000000080'),
         'V13-192 Role Based Permissions',
         'As a user, I see only UI elements my role permits.',
-        'IN_PROGRESS', 'HIGH',
+        'DONE', 'HIGH',
         HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
         HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'),
         TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-13 08:00:00',
         TIMESTAMP '2026-04-14 10:00:00',
+        TIMESTAMP '2026-04-24 16:00:00',
         0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000080'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
 VALUES (HEXTORAW('E0000000000000000000000000000080'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-14 10:00:00');
-INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000080'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-14', 7.0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at)
+VALUES (HEXTORAW('E0000000000000000000000000000080'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000080'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-14', 3.0);
 
--- V13-197/198/199 subtasks — TODO, unassigned
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000081'), 'V13-197 Read role from JWT claims in React context', 'TODO', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000081'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+-- V13-197/198/199 subtasks — DONE
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000081'), 'V13-197 Read role from JWT claims in React context', 'DONE', 'HIGH', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000081'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000081'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000081'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000081'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-22', 3.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000082'), 'V13-198 Hide PM-only nav items for developer users', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000082'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000082'), 'V13-198 Hide PM-only nav items for developer users', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000082'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000082'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000082'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000082'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-23', 1.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000083'), 'V13-199 Redirect unauthorized deep links back to dashboard', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000083'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, created_by, created_at, sprint_added_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000083'), 'V13-199 Redirect unauthorized deep links back to dashboard', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-20 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000083'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000083'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-20 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000083'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000083'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-23', 1.0);
 
 
 -- ---------------------------------------------------------------------------
--- Sprint 3 standalone module tasks (V13-315 to V13-318) — all TODO
+-- Sprint 3 standalone module tasks (V13-315 to V13-318) — all DONE
 -- ---------------------------------------------------------------------------
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000084'), 'V13-315 M4 - Software Quality', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000084'), 'V13-315 M4 - Software Quality', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-21 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000084'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000084'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-21 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000084'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000084'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-21', 9.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000085'), 'V13-316 M9 - OCI/DevOps', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000085'), 'V13-316 M9 - OCI/DevOps', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000085'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000085'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000085'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000085'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-22', 3.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000086'), 'V13-318 M6 - Advanced Web', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000086'), 'V13-318 M6 - Advanced Web', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000086'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000086'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000086'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000086'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-22', 8.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000087'), 'V13-319 M11 - Java Development', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000087'), 'V13-319 M11 - Java Development', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000087'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000087'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000087'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000087'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-22', 3.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000088'), 'V13-320 M1 - Software Standards', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000088'), 'V13-320 M1 - Software Standards', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000088'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000088'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000088'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000088'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-22', 2.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000089'), 'V13-320 M2 - Project Administration', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000089'), 'V13-320 M2 - Project Administration', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
 INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000089'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000089'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000089'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000089'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-22', 3.0);
 
-INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, rework_count)
-VALUES (HEXTORAW('E0000000000000000000000000000090'), 'V13-320 M2 - Deployment & Closure', 'TODO', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', 0);
-INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000089'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000090'), 'V13-320 M2 - Deployment & Closure', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-13 08:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000090'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 08:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000090'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000090'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000090'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-22', 1.0);
+
+-- DevOps Foundations training — Sprint 3 (course 2/5, 5 members × 7 h each)
+-- Baltazar
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000096'), 'Complete DevOps Foundations course 2/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000096'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000096'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000096'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000096'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), DATE '2026-04-23', 7.0);
+
+-- Ana Elena
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000097'), 'Complete DevOps Foundations course 2/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000097'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000097'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000097'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000097'), HEXTORAW('E5E7D6DC9BA54E7A95B198EF1AA32060'), DATE '2026-04-23', 7.0);
+
+-- Luis
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000098'), 'Complete DevOps Foundations course 2/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000098'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000098'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000098'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000098'), HEXTORAW('D9664711BC1348ABA56BCA68B161244A'), DATE '2026-04-23', 7.0);
+
+-- Ana Paula
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E0000000000000000000000000000099'), 'Complete DevOps Foundations course 2/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000099'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000099'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E0000000000000000000000000000099'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E0000000000000000000000000000099'), HEXTORAW('09F9156961144414AF1D9815FED84D5F'), DATE '2026-04-23', 7.0);
+
+-- jozefhdez
+INSERT INTO tasks (id, title, status, priority, project_id, sprint_id, assignee_id, created_by, created_at, sprint_added_at, assigned_at, entered_in_progress_at, completed_at, rework_count)
+VALUES (HEXTORAW('E000000000000000000000000000009A'), 'Complete DevOps Foundations course 2/5', 'DONE', 'MEDIUM', HEXTORAW('F18FB987E9A04CA58213404D089F41AA'), HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), HEXTORAW('94BCC8654A0F42839AE3696F1C5C964E'), TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-13 09:00:00', TIMESTAMP '2026-04-22 09:00:00', TIMESTAMP '2026-04-24 16:00:00', 0);
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000009A'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), NULL, 'TODO', 'WEB', TIMESTAMP '2026-04-13 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000009A'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'TODO', 'IN_PROGRESS', 'WEB', TIMESTAMP '2026-04-22 09:00:00');
+INSERT INTO task_state_histories (task_id, changed_by, from_status, to_status, source, changed_at) VALUES (HEXTORAW('E000000000000000000000000000009A'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), 'IN_PROGRESS', 'DONE', 'WEB', TIMESTAMP '2026-04-24 16:00:00');
+INSERT INTO task_work_logs (task_id, user_id, work_date, hours_worked) VALUES (HEXTORAW('E000000000000000000000000000009A'), HEXTORAW('DB5CABA59E764D2C83167B8578AB06DB'), DATE '2026-04-23', 7.0);
 
 -- ===========================================================================
 -- 6. UPDATE planned_task_count ON EACH SPRINT
 --
 -- Sprint 1: 46 tasks (all were in sprint at activation time on Feb 23,
 --           except V13-93 which was scope creep added Mar 6 after activation)
--- Sprint 2: 47 tasks planned at activation (Mar 23),
+-- Sprint 2: 52 tasks (47 planned at activation + 5 DevOps Foundations course 1/5)
 --           V13-131 added Mar 30 as scope creep
--- Sprint 3: 35 tasks planned at activation (Apr 13, all added day 1)
+-- Sprint 3: 40 tasks (35 planned at activation + 5 DevOps Foundations course 2/5)
 -- ===========================================================================
 UPDATE sprints
 SET planned_task_count = 46
 WHERE id = HEXTORAW('A4F9BF0579724468B818665F2FC03AA1');
 
 UPDATE sprints
-SET planned_task_count = 47
+SET planned_task_count = 52
 WHERE id = HEXTORAW('9E957AA9278043FDB4AAD86065F344F9');
 
 UPDATE sprints
-SET planned_task_count = 35
+SET planned_task_count = 40
 WHERE id = HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA');
 
 
