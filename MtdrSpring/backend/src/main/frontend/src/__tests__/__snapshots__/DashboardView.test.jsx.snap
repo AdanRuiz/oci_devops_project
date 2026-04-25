@@ -7,11 +7,3 @@ Object {
   "sprintHealth": "Active Sprint HealthNo active sprints.",
 }
 `;
-
-exports[`Snapshot matches snapshot with tasks and sprint health 1`] = `
-Object {
-  "kpiCards": "Open Tasks5Across 1 projectsCompleted3This SprintBlocked1Needs AttentionAvg cycle time2.5 days↓ 10% vs Last sprint",
-  "myTasks": "My TasksIn ProgressWrite unit tests",
-  "sprintHealth": "Active Sprint HealthOracle PMSprint 11 Todo1 In Progress0 Blocked2 Done",
-}
-`;

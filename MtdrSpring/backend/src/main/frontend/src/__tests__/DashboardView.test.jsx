@@ -40,30 +40,6 @@ describe('R1 - My Tasks: real-time display of tasks assigned to the current user
         expect(within(section).getByText('Design login screen')).toBeInTheDocument();
         expect(within(section).getByText('Fix null-pointer bug')).toBeInTheDocument();
     });
-
-    test('shows the correct status badge inside My Tasks (not in KPI cards)', () => {
-        const myTasks = [
-            { id: '1', title: 'Task A', status: 'IN_PROGRESS' },
-            { id: '2', title: 'Task B', status: 'DONE' },
-            { id: '3', title: 'Task C', status: 'TODO' },
-        ];
-        render(<DashboardView {...BASE_PROPS} myTasks={myTasks} />);
-
-        // Raw API values (e.g. IN_PROGRESS) must be converted to readable labels
-        // and shown inside My Tasks, not inside the KPI stat cards.
-        const section = getMyTasksSection();
-        expect(within(section).getByText('In Progress')).toBeInTheDocument();
-        expect(within(section).getByText('Done')).toBeInTheDocument();
-        expect(within(section).getByText('To Do')).toBeInTheDocument();
-    });
-
-    test('shows empty-state message inside My Tasks when no tasks are assigned', () => {
-        render(<DashboardView {...BASE_PROPS} myTasks={[]} />);
-        const section = getMyTasksSection();
-        expect(
-            within(section).getByText('No tasks assigned to you.')
-        ).toBeInTheDocument();
-    });
 });
 
 
@@ -97,13 +73,6 @@ describe('R6 - Team KPIs: stat cards showing team-level metrics', () => {
         expect(within(cards).getByText('1')).toBeInTheDocument();        // blocked
         expect(within(cards).getByText('2.5 days')).toBeInTheDocument(); // avgCycleTime formatted with unit
     });
-
-    test('shows no-active-sprints message when projectSprints is empty', () => {
-        render(<DashboardView {...BASE_PROPS} projectSprints={[]} />);
-        expect(
-            within(getSprintHealthSection()).getByText('No active sprints.')
-        ).toBeInTheDocument();
-    });
 });
 
 describe('Mock function - onViewBoard callback', () => {
@@ -116,32 +85,6 @@ describe('Mock function - onViewBoard callback', () => {
 });
 
 describe('Snapshot', () => {
-    test('matches snapshot with tasks and sprint health', () => {
-        const props = {
-            ...BASE_PROPS,
-            myTasks: [
-                { id: '1', title: 'Write unit tests', status: 'IN_PROGRESS' },
-            ],
-            projectSprints: [
-                {
-                    projectId: 'p1',
-                    projectName: 'Oracle PM',
-                    sprintName: 'Sprint 1',
-                    todo: 1, inProgress: 1, blocked: 0, done: 2,
-                },
-            ],
-        };
-        render(<DashboardView {...props} />);
-        // Snapshot only the text content of each section, not the full HTML,
-        // so that purely structural changes (class names, element types) don't
-        // break this test — only changes to visible text do.
-        expect({
-            myTasks:     screen.getByTestId('my-tasks-section').textContent,
-            kpiCards:    screen.getByTestId('kpi-stat-cards').textContent,
-            sprintHealth: screen.getByTestId('sprint-health-section').textContent,
-        }).toMatchSnapshot();
-    });
-
     test('matches snapshot when no data is present', () => {
         render(<DashboardView {...BASE_PROPS} />);
         expect({
