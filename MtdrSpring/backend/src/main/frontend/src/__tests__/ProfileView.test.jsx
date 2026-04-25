@@ -24,6 +24,8 @@ const MANAGER_PROPS = {
     inviteSuccess: false,
 };
 
+// Derived from MANAGER_PROPS — only the role-related fields differ, so we
+// don't repeat the full prop list twice.
 const DEVELOPER_PROPS = {
     ...MANAGER_PROPS,
     userEmail: 'bob.jones@oracle.com',
@@ -51,12 +53,15 @@ describe('R5 - Role-based dashboard: PROJECT_MANAGER', () => {
 
     test('shows a Remove button for each team member inside the members list', () => {
         render(<ProfileView {...MANAGER_PROPS} />);
+        // One Remove button per member — the count must match exactly.
         const removeButtons = within(getMembersList()).getAllByRole('button', { name: /remove/i });
         expect(removeButtons).toHaveLength(MEMBERS.length);
     });
 
     test('displays the PROJECT_MANAGER role label', () => {
         render(<ProfileView {...MANAGER_PROPS} />);
+        // The label can appear in multiple places (header, badge), so
+        // getAllByText is used and we only assert at least one is visible.
         const roleLabels = screen.getAllByText('PROJECT_MANAGER');
         expect(roleLabels.length).toBeGreaterThanOrEqual(1);
     });
@@ -65,6 +70,8 @@ describe('R5 - Role-based dashboard: PROJECT_MANAGER', () => {
 describe('R5 - Role-based dashboard: DEVELOPER', () => {
     test('does not show the Invite member section', () => {
         render(<ProfileView {...DEVELOPER_PROPS} />);
+        // queryByTestId returns null instead of throwing when the element is
+        // absent, which is what we need to assert "not present".
         expect(screen.queryByTestId('invite-section')).not.toBeInTheDocument();
     });
 
@@ -96,6 +103,8 @@ describe('Mock function - onInviteMember spy', () => {
 
         const inviteSection = getInviteSection();
         const input = within(inviteSection).getByPlaceholderText('colleague@oracle.com');
+        // Wrap userEvent in act so React flushes all state updates from each
+        // keystroke before the click assertion runs.
         await act(async () => {
             userEvent.type(input, 'new.dev@oracle.com');
         });
@@ -109,6 +118,7 @@ describe('Mock function - onInviteMember spy', () => {
 
     test('Send invite button is disabled when the email field is empty', () => {
         render(<ProfileView {...MANAGER_PROPS} />);
+        // Prevents submitting the form without an address typed in.
         const button = within(getInviteSection()).getByRole('button', { name: /send invite/i });
         expect(button).toBeDisabled();
     });
@@ -117,6 +127,7 @@ describe('Mock function - onInviteMember spy', () => {
 describe('Snapshots', () => {
     test('matches snapshot for the PROJECT_MANAGER view', () => {
         render(<ProfileView {...MANAGER_PROPS} />);
+        // Snapshot only text content so HTML restructuring doesn't break it.
         expect({
             inviteSection: screen.getByTestId('invite-section').textContent,
             membersList:   screen.getByTestId('members-list').textContent,

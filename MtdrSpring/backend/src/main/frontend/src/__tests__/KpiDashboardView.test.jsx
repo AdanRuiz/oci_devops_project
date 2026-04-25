@@ -3,10 +3,13 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import KpiDashboardView from '../views/kpi/KpiDashboardView';
 
-// ─── Module mock: recharts ────────────────────────────────────────────────────
+// recharts calls ResizeObserver internally, which doesn't exist in jsdom.
+// Replacing chart components with plain divs lets us still assert on data
+// passed to charts without crashing the test environment.
 jest.mock('recharts', () => ({
     ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
     BarChart: ({ children, data }) => (
+        // data-items exposes how many data points were passed, in case a test needs to assert on it.
         <div data-testid="bar-chart" data-items={data?.length}>{children}</div>
     ),
     Bar: () => null,
@@ -36,6 +39,8 @@ const DEV_STATS = [
     },
 ];
 
+// onSprintChange is a shared mock defined here; beforeEach clears it so call
+// counts from one test don't bleed into the next.
 const BASE_PROPS = {
     projectName: 'Oracle PM Tool',
     sprints: SPRINTS,
@@ -105,11 +110,15 @@ describe('Mock function - onSprintChange spy', () => {
     });
 
     test('jest.spyOn can observe calls to onSprintChange', () => {
+        // spyOn wraps an existing method so we can track calls without
+        // replacing the function reference passed to the component.
         const handlers = { onSprintChange: jest.fn() };
         const spy = jest.spyOn(handlers, 'onSprintChange');
 
         render(<KpiDashboardView {...BASE_PROPS} onSprintChange={handlers.onSprintChange} />);
-        
+
+        // Calling the handler manually confirms the spy records the right
+        // argument — this verifies the spy wiring, not a UI interaction.
         handlers.onSprintChange('s2');
 
         expect(spy).toHaveBeenCalledWith('s2');
@@ -120,6 +129,7 @@ describe('Mock function - onSprintChange spy', () => {
 describe('Snapshots', () => {
     test('matches snapshot with full developer stats loaded', () => {
         render(<KpiDashboardView {...BASE_PROPS} />);
+        // Snapshot only text content so HTML restructuring doesn't break it.
         expect({
             sprintTotals: screen.getByTestId('sprint-totals-card').textContent,
             yourStats:    screen.getByTestId('your-stats-card').textContent,

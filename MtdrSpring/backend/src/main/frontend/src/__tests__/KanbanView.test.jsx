@@ -3,7 +3,8 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import KanbanView from '../views/kanban/KanbanView';
 
-// ─── Module mock: recharts uses ResizeObserver
+// recharts calls ResizeObserver internally, which doesn't exist in jsdom.
+// Replacing with plain wrappers prevents the crash while still rendering children.
 jest.mock('recharts', () => ({
     ResponsiveContainer: ({ children }) => <div>{children}</div>,
     BarChart: ({ children }) => <div>{children}</div>,
@@ -31,6 +32,8 @@ const TASKS = [
     { id: 't4', title: 'Fix broken pipeline',    status: 'BLOCKED',     priority: 'HIGH',   assignee: { id: 'u2' } },
 ];
 
+// Shared mocks in BASE_PROPS accumulate calls across tests; beforeEach clears
+// them so each test starts with a clean call count.
 const BASE_PROPS = {
     projectName: 'Oracle PM Tool',
     sprints: SPRINTS,
@@ -52,6 +55,7 @@ describe('R1 - KanbanView: tasks displayed per assigned user', () => {
     test("shows alice's tasks under her row", () => {
         render(<KanbanView {...BASE_PROPS} />);
 
+        // Each task is scoped to its assignee's row so cross-user leaks are caught.
         const aliceRow = getAliceRow();
         expect(within(aliceRow).getByText('Build API layer')).toBeInTheDocument();
         expect(within(aliceRow).getByText('Write unit tests')).toBeInTheDocument();
@@ -68,6 +72,7 @@ describe('R1 - KanbanView: tasks displayed per assigned user', () => {
     test("task count badge reflects the number of tasks for that user", () => {
         render(<KanbanView {...BASE_PROPS} />);
 
+        // The badge renders the count in parentheses, e.g. "(2)".
         // alice has 2 tasks, bob has 2 tasks
         expect(within(getAliceRow()).getByText('(2)')).toBeInTheDocument();
         expect(within(getBobRow()).getByText('(2)')).toBeInTheDocument();
@@ -95,6 +100,7 @@ describe('Mock function - onTaskSelect spy', () => {
 describe('Snapshot', () => {
     test('matches snapshot with tasks for two users', () => {
         render(<KanbanView {...BASE_PROPS} />);
+        // Snapshot only text content so HTML restructuring doesn't break it.
         expect({
             alice: getAliceRow().textContent,
             bob: getBobRow().textContent,

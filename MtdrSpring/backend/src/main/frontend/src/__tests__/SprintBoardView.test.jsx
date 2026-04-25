@@ -3,7 +3,9 @@ import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SprintBoardView from '../views/sprints/SprintBoardView';
 
-// ─── Module mock: @dnd-kit/core ───────────────────────────────────────────────
+// @dnd-kit relies on pointer events and layout APIs that don't exist in jsdom.
+// The mock replaces DndContext with a plain wrapper and captures the onDragEnd
+// callback in a global so tests can fire drags programmatically.
 jest.mock('@dnd-kit/core', () => ({
     DndContext: function DndContext({ children, onDragEnd }) {
         global.__dndOnDragEnd = onDragEnd;
@@ -41,6 +43,8 @@ const TASKS = [
     { id: 't5', title: 'Deploy to staging',       status: 'DONE',        priority: 'MEDIUM', assignee: { id: 'u1', email: 'dev1@oracle.com' } },
 ];
 
+// onCreateTask / onLogWork must return a resolved promise so the component
+// doesn't get stuck waiting for an async result after the test ends.
 const HANDLERS = {
     onBack: jest.fn(),
     onTaskSelect: jest.fn(),
@@ -57,6 +61,8 @@ function getLogHoursDialog()    { return screen.getByTestId('log-hours-dialog');
 
 beforeEach(() => {
     jest.clearAllMocks();
+    // Reset the captured drag callback so a leftover from a previous test
+    // can't accidentally be triggered.
     global.__dndOnDragEnd = null;
 });
 
@@ -80,10 +86,12 @@ describe('R4 - Marking a task as completed', () => {
     test('dragging a task to DONE opens the Log Hours dialog', async () => {
         render(<SprintBoardView sprint={SPRINT} tasks={TASKS} members={MEMBERS} projectId="p1" {...HANDLERS} />);
 
+        // Fire the captured onDragEnd callback to simulate dropping t1 onto DONE.
         await act(async () => {
             global.__dndOnDragEnd({ active: { id: 't1' }, over: { id: 'DONE' } });
         });
 
+        // The dialog appears asynchronously after React processes the drop.
         await waitFor(() => expect(getLogHoursDialog()).toBeInTheDocument());
     });
 
@@ -114,6 +122,8 @@ describe('R4 - Marking a task as completed', () => {
 
         await act(async () => { userEvent.click(within(getLogHoursDialog()).getByRole('button', { name: /cancel/i })); });
 
+        // queryByTestId returns null instead of throwing, suitable when we
+        // expect the element to be gone.
         await waitFor(() => expect(screen.queryByTestId('log-hours-dialog')).not.toBeInTheDocument());
         expect(HANDLERS.onStatusChange).not.toHaveBeenCalled();
         expect(HANDLERS.onLogWork).not.toHaveBeenCalled();
@@ -139,6 +149,7 @@ describe('Mock function - onTaskSelect spy', () => {
 describe('Snapshot', () => {
     test('matches snapshot for an empty sprint board', () => {
         render(<SprintBoardView sprint={SPRINT} tasks={[]} members={MEMBERS} projectId="p1" {...HANDLERS} />);
+        // Snapshot only text content so HTML restructuring doesn't break it.
         expect({
             todo:       screen.getByTestId('column-TODO').textContent,
             inProgress: screen.getByTestId('column-IN_PROGRESS').textContent,

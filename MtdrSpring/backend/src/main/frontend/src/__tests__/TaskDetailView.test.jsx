@@ -61,6 +61,7 @@ describe('R3 - Completed task: minimum required information', () => {
         render(
             <TaskDetailView task={TASK} history={[]} logs={[]} onBack={jest.fn()} />
         );
+        // Scoped to the sidebar so the email appearing elsewhere doesn't satisfy this.
         expect(
             within(getSidebar()).getByText('alice.smith@oracle.com')
         ).toBeInTheDocument();
@@ -70,6 +71,7 @@ describe('R3 - Completed task: minimum required information', () => {
         render(
             <TaskDetailView task={TASK} history={[]} logs={LOGS} onBack={jest.fn()} />
         );
+        // Hours are formatted with one decimal place and a unit suffix.
         expect(within(getWorkLogs()).getByText('4.0 hrs')).toBeInTheDocument();
     });
 
@@ -79,6 +81,8 @@ describe('R3 - Completed task: minimum required information', () => {
         );
         const sidebar = getSidebar();
         expect(within(sidebar).getByText('Completed')).toBeInTheDocument();
+        // The ISO timestamp is displayed as a human-readable date; the regex
+        // is flexible enough to match locale-specific formatting.
         expect(within(sidebar).getByText(/Mar 5, 2024/i)).toBeInTheDocument();
     });
 });
@@ -91,6 +95,9 @@ describe('R2 - State changes: history timeline', () => {
         const historyCard = getStateHistory();
         // TODO → IN_PROGRESS → DONE
         expect(within(historyCard).getByText('To Do')).toBeInTheDocument();
+        // Each transition row shows both a from and a to status label, so
+        // "In Progress" and "Done" can appear more than once — getAllByText
+        // handles that without failing on multiple matches.
         expect(within(historyCard).getAllByText('In Progress').length).toBeGreaterThanOrEqual(1);
         expect(within(historyCard).getAllByText('Done').length).toBeGreaterThanOrEqual(1);
     });
@@ -99,6 +106,7 @@ describe('R2 - State changes: history timeline', () => {
         render(
             <TaskDetailView task={TASK} history={HISTORY} logs={[]} onBack={jest.fn()} />
         );
+        // Alice made both transitions, so her email appears once per row.
         const emails = within(getStateHistory()).getAllByText(/alice\.smith@oracle\.com/i);
         expect(emails.length).toBeGreaterThanOrEqual(1);
     });
@@ -120,6 +128,7 @@ describe('Mock function - onBack spy', () => {
 describe('Snapshot', () => {
     test('matches snapshot when task has no history or logs', () => {
         render(<TaskDetailView task={TASK} history={[]} logs={[]} onBack={jest.fn()} />);
+        // Snapshot only text content so HTML restructuring doesn't break it.
         expect({
             sidebar:  screen.getByTestId('task-details-sidebar').textContent,
             history:  screen.getByTestId('state-history').textContent,
