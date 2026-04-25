@@ -157,7 +157,7 @@ export default function KpiDashboardView({
                 <>
                     {/* Row 1: Sprint totals + Per-dev averages */}
                     <Grid container spacing="28px" sx={{ mb: '28px' }}>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={6} data-testid="sprint-totals-card">
                             <ChartCard title="Sprint Totals">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>
@@ -170,7 +170,7 @@ export default function KpiDashboardView({
                             </ChartCard>
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={6} data-testid="your-stats-card">
                             <ChartCard title="Your Stats">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>

@@ -197,7 +197,7 @@ export default function ProfileView({
 
                     {/* Invite section — managers only */}
                     {isManager && (
-                        <>
+                        <Box data-testid="invite-section">
                             <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
                                 Invite member
                             </Typography>
@@ -226,7 +226,7 @@ export default function ProfileView({
                                     {isInviting ? 'Sending…' : 'Send invite'}
                                 </Button>
                             </Box>
-                        </>
+                        </Box>
                     )}
 
                     {/* Members list */}
@@ -246,7 +246,7 @@ export default function ProfileView({
                         </Typography>
                     )}
 
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Box data-testid="members-list" sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {members.map(m => (
                             <MemberCard
                                 key={getMemberId(m)}

@@ -193,7 +193,7 @@ export default function TaskDetailView({ task, history, logs, onBack }) {
                 {/* Left — main content */}
                 <Grid item xs={12} md={8}>
                     {/* State History */}
-                    <Card sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#fbf9f8', mb: '20px' }}>
+                    <Card data-testid="state-history" sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#fbf9f8', mb: '20px' }}>
                         <CardContent sx={{ p: '20px !important' }}>
                             <SectionTitle>State History</SectionTitle>
                             <HistoryTimeline history={history} />
@@ -201,7 +201,7 @@ export default function TaskDetailView({ task, history, logs, onBack }) {
                     </Card>
 
                     {/* Work Logs */}
-                    <Card sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#fbf9f8' }}>
+                    <Card data-testid="work-logs" sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#fbf9f8' }}>
                         <CardContent sx={{ p: '20px !important' }}>
                             <WorkLogSection logs={logs} />
                         </CardContent>
@@ -210,7 +210,7 @@ export default function TaskDetailView({ task, history, logs, onBack }) {
 
                 {/* Right, metadata sidebar */}
                 <Grid item xs={12} md={4}>
-                    <Card sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#fbf9f8' }}>
+                    <Card data-testid="task-details-sidebar" sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#fbf9f8' }}>
                         <CardContent sx={{ p: '20px !important' }}>
                             <SectionTitle accent="#9C27B0">Details</SectionTitle>
 

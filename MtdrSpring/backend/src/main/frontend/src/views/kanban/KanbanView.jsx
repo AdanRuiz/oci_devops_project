@@ -66,7 +66,7 @@ function UserRow({ user, tasks, onTaskSelect }) {
     const totalTasks = tasks.length;
 
     return (
-        <Box sx={{ mb: '32px' }}>
+        <Box sx={{ mb: '32px' }} data-testid={`user-row-${user.id}`}>
             {/* User name */}
             <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: '#1A1A1A', mb: '12px' }}>
                 {userName}{' '}

@@ -97,7 +97,7 @@ function DroppableColumn({ status, tasks, onTaskSelect, isOver }) {
     const { setNodeRef } = useDroppable({ id: status });
 
     return (
-        <Box>
+        <Box data-testid={`column-${status}`}>
             {/* Column header */}
             <Card sx={{
                 border: '1px solid #E8E8E8',
@@ -187,7 +187,7 @@ function AddTaskDialog({ open, members, sprintId, projectId, onClose, onSubmit }
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" data-testid="add-task-dialog">
             <DialogTitle sx={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>
                 Add Task
             </DialogTitle>
@@ -291,7 +291,7 @@ function LogHoursDialog({ open, taskTitle, onClose, onConfirm }) {
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs" data-testid="log-hours-dialog">
             <DialogTitle sx={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>
                 Log Hours
             </DialogTitle>

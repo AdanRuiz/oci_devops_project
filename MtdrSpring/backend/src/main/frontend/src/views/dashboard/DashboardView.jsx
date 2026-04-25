@@ -219,7 +219,7 @@ export default function DashboardView({
             </Box>
 
             {/* KPI stat cards */}
-            <Grid container spacing="12px" sx={{ mb: '40px' }}>
+            <Grid container spacing="12px" sx={{ mb: '40px' }} data-testid="kpi-stat-cards">
                 <Grid item xs={6} md={3}>
                     <StatCard
                         label="Open Tasks"
@@ -261,7 +261,7 @@ export default function DashboardView({
             {/* Active Sprint Health + My Tasks */}
             <Grid container spacing="28px" alignItems="flex-start">
                 {/* Left */}
-                <Grid item xs={12} md={7}>
+                <Grid item xs={12} md={7} data-testid="sprint-health-section">
                     <Box sx={{ mb: '17px' }}>
                         <SectionTitle>Active Sprint Health</SectionTitle>
                     </Box>
@@ -284,7 +284,7 @@ export default function DashboardView({
                 </Grid>
 
                 {/* Right */}
-                <Grid item xs={12} md={5}>
+                <Grid item xs={12} md={5} data-testid="my-tasks-section">
                     <Box sx={{ mb: '19px' }}>
                         <SectionTitle>My Tasks</SectionTitle>
                     </Box>
