@@ -4,21 +4,14 @@ import { useTask, useTaskHistory, useTaskWorkLogs } from '../models/hooks/useTas
 import TaskDetailView from '../views/tasks/TaskDetailView';
 
 export default function TaskDetailController() {
-    const { taskId } = useParams();
-    const navigate = useNavigate();
+  const { taskId } = useParams();
+  const navigate = useNavigate();
 
-    const { data: task, isLoading } = useTask(taskId);
-    const { data: history = [] } = useTaskHistory(taskId);
-    const { data: logs = [] } = useTaskWorkLogs(taskId);
+  const { data: task, isLoading } = useTask(taskId);
+  const { data: history = [] } = useTaskHistory(taskId);
+  const { data: logs = [] } = useTaskWorkLogs(taskId);
 
-    if (isLoading) return <CircularProgress />;
+  if (isLoading) return <CircularProgress />;
 
-    return (
-        <TaskDetailView
-            task={task}
-            history={history}
-            logs={logs}
-            onBack={() => navigate(-1)}
-        />
-    );
+  return <TaskDetailView task={task} history={history} logs={logs} onBack={() => navigate(-1)} />;
 }
