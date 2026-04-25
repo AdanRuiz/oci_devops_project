@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshots matches snapshot with full developer stats loaded 1`] = `
+Object {
+  "sprintTotals": "Sprint TotalsTotal Tasks8All tasks assigned this sprintTotal Real Hours56.5Sum of hours logged by all developers",
+  "yourStats": "Your StatsTasks Completed4Tasks you completed this sprintHours Logged32.0Hours you logged this sprint",
+}
+`;

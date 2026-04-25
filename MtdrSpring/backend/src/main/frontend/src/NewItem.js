@@ -9,9 +9,8 @@
  * @author  jean.de.lavarene@oracle.com
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-
 
 function NewItem(props) {
   const [item, setItem] = useState('');
@@ -22,7 +21,7 @@ function NewItem(props) {
     }
     // addItem makes the REST API call:
     props.addItem(item);
-    setItem("");
+    setItem('');
     e.preventDefault();
   }
   function handleChange(e) {
@@ -30,33 +29,33 @@ function NewItem(props) {
   }
   return (
     <div id="newinputform">
-    <form>
-      <input
-        id="newiteminput"
-        placeholder="New item"
-        type="text"
-        autoComplete="off"
-        value={item}
-        onChange={handleChange}
-        // No need to click on the "ADD" button to add a todo item. You
-        // can simply press "Enter":
-        onKeyDown={event => {
-          if (event.key === 'Enter') {
-            handleSubmit(event);
-          }
-        }}
-      />
-      <span>&nbsp;&nbsp;</span>
-      <Button
-        className="AddButton"
-        variant="contained"
-        disabled={props.isInserting}
-        onClick={!props.isInserting ? handleSubmit : null}
-        size="small"
-      >
-        {props.isInserting ? 'Adding…' : 'Add'}
-      </Button>
-    </form>
+      <form>
+        <input
+          id="newiteminput"
+          placeholder="New item"
+          type="text"
+          autoComplete="off"
+          value={item}
+          onChange={handleChange}
+          // No need to click on the "ADD" button to add a todo item. You
+          // can simply press "Enter":
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              handleSubmit(event);
+            }
+          }}
+        />
+        <span>&nbsp;&nbsp;</span>
+        <Button
+          className="AddButton"
+          variant="contained"
+          disabled={props.isInserting}
+          onClick={!props.isInserting ? handleSubmit : null}
+          size="small"
+        >
+          {props.isInserting ? 'Adding…' : 'Add'}
+        </Button>
+      </form>
     </div>
   );
 }

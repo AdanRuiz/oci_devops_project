@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot matches snapshot for an empty sprint board 1`] = `
+Object {
+  "blocked": "Blocked0No tasks",
+  "done": "Done0No tasks",
+  "inProgress": "In Progress0No tasks",
+  "todo": "To Do0No tasks",
+}
+`;
+

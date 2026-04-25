@@ -6,23 +6,27 @@ import { fetchMe } from './api/usersApi';
 const CurrentUserContext = createContext(null);
 
 export function CurrentUserProvider({ children }) {
-    const auth = useAuth();
+  const auth = useAuth();
 
-    const { data: currentUser, isLoading, error } = useQuery({
-        queryKey: ['users', 'me'],
-        queryFn: fetchMe,
-        enabled: auth.isAuthenticated,
-        staleTime: 5 * 60_000,
-        retry: 1,
-    });
+  const {
+    data: currentUser,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['users', 'me'],
+    queryFn: fetchMe,
+    enabled: auth.isAuthenticated,
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
 
-    return (
-        <CurrentUserContext.Provider value={{ currentUser: currentUser ?? null, isLoading, error }}>
-            {children}
-        </CurrentUserContext.Provider>
-    );
+  return (
+    <CurrentUserContext.Provider value={{ currentUser: currentUser ?? null, isLoading, error }}>
+      {children}
+    </CurrentUserContext.Provider>
+  );
 }
 
 export function useCurrentUser() {
-    return useContext(CurrentUserContext);
+  return useContext(CurrentUserContext);
 }
