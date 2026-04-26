@@ -112,15 +112,44 @@ public class ToDoItemService {
     /** Updates only the status column. Runs in a transaction so lazy fields are never touched. */
     @Transactional
     public Task patchStatus(UUID id, TaskStatus status, User actor) {
+        return patchStatus(id, status, actor, ChangeSource.WEB);
+    }
+    
+    @Transactional
+    public Task patchStatus(UUID id, TaskStatus status, User actor, ChangeSource source) {
         Task task = toDoItemRepository.findById(id).orElse(null);
         if (task == null) return null;
 
         if (actor != null) {
             String hexId = actor.getId().toString().replace("-", "");
-            jdbcTemplate.update("BEGIN app_ctx.set_actor(HEXTORAW(?), ?); END;", hexId, ChangeSource.WEB.name());
+            String src = (source != null ? source : ChangeSource.WEB).name();
+            jdbcTemplate.update("BEGIN app_ctx.set_actor(HEXTORAW(?), ?); END;", hexId, src);
         }
 
         task.setStatus(status);
+        return toDoItemRepository.save(task);
+    }
+
+    /**
+     * Bot-specific helper that updates status and optionally assigns the task to a sprint
+     * inside a single transaction.
+     */
+    @Transactional
+    public Task patchStatusAndSprint(UUID id, TaskStatus status, Sprint sprint, User actor, ChangeSource source) {
+        Task task = toDoItemRepository.findById(id).orElse(null);
+        if (task == null) return null;
+
+        if (actor != null) {
+            String hexId = actor.getId().toString().replace("-", "");
+            String src = (source != null ? source : ChangeSource.WEB).name();
+            jdbcTemplate.update("BEGIN app_ctx.set_actor(HEXTORAW(?), ?); END;", hexId, src);
+        }
+
+        task.setStatus(status);
+        if (sprint != null && task.getSprint() == null) {
+            task.setSprint(sprint);
+        }
+
         return toDoItemRepository.save(task);
     }
 

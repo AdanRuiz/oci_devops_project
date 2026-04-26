@@ -9,7 +9,14 @@ import com.springboot.MyTodoList.model.ProjectMember;
 import com.springboot.MyTodoList.repository.UserRepository;
 import com.springboot.MyTodoList.repository.ProjectMemberRepository;
 import com.springboot.MyTodoList.repository.ProjectRepository;
+import com.springboot.MyTodoList.repository.TaskWorkLogRepository;
+import com.springboot.MyTodoList.repository.SprintRepository;
+import com.springboot.MyTodoList.model.Sprint;
+import com.springboot.MyTodoList.model.SprintStatus;
+import com.springboot.MyTodoList.model.TaskWorkLog;
 import com.springboot.MyTodoList.service.DeepSeekService;
+import java.time.LocalDate;
+import java.math.BigDecimal;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.telegram.TelegramLinkService;
 import java.util.ArrayList;
@@ -37,8 +44,10 @@ public class BotActions {
     UserRepository userRepository;
     ProjectMemberRepository projectMemberRepository;
     ProjectRepository projectRepository;
+    TaskWorkLogRepository taskWorkLogRepository;
+    SprintRepository sprintRepository;
 
-    public BotActions(TelegramClient tc, ToDoItemService ts, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr) {
+    public BotActions(TelegramClient tc, ToDoItemService ts, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
         telegramClient = tc;
         todoService = ts;
         deepSeekService = ds;
@@ -46,7 +55,34 @@ public class BotActions {
         userRepository = ur;
         projectMemberRepository = pmr;
         projectRepository = pr;
+        taskWorkLogRepository = twlr;
+        sprintRepository = sr;
         exit = false;
+    }
+
+    private Sprint getActiveSprint(UUID projectId) {
+        List<Sprint> activeSprints = sprintRepository.findByProject_IdAndStatus(projectId, SprintStatus.ACTIVE);
+        LocalDate today = LocalDate.now();
+
+        if (activeSprints.isEmpty()) {
+            List<Sprint> allSprints = sprintRepository.findByProject_Id(projectId);
+            if (allSprints.isEmpty()) return null;
+            return allSprints.stream()
+                .min(java.util.Comparator.comparingLong(s -> Math.abs(s.getStartDate().toEpochDay() - today.toEpochDay())))
+                .orElse(allSprints.get(0));
+        }
+
+        if (activeSprints.size() == 1) return activeSprints.get(0);
+        
+        List<Sprint> currentSprints = activeSprints.stream()
+            .filter(s -> !today.isBefore(s.getStartDate()) && !today.isAfter(s.getEndDate()))
+            .collect(Collectors.toList());
+            
+        if (currentSprints.size() == 1) return currentSprints.get(0);
+        
+        return activeSprints.stream()
+            .min(java.util.Comparator.comparingLong(s -> Math.abs(s.getStartDate().toEpochDay() - today.toEpochDay())))
+            .orElse(activeSprints.get(0));
     }
 
     public void setRequestText(String cmd) { requestText = cmd; }
@@ -95,7 +131,9 @@ public class BotActions {
                          "/help - Show available commands\n" +
                          "/status - Get a quick summary of tasks\n" +
                          "/create <title> - Create a new task (e.g. /create Fix DB bug)\n" +
-                         "/delete <title> - Delete a task by matching title";
+                         "/delete <title> - Delete a task by matching title\n" +
+                         "/updatestatus <IN_PROGRESS/BLOCKED/DONE> <task title> - Update task status\n" +
+                         "/loghours <hours> <task title> - Log hours worked on a task";
         BotHelper.sendMessageToTelegram(chatId, helpMsg, telegramClient);
         exit = true;
     }
@@ -133,7 +171,7 @@ public class BotActions {
         long blocked = tasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
         long done = tasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
         
-        String msg = String.format("📊 Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d", 
+        String msg = String.format("Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d", 
                                    project.getName(), todo, inProgress, blocked, done);
         BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
         exit = true;
@@ -171,9 +209,12 @@ public class BotActions {
             return;
         }
 
+        Sprint sprint = getActiveSprint(project.getId());
+
         Task t = new Task();
         t.setTitle(title);
         t.setProject(project);
+        t.setSprint(sprint);
         t.setCreatedBy(user);
         t.setAssignee(user);
         t.setPriority(TaskPriority.MEDIUM);
@@ -181,10 +222,11 @@ public class BotActions {
         
         try {
             todoService.addToDoItem(t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
-            BotHelper.sendMessageToTelegram(chatId, "✅ Task created successfully:\n" + title, telegramClient);
+            String location = sprint != null ? "sprint '" + sprint.getName() + "'" : "backlog";
+            BotHelper.sendMessageToTelegram(chatId, "✅ Task created successfully in " + location + ":\n" + title, telegramClient);
         } catch (Exception e) {
             logger.error("Failed to create task", e);
-            BotHelper.sendMessageToTelegram(chatId, "❌ Failed to create task due to a server error.", telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "Failed to create task due to a server error.", telegramClient);
         }
         exit = true;
     }
@@ -227,10 +269,133 @@ public class BotActions {
         } else {
             boolean deleted = todoService.deleteToDoItem(matchingTasks.get(0).getId());
             if (deleted) {
-                BotHelper.sendMessageToTelegram(chatId, "✅ Task deleted successfully.", telegramClient);
+                BotHelper.sendMessageToTelegram(chatId, "Task deleted successfully.", telegramClient);
             } else {
-                BotHelper.sendMessageToTelegram(chatId, "❌ Failed to delete task due to an error.", telegramClient);
+                BotHelper.sendMessageToTelegram(chatId, "Failed to delete task due to an error.", telegramClient);
             }
+        }
+        exit = true;
+    }
+
+    public void fnUpdateStatus() {
+        if (exit || requestText == null || !requestText.toLowerCase().startsWith("/updatestatus")) return;
+
+        try {
+            User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
+            if (user == null) {
+                BotHelper.sendMessageToTelegram(chatId, "Please /link your account first.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            String[] parts = requestText.trim().split("\\s+", 3);
+            if (parts.length < 3) {
+                BotHelper.sendMessageToTelegram(chatId, "Usage: /updatestatus <IN_PROGRESS|BLOCKED|DONE|TODO> <task title>", telegramClient);
+                exit = true;
+                return;
+            }
+
+            String statusStr = parts[1].toUpperCase();
+            String title = parts[2].trim();
+            TaskStatus newStatus;
+            try {
+                newStatus = TaskStatus.valueOf(statusStr);
+            } catch (IllegalArgumentException e) {
+                BotHelper.sendMessageToTelegram(chatId, "Invalid status. Use TODO, IN_PROGRESS, BLOCKED, or DONE.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+            if (memberships.isEmpty()) {
+                BotHelper.sendMessageToTelegram(chatId, "You have no projects.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            UUID projectId = memberships.get(0).getProject().getId();
+            Sprint activeSprint = getActiveSprint(projectId);
+
+            List<Task> matchingTasks = todoService.findByProjectId(projectId).stream()
+                .filter(t -> t.getTitle().equalsIgnoreCase(title))
+                .collect(Collectors.toList());
+
+            if (matchingTasks.isEmpty()) {
+                BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+            } else if (matchingTasks.size() > 1) {
+                BotHelper.sendMessageToTelegram(chatId, "Multiple tasks found with that title, please use web UI.", telegramClient);
+            } else {
+                Task t = matchingTasks.get(0);
+                boolean assignedToSprint = t.getSprint() == null && activeSprint != null;
+                todoService.patchStatusAndSprint(t.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+
+                String msg = "✅ Task status updated to " + newStatus;
+                if (assignedToSprint) {
+                    msg += " in sprint '" + activeSprint.getName() + "'";
+                }
+                BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to update task status for chatId={}", chatId, e);
+            BotHelper.sendMessageToTelegram(chatId, "Failed to update task status due to a server error.", telegramClient);
+        }
+
+        exit = true;
+    }
+
+    public void fnLogHours() {
+        if (!requestText.startsWith("/loghours ") || exit) return;
+        
+        User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
+        if (user == null) {BotHelper.sendMessageToTelegram(chatId, "Please /link your account first.", telegramClient); exit = true; return;}
+        
+        String[] parts = requestText.split(" ", 3);
+        if (parts.length < 3) {
+            BotHelper.sendMessageToTelegram(chatId, "Usage: /loghours <hours> <task title>", telegramClient);
+            exit = true; return;
+        }
+        
+        double hours;
+        try {
+            hours = Double.parseDouble(parts[1]);
+            if (hours <= 0 || hours > 100) throw new NumberFormatException();
+        } catch(NumberFormatException e) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid hours. Must be a number between 0.1 and 100.", telegramClient);
+            exit = true; return;
+        }
+
+        String title = parts[2].trim();
+        List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+        if (memberships.isEmpty()) {BotHelper.sendMessageToTelegram(chatId, "You have no projects.", telegramClient); exit = true; return;}
+        
+        UUID projectId = memberships.get(0).getProject().getId();
+        Sprint activeSprint = getActiveSprint(projectId);
+        
+        
+        List<Task> matchingTasks = todoService.findByProjectId(projectId).stream()
+            .filter(t -> t.getTitle().equalsIgnoreCase(title))
+            .collect(Collectors.toList());
+            
+        if (matchingTasks.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+        } else if (matchingTasks.size() > 1) {
+            BotHelper.sendMessageToTelegram(chatId, "Multiple tasks found.", telegramClient);
+        } else {
+            Task t = matchingTasks.get(0);
+            
+            // Move to active sprint if it is logged without a sprint
+            if (t.getSprint() == null && activeSprint != null) {
+                t.setSprint(activeSprint);
+                todoService.updateToDoItem(t.getId(), t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+            }
+            
+            TaskWorkLog log = new TaskWorkLog();
+            log.setTask(t);
+            log.setUser(user);
+            log.setWorkDate(LocalDate.now());
+            log.setHoursWorked(BigDecimal.valueOf(hours));
+            taskWorkLogRepository.save(log);
+            BotHelper.sendMessageToTelegram(chatId, "Logged " + hours + " hours to task: " + title, telegramClient);
         }
         exit = true;
     }

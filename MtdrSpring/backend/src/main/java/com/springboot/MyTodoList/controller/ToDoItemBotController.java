@@ -8,6 +8,8 @@ import com.springboot.MyTodoList.util.BotActions;
 import com.springboot.MyTodoList.repository.UserRepository;
 import com.springboot.MyTodoList.repository.ProjectMemberRepository;
 import com.springboot.MyTodoList.repository.ProjectRepository;
+import com.springboot.MyTodoList.repository.TaskWorkLogRepository;
+import com.springboot.MyTodoList.repository.SprintRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,8 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
         private UserRepository userRepository;
         private ProjectMemberRepository projectMemberRepository;
         private ProjectRepository projectRepository;
+        private TaskWorkLogRepository taskWorkLogRepository;
+        private SprintRepository sprintRepository;
         private final TelegramClient telegramClient;
 
         private final BotProps botProps;
@@ -51,7 +55,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
     }
 
 
-        public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr) {
+        public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
                 this.botProps = bp;
                 telegramClient = new OkHttpTelegramClient(getBotToken());
                 toDoItemService = tsvc;
@@ -60,6 +64,8 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 userRepository = ur;
                 projectMemberRepository = pmr;
                 projectRepository = pr;
+                taskWorkLogRepository = twlr;
+                sprintRepository = sr;
         }
 
         @Override
@@ -77,7 +83,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 String messageTextFromTelegram = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
 
-                BotActions actions = new BotActions(telegramClient, toDoItemService, deepSeekService, telegramLinkService, userRepository, projectMemberRepository, projectRepository);
+                BotActions actions = new BotActions(telegramClient, toDoItemService, deepSeekService, telegramLinkService, userRepository, projectMemberRepository, projectRepository, taskWorkLogRepository, sprintRepository);
                 actions.setRequestText(messageTextFromTelegram);
                 actions.setChatId(chatId);
 
@@ -87,6 +93,8 @@ actions.fnStart();
                 actions.fnCreate();
                 actions.fnStatus();
                 actions.fnDeleteCommand();
+                actions.fnUpdateStatus();
+                actions.fnLogHours();
 		actions.fnListAll();
 		actions.fnAddItem();
 		actions.fnLLM();
