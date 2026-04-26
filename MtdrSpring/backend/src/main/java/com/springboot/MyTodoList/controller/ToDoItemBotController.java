@@ -1,7 +1,7 @@
 package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.config.BotProps;
-import com.springboot.MyTodoList.service.DeepSeekService;
+import com.springboot.MyTodoList.service.GeminiService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.telegram.TelegramLinkService;
 import com.springboot.MyTodoList.util.BotActions;
@@ -30,7 +30,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 
         private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
         private ToDoItemService toDoItemService;
-        private DeepSeekService deepSeekService;
+        private GeminiService geminiService;
         private TelegramLinkService telegramLinkService;
         private UserRepository userRepository;
         private ProjectMemberRepository projectMemberRepository;
@@ -55,11 +55,11 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
     }
 
 
-        public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
+        public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
                 this.botProps = bp;
                 telegramClient = new OkHttpTelegramClient(getBotToken());
                 toDoItemService = tsvc;
-                deepSeekService = ds;
+            geminiService = gs;
                 telegramLinkService = tls;
                 userRepository = ur;
                 projectMemberRepository = pmr;
@@ -83,7 +83,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 String messageTextFromTelegram = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
 
-                BotActions actions = new BotActions(telegramClient, toDoItemService, deepSeekService, telegramLinkService, userRepository, projectMemberRepository, projectRepository, taskWorkLogRepository, sprintRepository);
+                BotActions actions = new BotActions(telegramClient, toDoItemService, geminiService, telegramLinkService, userRepository, projectMemberRepository, projectRepository, taskWorkLogRepository, sprintRepository);
                 actions.setRequestText(messageTextFromTelegram);
                 actions.setChatId(chatId);
 
