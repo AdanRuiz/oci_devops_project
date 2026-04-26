@@ -130,7 +130,7 @@ public class BotActions {
                          "/link <code> - Link your Telegram account\n" +
                          "/help - Show available commands\n" +
                          "/status [sprint name | task title] - Get project summary, sprint summary, or task status\n" +
-                         "/create <title> - Create a new task (e.g. /create Fix DB bug)\n" +
+                         "/create <title> | <LOW|MEDIUM|HIGH> - Create a task with priority (e.g. /create Fix DB bug | HIGH)\n" +
                          "/delete <title> - Delete a task by matching title\n" +
                          "/updatestatus <IN_PROGRESS/BLOCKED/DONE> <task title> - Update task status\n" +
                          "/loghours <hours> <task title> - Log hours worked on a task";
@@ -242,9 +242,36 @@ public class BotActions {
             return;
         }
         
-        String title = requestText.substring(7).trim();
-        if (title.isEmpty()) {
-            BotHelper.sendMessageToTelegram(chatId, "Usage: /create <task title>", telegramClient);
+        String createArgs = requestText.substring(7).trim();
+        if (createArgs.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "Usage: /create <task title> | <LOW|MEDIUM|HIGH>", telegramClient);
+            exit = true;
+            return;
+        }
+
+        String title = createArgs;
+        TaskPriority priority = TaskPriority.MEDIUM;
+
+        if (createArgs.contains("|")) {
+            String[] createParts = createArgs.split("\\|", 2);
+            title = createParts[0].trim();
+            String priorityRaw = createParts[1].trim().toUpperCase();
+
+            if (title.isEmpty()) {
+                BotHelper.sendMessageToTelegram(chatId, "Task title cannot be empty.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            try {
+                priority = TaskPriority.valueOf(priorityRaw);
+            } catch (IllegalArgumentException e) {
+                BotHelper.sendMessageToTelegram(chatId, "Invalid priority. Use LOW, MEDIUM, or HIGH.", telegramClient);
+                exit = true;
+                return;
+            }
+        } else if (title.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "Task title cannot be empty.", telegramClient);
             exit = true;
             return;
         }
@@ -272,13 +299,13 @@ public class BotActions {
         t.setSprint(sprint);
         t.setCreatedBy(user);
         t.setAssignee(user);
-        t.setPriority(TaskPriority.MEDIUM);
+        t.setPriority(priority);
         t.setStatus(TaskStatus.TODO);
         
         try {
             todoService.addToDoItem(t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
             String location = sprint != null ? "sprint '" + sprint.getName() + "'" : "backlog";
-            BotHelper.sendMessageToTelegram(chatId, "✅ Task created successfully in " + location + ":\n" + title, telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "✅ Task created successfully in " + location + " with priority " + priority + ":\n" + title, telegramClient);
         } catch (Exception e) {
             logger.error("Failed to create task", e);
             BotHelper.sendMessageToTelegram(chatId, "Failed to create task due to a server error.", telegramClient);
