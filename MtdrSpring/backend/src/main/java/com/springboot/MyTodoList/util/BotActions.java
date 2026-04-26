@@ -14,7 +14,7 @@ import com.springboot.MyTodoList.repository.SprintRepository;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.SprintStatus;
 import com.springboot.MyTodoList.model.TaskWorkLog;
-import com.springboot.MyTodoList.service.DeepSeekService;
+import com.springboot.MyTodoList.service.GeminiService;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import com.springboot.MyTodoList.service.ToDoItemService;
@@ -39,7 +39,7 @@ public class BotActions {
     boolean exit;
 
     ToDoItemService todoService;
-    DeepSeekService deepSeekService;
+    GeminiService geminiService;
     TelegramLinkService telegramLinkService;
     UserRepository userRepository;
     ProjectMemberRepository projectMemberRepository;
@@ -47,10 +47,10 @@ public class BotActions {
     TaskWorkLogRepository taskWorkLogRepository;
     SprintRepository sprintRepository;
 
-    public BotActions(TelegramClient tc, ToDoItemService ts, DeepSeekService ds, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
+    public BotActions(TelegramClient tc, ToDoItemService ts, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
         telegramClient = tc;
         todoService = ts;
-        deepSeekService = ds;
+        geminiService = gs;
         telegramLinkService = tls;
         userRepository = ur;
         projectMemberRepository = pmr;
@@ -90,8 +90,8 @@ public class BotActions {
     public void setTelegramClient(TelegramClient tc) { telegramClient = tc; }
     public void setTodoService(ToDoItemService tsvc) { todoService = tsvc; }
     public ToDoItemService getTodoService() { return todoService; }
-    public void setDeepSeekService(DeepSeekService dssvc) { deepSeekService = dssvc; }
-    public DeepSeekService getDeepSeekService() { return deepSeekService; }
+    public void setGeminiService(GeminiService gsvc) { geminiService = gsvc; }
+    public GeminiService getGeminiService() { return geminiService; }
 
     public void fnLink() {
         if (requestText == null || !requestText.startsWith("/link")) return;
@@ -129,7 +129,7 @@ public class BotActions {
                          "/start - View welcome message\n" +
                          "/link <code> - Link your Telegram account\n" +
                          "/help - Show available commands\n" +
-                         "/status - Get a quick summary of tasks\n" +
+                         "/status [sprint name | task title] - Get project summary, sprint summary, or task status\n" +
                          "/create <title> - Create a new task (e.g. /create Fix DB bug)\n" +
                          "/delete <title> - Delete a task by matching title\n" +
                          "/updatestatus <IN_PROGRESS/BLOCKED/DONE> <task title> - Update task status\n" +
@@ -139,7 +139,7 @@ public class BotActions {
     }
 
     public void fnStatus() {
-        if (!requestText.equals("/status") || exit) return;
+        if (requestText == null || !requestText.toLowerCase().startsWith("/status") || exit) return;
         
         User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
         if (user == null) {
@@ -165,15 +165,70 @@ public class BotActions {
             return;
         }
 
-        List<Task> tasks = todoService.findByProjectId(project.getId());
-        long todo = tasks.stream().filter(t -> t.getStatus() == TaskStatus.TODO).count();
-        long inProgress = tasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
-        long blocked = tasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
-        long done = tasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
-        
-        String msg = String.format("Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d", 
-                                   project.getName(), todo, inProgress, blocked, done);
-        BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+        String arg = requestText.trim().length() > 7 ? requestText.trim().substring(7).trim() : "";
+
+        if (arg.isEmpty()) {
+            List<Task> tasks = todoService.findByProjectId(project.getId());
+            long todo = tasks.stream().filter(t -> t.getStatus() == TaskStatus.TODO).count();
+            long inProgress = tasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
+            long blocked = tasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
+            long done = tasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
+
+            String msg = String.format("Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d",
+                                       project.getName(), todo, inProgress, blocked, done);
+            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+            exit = true;
+            return;
+        }
+
+        List<Sprint> sprints = sprintRepository.findByProject_Id(project.getId());
+        Sprint sprintMatch = sprints.stream()
+            .filter(s -> s.getName().equalsIgnoreCase(arg))
+            .findFirst()
+            .orElse(null);
+
+        if (sprintMatch != null) {
+            List<Task> sprintTasks = todoService.findBySprintId(sprintMatch.getId());
+            long todo = sprintTasks.stream().filter(t -> t.getStatus() == TaskStatus.TODO).count();
+            long inProgress = sprintTasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
+            long blocked = sprintTasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
+            long done = sprintTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
+
+            String msg = String.format(
+                "Status for Sprint: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d",
+                sprintMatch.getName(),
+                todo,
+                inProgress,
+                blocked,
+                done
+            );
+            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+            exit = true;
+            return;
+        }
+
+        List<Task> exactTaskMatches = todoService.findByProjectId(project.getId()).stream()
+            .filter(t -> t.getTitle().equalsIgnoreCase(arg))
+            .collect(Collectors.toList());
+
+        if (exactTaskMatches.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId,
+                "No sprint or task found with that name/title. Use /status for project summary.",
+                telegramClient);
+        } else if (exactTaskMatches.size() > 1) {
+            BotHelper.sendMessageToTelegram(chatId,
+                "Multiple tasks found with that title. Please use a unique task title.",
+                telegramClient);
+        } else {
+            Task task = exactTaskMatches.get(0);
+            String msg = String.format(
+                "Task Status\nTitle: %s\nStatus: %s\nPriority: %s",
+                task.getTitle(),
+                task.getStatus(),
+                task.getPriority()
+            );
+            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+        }
         exit = true;
     }
 
@@ -537,6 +592,91 @@ public class BotActions {
     public void fnElse() {
         if (exit) return;
 
+        if (requestText == null || requestText.trim().isEmpty()) return;
+
+        // Keep slash commands deterministic. Unknown slash commands should not go to LLM parsing.
+        if (requestText.trim().startsWith("/")) {
+            logger.warn("Unrecognized slash command from chatId={}: {}", chatId, requestText);
+            BotHelper.sendMessageToTelegram(chatId,
+                "I didn't understand that command. Use /help to see available commands.", telegramClient, null);
+            return;
+        }
+
+        try {
+            GeminiService.ParsedIntent intent = geminiService.parseIntent(requestText);
+            if (intent == null || intent.action() == GeminiService.IntentAction.UNKNOWN || intent.confidence() < 0.65) {
+                BotHelper.sendMessageToTelegram(chatId,
+                    "I couldn't confidently map that request. Please rephrase, or use /help for command format.",
+                    telegramClient,
+                    null);
+                exit = true;
+                return;
+            }
+
+            switch (intent.action()) {
+                case CREATE_TASK:
+                    if (intent.title() == null || intent.title().isBlank()) {
+                        BotHelper.sendMessageToTelegram(chatId, "Please provide a task title.", telegramClient, null);
+                        exit = true;
+                        return;
+                    }
+                    requestText = "/create " + intent.title().trim();
+                    fnCreate();
+                    return;
+                case UPDATE_STATUS:
+                    if (intent.status() == null || intent.status().isBlank() || intent.title() == null || intent.title().isBlank()) {
+                        BotHelper.sendMessageToTelegram(chatId,
+                            "I need both task title and status (TODO, IN_PROGRESS, BLOCKED, DONE).",
+                            telegramClient,
+                            null);
+                        exit = true;
+                        return;
+                    }
+                    requestText = "/updatestatus " + intent.status().trim().toUpperCase() + " " + intent.title().trim();
+                    fnUpdateStatus();
+                    return;
+                case LOG_HOURS:
+                    if (intent.hours() == null || intent.title() == null || intent.title().isBlank()) {
+                        BotHelper.sendMessageToTelegram(chatId,
+                            "I need both hours and task title to log work.",
+                            telegramClient,
+                            null);
+                        exit = true;
+                        return;
+                    }
+                    requestText = "/loghours " + intent.hours() + " " + intent.title().trim();
+                    fnLogHours();
+                    return;
+                case DELETE_TASK:
+                    if (intent.title() == null || intent.title().isBlank()) {
+                        BotHelper.sendMessageToTelegram(chatId, "Please provide the task title to delete.", telegramClient, null);
+                        exit = true;
+                        return;
+                    }
+                    requestText = "/delete " + intent.title().trim();
+                    fnDeleteCommand();
+                    return;
+                case STATUS_SUMMARY:
+                    requestText = "/status";
+                    fnStatus();
+                    return;
+                case HELP:
+                    requestText = "/help";
+                    fnHelp();
+                    return;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("Natural language parsing failed for chatId={}", chatId, e);
+            BotHelper.sendMessageToTelegram(chatId,
+                "I couldn't process that with the parser right now. Try a direct command with /help.",
+                telegramClient,
+                null);
+            exit = true;
+            return;
+        }
+
         logger.warn("Unrecognized command from chatId={}: {}", chatId, requestText);
         BotHelper.sendMessageToTelegram(chatId,
             "I didn't understand that command. Use /help to see available commands.", telegramClient, null);
@@ -547,10 +687,10 @@ public class BotActions {
         if (!requestText.contains(BotCommands.LLM_REQ.getCommand()) || exit)
             return;
 
-        String prompt = "Dame los datos del clima en mty";
+        String prompt = "Give a one-line health-check response for the bot parser.";
         String out = "<empty>";
         try {
-            out = deepSeekService.generateText(prompt);
+            out = geminiService.generateText(prompt);
         } catch (Exception exc) {
             logger.error("LLM call failed", exc);
         }
