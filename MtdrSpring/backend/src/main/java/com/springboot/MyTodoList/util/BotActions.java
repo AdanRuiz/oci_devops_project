@@ -647,7 +647,20 @@ public class BotActions {
                         exit = true;
                         return;
                     }
-                    requestText = "/create " + intent.title().trim();
+                    String normalizedPriority = "MEDIUM";
+                    if (intent.priority() != null && !intent.priority().isBlank()) {
+                        String p = intent.priority().trim().toUpperCase();
+                        if (!("LOW".equals(p) || "MEDIUM".equals(p) || "HIGH".equals(p))) {
+                            BotHelper.sendMessageToTelegram(chatId,
+                                "Parsed an invalid priority. Please use LOW, MEDIUM, or HIGH.",
+                                telegramClient,
+                                null);
+                            exit = true;
+                            return;
+                        }
+                        normalizedPriority = p;
+                    }
+                    requestText = "/create " + intent.title().trim() + " | " + normalizedPriority;
                     fnCreate();
                     return;
                 case UPDATE_STATUS:
@@ -684,7 +697,11 @@ public class BotActions {
                     fnDeleteCommand();
                     return;
                 case STATUS_SUMMARY:
-                    requestText = "/status";
+                    if (intent.statusQuery() != null && !intent.statusQuery().isBlank()) {
+                        requestText = "/status " + intent.statusQuery().trim();
+                    } else {
+                        requestText = "/status";
+                    }
                     fnStatus();
                     return;
                 case HELP:

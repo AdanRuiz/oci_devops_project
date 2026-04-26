@@ -51,7 +51,9 @@ public class GeminiService {
     public record ParsedIntent(
         IntentAction action,
         String title,
-        String status,
+        String priority,
+      String status,
+      String statusQuery,
         Double hours,
         double confidence,
         String clarificationQuestion
@@ -70,7 +72,9 @@ public class GeminiService {
             {
               \"action\": \"CREATE_TASK|UPDATE_STATUS|LOG_HOURS|DELETE_TASK|STATUS_SUMMARY|HELP|UNKNOWN\",
               \"title\": string|null,
+              \"priority\": \"LOW|MEDIUM|HIGH\"|null,
               \"status\": \"TODO|IN_PROGRESS|BLOCKED|DONE\"|null,
+              \"statusQuery\": string|null,
               \"hours\": number|null,
               \"confidence\": number,
               \"clarificationQuestion\": string|null
@@ -78,6 +82,8 @@ public class GeminiService {
             Rules:
             - Keep confidence between 0 and 1.
             - Use UNKNOWN if not clear.
+            - For CREATE_TASK, use title and optional priority.
+            - For STATUS_SUMMARY, if user asks about a specific sprint or task, put it in statusQuery.
             - Do not include markdown or code fences.
             User text: %s
             """.formatted(userText.replace("\"", "\\\""));
@@ -97,12 +103,14 @@ public class GeminiService {
         }
 
         String title = intentNode.path("title").isNull() ? null : intentNode.path("title").asText(null);
+        String priority = intentNode.path("priority").isNull() ? null : intentNode.path("priority").asText(null);
         String status = intentNode.path("status").isNull() ? null : intentNode.path("status").asText(null);
+        String statusQuery = intentNode.path("statusQuery").isNull() ? null : intentNode.path("statusQuery").asText(null);
         Double hours = intentNode.path("hours").isNumber() ? intentNode.path("hours").asDouble() : null;
         double confidence = intentNode.path("confidence").isNumber() ? intentNode.path("confidence").asDouble() : 0.0;
         String clarification = intentNode.path("clarificationQuestion").isNull() ? null : intentNode.path("clarificationQuestion").asText(null);
 
-        return new ParsedIntent(action, title, status, hours, confidence, clarification);
+        return new ParsedIntent(action, title, priority, status, statusQuery, hours, confidence, clarification);
     }
 
     private JsonNode callGemini(String body) throws Exception {
