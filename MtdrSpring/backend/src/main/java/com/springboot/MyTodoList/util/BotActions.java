@@ -37,6 +37,7 @@ public class BotActions {
     long chatId;
     TelegramClient telegramClient;
     boolean exit;
+    boolean parserDryRun;
 
     ToDoItemService todoService;
     GeminiService geminiService;
@@ -47,7 +48,7 @@ public class BotActions {
     TaskWorkLogRepository taskWorkLogRepository;
     SprintRepository sprintRepository;
 
-    public BotActions(TelegramClient tc, ToDoItemService ts, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
+    public BotActions(TelegramClient tc, ToDoItemService ts, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr, boolean dryRun) {
         telegramClient = tc;
         todoService = ts;
         geminiService = gs;
@@ -57,6 +58,7 @@ public class BotActions {
         projectRepository = pr;
         taskWorkLogRepository = twlr;
         sprintRepository = sr;
+        parserDryRun = dryRun;
         exit = false;
     }
 
@@ -636,6 +638,62 @@ public class BotActions {
                     "I couldn't confidently map that request. Please rephrase, or use /help for command format.",
                     telegramClient,
                     null);
+                exit = true;
+                return;
+            }
+
+            String previewCommand;
+            switch (intent.action()) {
+                case CREATE_TASK:
+                    String previewPriority = "MEDIUM";
+                    if (intent.priority() != null && !intent.priority().isBlank()) {
+                        previewPriority = intent.priority().trim().toUpperCase();
+                    }
+                    previewCommand = intent.title() == null || intent.title().isBlank()
+                        ? "<invalid create intent: missing title>"
+                        : "/create " + intent.title().trim() + " | " + previewPriority;
+                    break;
+                case UPDATE_STATUS:
+                    previewCommand = (intent.status() == null || intent.title() == null)
+                        ? "<invalid update status intent>"
+                        : "/updatestatus " + intent.status().trim().toUpperCase() + " " + intent.title().trim();
+                    break;
+                case LOG_HOURS:
+                    previewCommand = (intent.hours() == null || intent.title() == null)
+                        ? "<invalid log hours intent>"
+                        : "/loghours " + intent.hours() + " " + intent.title().trim();
+                    break;
+                case DELETE_TASK:
+                    previewCommand = intent.title() == null || intent.title().isBlank()
+                        ? "<invalid delete intent: missing title>"
+                        : "/delete " + intent.title().trim();
+                    break;
+                case STATUS_SUMMARY:
+                    previewCommand = (intent.statusQuery() != null && !intent.statusQuery().isBlank())
+                        ? "/status " + intent.statusQuery().trim()
+                        : "/status";
+                    break;
+                case HELP:
+                    previewCommand = "/help";
+                    break;
+                default:
+                    previewCommand = "<unknown>";
+                    break;
+            }
+
+            if (parserDryRun) {
+                String dryRunMsg = String.format(
+                    "Parser dry-run mode is ON.\nAction: %s\nConfidence: %.2f\nWould run: %s\n\nParsed fields:\n- title: %s\n- priority: %s\n- status: %s\n- statusQuery: %s\n- hours: %s",
+                    intent.action(),
+                    intent.confidence(),
+                    previewCommand,
+                    intent.title() == null ? "<null>" : intent.title(),
+                    intent.priority() == null ? "<null>" : intent.priority(),
+                    intent.status() == null ? "<null>" : intent.status(),
+                    intent.statusQuery() == null ? "<null>" : intent.statusQuery(),
+                    intent.hours() == null ? "<null>" : intent.hours().toString()
+                );
+                BotHelper.sendMessageToTelegram(chatId, dryRunMsg, telegramClient, null);
                 exit = true;
                 return;
             }

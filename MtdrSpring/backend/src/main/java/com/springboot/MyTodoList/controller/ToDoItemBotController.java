@@ -44,6 +44,9 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
         @Value("${telegram.bot.token}")
         private String telegramBotToken;
 
+        @Value("${bot.parser.dry-run:false}")
+        private boolean parserDryRun;
+
 
         @Override
     public String getBotToken() {
@@ -83,7 +86,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 String messageTextFromTelegram = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
 
-                BotActions actions = new BotActions(telegramClient, toDoItemService, geminiService, telegramLinkService, userRepository, projectMemberRepository, projectRepository, taskWorkLogRepository, sprintRepository);
+                BotActions actions = new BotActions(telegramClient, toDoItemService, geminiService, telegramLinkService, userRepository, projectMemberRepository, projectRepository, taskWorkLogRepository, sprintRepository, parserDryRun);
                 actions.setRequestText(messageTextFromTelegram);
                 actions.setChatId(chatId);
 
