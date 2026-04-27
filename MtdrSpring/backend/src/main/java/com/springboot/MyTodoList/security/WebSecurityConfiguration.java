@@ -41,7 +41,8 @@ public class WebSecurityConfiguration {
                     "/static/**", "/*.js", "/*.css", "/*.map",
                     "/callback", "/callback/**",
                     "/dashboard", "/kanban", "/kpi", "/profile",
-                    "/auth/sign-in", "/auth/**"
+                    "/auth/sign-in", "/auth/**",
+                    "/internal/bot-status/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

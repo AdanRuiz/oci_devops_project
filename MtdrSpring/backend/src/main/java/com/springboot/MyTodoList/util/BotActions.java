@@ -1,5 +1,7 @@
 package com.springboot.MyTodoList.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.model.TaskPriority;
@@ -19,9 +21,18 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.telegram.TelegramLinkService;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +43,21 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class BotActions {
 
     private static final Logger logger = LoggerFactory.getLogger(BotActions.class);
+    private static final long CONFIRMATION_TTL_MS = 5 * 60 * 1000;
+    private static final Map<Long, PendingCommand> pendingCommands = new ConcurrentHashMap<>();
+
+    private record PendingCommand(String command, long createdAtMs) {}
 
     String requestText;
     long chatId;
     TelegramClient telegramClient;
     boolean exit;
     boolean parserDryRun;
+    boolean parserRequireConfirmation;
+    boolean parserDebug;
+    boolean useHttpApi;
+    String internalApiBaseUrl;
+    String internalApiKey;
 
     ToDoItemService todoService;
     GeminiService geminiService;
@@ -47,8 +67,10 @@ public class BotActions {
     ProjectRepository projectRepository;
     TaskWorkLogRepository taskWorkLogRepository;
     SprintRepository sprintRepository;
+    final HttpClient internalHttpClient;
+    final ObjectMapper objectMapper;
 
-    public BotActions(TelegramClient tc, ToDoItemService ts, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr, boolean dryRun) {
+    public BotActions(TelegramClient tc, ToDoItemService ts, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr, boolean dryRun, boolean requireConfirmation, boolean debug, boolean useHttpApi, String internalApiBaseUrl, String internalApiKey) {
         telegramClient = tc;
         todoService = ts;
         geminiService = gs;
@@ -59,7 +81,119 @@ public class BotActions {
         taskWorkLogRepository = twlr;
         sprintRepository = sr;
         parserDryRun = dryRun;
+        parserRequireConfirmation = requireConfirmation;
+        parserDebug = debug;
+        this.useHttpApi = useHttpApi;
+        this.internalApiBaseUrl = internalApiBaseUrl;
+        this.internalApiKey = internalApiKey;
+        this.internalHttpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        this.objectMapper = new ObjectMapper();
         exit = false;
+    }
+
+    private String fetchStatusViaHttp(UUID projectId, String arg) throws Exception {
+        String base = internalApiBaseUrl == null || internalApiBaseUrl.isBlank() ? "http://localhost:8080" : internalApiBaseUrl;
+        String url = base + "/internal/bot-status/project/" + projectId;
+        if (arg != null && !arg.isBlank()) {
+            url += "?query=" + URLEncoder.encode(arg, StandardCharsets.UTF_8);
+        }
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .timeout(Duration.ofSeconds(10))
+            .header("Accept", "application/json")
+            .GET();
+
+        if (internalApiKey != null && !internalApiKey.isBlank()) {
+            builder.header("X-Bot-Api-Key", internalApiKey);
+        }
+
+        HttpResponse<String> response = internalHttpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IllegalStateException("Internal bot status API failed: " + response.statusCode() + " body=" + response.body());
+        }
+
+        JsonNode root = objectMapper.readTree(response.body());
+        JsonNode messageNode = root.path("message");
+        if (messageNode.isMissingNode() || messageNode.isNull()) {
+            throw new IllegalStateException("Internal bot status API did not return a message field.");
+        }
+        return messageNode.asText();
+    }
+
+    private boolean tryHandlePendingConfirmation() {
+        PendingCommand pending = pendingCommands.get(chatId);
+        if (pending == null) return false;
+
+        long now = System.currentTimeMillis();
+        if (now - pending.createdAtMs() > CONFIRMATION_TTL_MS) {
+            pendingCommands.remove(chatId);
+            BotHelper.sendMessageToTelegram(chatId,
+                "Pending confirmation expired. Please send your request again.",
+                telegramClient,
+                null);
+            exit = true;
+            return true;
+        }
+
+        String normalized = requestText == null ? "" : requestText.trim().toLowerCase();
+        if (normalized.equals("confirm") || normalized.equals("yes")) {
+            pendingCommands.remove(chatId);
+            executeCommand(pending.command());
+            return true;
+        }
+
+        if (normalized.equals("cancel") || normalized.equals("no")) {
+            pendingCommands.remove(chatId);
+            BotHelper.sendMessageToTelegram(chatId,
+                "Cancelled. No changes were applied.",
+                telegramClient,
+                null);
+            exit = true;
+            return true;
+        }
+
+        BotHelper.sendMessageToTelegram(chatId,
+            "You have a pending command. Reply 'confirm' to execute or 'cancel' to discard.",
+            telegramClient,
+            null);
+        exit = true;
+        return true;
+    }
+
+    private void executeCommand(String commandText) {
+        requestText = commandText;
+
+        if (commandText.startsWith("/create")) {
+            fnCreate();
+            return;
+        }
+        if (commandText.startsWith("/updatestatus")) {
+            fnUpdateStatus();
+            return;
+        }
+        if (commandText.startsWith("/loghours")) {
+            fnLogHours();
+            return;
+        }
+        if (commandText.startsWith("/delete")) {
+            fnDeleteCommand();
+            return;
+        }
+        if (commandText.startsWith("/status")) {
+            fnStatus();
+            return;
+        }
+        if (commandText.startsWith("/help")) {
+            fnHelp();
+            return;
+        }
+
+        BotHelper.sendMessageToTelegram(chatId,
+            "Failed to execute pending command. Please try again.",
+            telegramClient,
+            null);
+        exit = true;
     }
 
     private Sprint getActiveSprint(UUID projectId) {
@@ -168,6 +302,21 @@ public class BotActions {
         }
 
         String arg = requestText.trim().length() > 7 ? requestText.trim().substring(7).trim() : "";
+
+        if (useHttpApi) {
+            try {
+                String message = fetchStatusViaHttp(project.getId(), arg);
+                BotHelper.sendMessageToTelegram(chatId, message, telegramClient);
+                exit = true;
+                return;
+            } catch (Exception e) {
+                logger.error("HTTP status mode failed, falling back to in-process status handling.", e);
+                BotHelper.sendMessageToTelegram(chatId,
+                    "HTTP status mode failed; using local status mode.",
+                    telegramClient);
+            }
+            // Continue to local mode fallback if HTTP mode errored.
+        }
 
         if (arg.isEmpty()) {
             List<Task> tasks = todoService.findByProjectId(project.getId());
@@ -307,7 +456,7 @@ public class BotActions {
         try {
             todoService.addToDoItem(t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
             String location = sprint != null ? "sprint '" + sprint.getName() + "'" : "backlog";
-            BotHelper.sendMessageToTelegram(chatId, "✅ Task created successfully in " + location + " with priority " + priority + ":\n" + title, telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "Task created successfully in " + location + " with priority " + priority + ":\n" + title, telegramClient);
         } catch (Exception e) {
             logger.error("Failed to create task", e);
             BotHelper.sendMessageToTelegram(chatId, "Failed to create task due to a server error.", telegramClient);
@@ -413,7 +562,7 @@ public class BotActions {
                 boolean assignedToSprint = t.getSprint() == null && activeSprint != null;
                 todoService.patchStatusAndSprint(t.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
 
-                String msg = "✅ Task status updated to " + newStatus;
+                String msg = "Task status updated to " + newStatus;
                 if (assignedToSprint) {
                     msg += " in sprint '" + activeSprint.getName() + "'";
                 }
@@ -623,6 +772,10 @@ public class BotActions {
 
         if (requestText == null || requestText.trim().isEmpty()) return;
 
+        if (parserRequireConfirmation && tryHandlePendingConfirmation()) {
+            return;
+        }
+
         // Keep slash commands deterministic. Unknown slash commands should not go to LLM parsing.
         if (requestText.trim().startsWith("/")) {
             logger.warn("Unrecognized slash command from chatId={}: {}", chatId, requestText);
@@ -632,7 +785,63 @@ public class BotActions {
         }
 
         try {
-            GeminiService.ParsedIntent intent = geminiService.parseIntent(requestText);
+            GeminiService.IntentDiagnostics diagnostics = geminiService.parseIntentWithDiagnostics(requestText);
+            GeminiService.ParsedIntent intent = diagnostics.intent();
+
+            logger.info(
+                "Parser diagnostics chatId={} stage={} confidence={} action={} error={} preview={}",
+                chatId,
+                diagnostics.stage(),
+                intent == null ? null : intent.confidence(),
+                intent == null ? null : intent.action(),
+                diagnostics.errorDetail(),
+                diagnostics.modelTextPreview()
+            );
+
+            if (parserDebug) {
+                String diagMsg = String.format(
+                    "Parser debug\nStage: %s\nAction: %s\nConfidence: %s\nError: %s\nModel preview: %s",
+                    diagnostics.stage(),
+                    intent == null ? "<null>" : intent.action(),
+                    intent == null ? "<null>" : String.format("%.2f", intent.confidence()),
+                    diagnostics.errorDetail() == null ? "<none>" : diagnostics.errorDetail(),
+                    diagnostics.modelTextPreview() == null ? "<none>" : diagnostics.modelTextPreview()
+                );
+                BotHelper.sendMessageToTelegram(chatId, diagMsg, telegramClient, null);
+            }
+
+            if (intent == null) {
+                String error = diagnostics.errorDetail() == null ? "" : diagnostics.errorDetail();
+                String msg;
+                switch (diagnostics.stage()) {
+                    case API_CONFIGURATION:
+                        msg = "Parser is unavailable: GEMINI_API_KEY is missing in runtime environment.";
+                        break;
+                    case API_REQUEST_FAILED:
+                        if (error.toLowerCase().contains("model") && error.toLowerCase().contains("not found")) {
+                            msg = "Parser is unavailable: configured Gemini model was not found. Verify GEMINI_MODEL for your account/tier.";
+                        } else {
+                            msg = "Parser is unavailable: Gemini API request failed (quota/network/auth).";
+                        }
+                        break;
+                    case MODEL_EMPTY_RESPONSE:
+                        msg = "Parser error: Gemini returned an empty response.";
+                        break;
+                    case MODEL_NON_JSON_RESPONSE:
+                        msg = "Parser error: Gemini response format was not valid JSON for the intent schema.";
+                        break;
+                    default:
+                        msg = "Parser failed before intent mapping. Try again or use /help.";
+                        break;
+                }
+                if (parserDebug && !error.isBlank()) {
+                    msg += " Details: " + error;
+                }
+                BotHelper.sendMessageToTelegram(chatId, msg, telegramClient, null);
+                exit = true;
+                return;
+            }
+
             if (intent == null || intent.action() == GeminiService.IntentAction.UNKNOWN || intent.confidence() < 0.65) {
                 BotHelper.sendMessageToTelegram(chatId,
                     "I couldn't confidently map that request. Please rephrase, or use /help for command format.",
@@ -694,6 +903,28 @@ public class BotActions {
                     intent.hours() == null ? "<null>" : intent.hours().toString()
                 );
                 BotHelper.sendMessageToTelegram(chatId, dryRunMsg, telegramClient, null);
+                exit = true;
+                return;
+            }
+
+            if (parserRequireConfirmation) {
+                if (!previewCommand.startsWith("/")) {
+                    BotHelper.sendMessageToTelegram(chatId,
+                        "I parsed your request but it is incomplete. Please rephrase with more details.",
+                        telegramClient,
+                        null);
+                    exit = true;
+                    return;
+                }
+
+                pendingCommands.put(chatId, new PendingCommand(previewCommand, System.currentTimeMillis()));
+                String confirmMsg = String.format(
+                    "Parser confirmation mode is ON.\nAction: %s\nConfidence: %.2f\nWould run: %s\n\nReply 'confirm' to execute or 'cancel' to discard.",
+                    intent.action(),
+                    intent.confidence(),
+                    previewCommand
+                );
+                BotHelper.sendMessageToTelegram(chatId, confirmMsg, telegramClient, null);
                 exit = true;
                 return;
             }
@@ -771,8 +1002,13 @@ public class BotActions {
             }
         } catch (Exception e) {
             logger.error("Natural language parsing failed for chatId={}", chatId, e);
+            String msg = "I couldn't process that with the parser right now. Try a direct command with /help.";
+            String err = e.getMessage() == null ? "" : e.getMessage();
+            if (err.contains("GEMINI_API_KEY") || err.contains("Gemini API call failed")) {
+                msg = "Parser is unavailable right now (Gemini configuration/API). Verify GEMINI_API_KEY and try again.";
+            }
             BotHelper.sendMessageToTelegram(chatId,
-                "I couldn't process that with the parser right now. Try a direct command with /help.",
+                msg,
                 telegramClient,
                 null);
             exit = true;

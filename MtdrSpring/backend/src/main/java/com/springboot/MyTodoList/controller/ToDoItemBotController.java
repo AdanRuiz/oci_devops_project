@@ -47,6 +47,21 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
         @Value("${bot.parser.dry-run:false}")
         private boolean parserDryRun;
 
+        @Value("${bot.parser.require-confirmation:false}")
+        private boolean parserRequireConfirmation;
+
+        @Value("${bot.parser.debug:false}")
+        private boolean parserDebug;
+
+        @Value("${bot.use-http-api:false}")
+        private boolean botUseHttpApi;
+
+        @Value("${bot.internal.api.base-url:http://localhost:8080}")
+        private String botInternalApiBaseUrl;
+
+        @Value("${bot.internal.api.key:}")
+        private String botInternalApiKey;
+
 
         @Override
     public String getBotToken() {
@@ -86,7 +101,23 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 String messageTextFromTelegram = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
 
-                BotActions actions = new BotActions(telegramClient, toDoItemService, geminiService, telegramLinkService, userRepository, projectMemberRepository, projectRepository, taskWorkLogRepository, sprintRepository, parserDryRun);
+                BotActions actions = new BotActions(
+                    telegramClient,
+                    toDoItemService,
+                    geminiService,
+                    telegramLinkService,
+                    userRepository,
+                    projectMemberRepository,
+                    projectRepository,
+                    taskWorkLogRepository,
+                    sprintRepository,
+                    parserDryRun,
+                    parserRequireConfirmation,
+                    parserDebug,
+                    botUseHttpApi,
+                    botInternalApiBaseUrl,
+                    botInternalApiKey
+                );
                 actions.setRequestText(messageTextFromTelegram);
                 actions.setChatId(chatId);
 
