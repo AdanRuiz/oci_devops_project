@@ -58,11 +58,11 @@ export default function Layout({ children }) {
     navigate('/projects');
   };
 
-    const handleSignOut = async () => {
-        clearProject();
-        await auth.removeUser();
-        navigate('/auth/sign-in', { replace: true });
-    };
+  const handleSignOut = async () => {
+    clearProject();
+    await auth.removeUser();
+    navigate('/auth/sign-in', { replace: true });
+  };
 
   const splitY = APPBAR_H + 32 + BANNER_H;
 

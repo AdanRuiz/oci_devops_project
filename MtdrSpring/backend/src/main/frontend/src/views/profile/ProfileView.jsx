@@ -165,31 +165,31 @@ export default function ProfileView({
   inviteError,
   inviteSuccess,
 }) {
-    const auth = useAuth();
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [telegramCode, setTelegramCode] = useState(null);
+  const auth = useAuth();
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [telegramCode, setTelegramCode] = useState(null);
 
-    const handleLinkTelegram = async () => {
-        try {
-          const response = await fetch('/api/telegram/link-code', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${auth.user?.access_token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-          
-          if (response.ok) {
-             const data = await response.json();
-             setTelegramCode(data.code);
-          } else {
-             alert("Failed to generate link code. Status: " + response.status);
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Error linking telegram account.");
-        }
-    };
+  const handleLinkTelegram = async () => {
+    try {
+      const response = await fetch('/api/telegram/link-code', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${auth.user?.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setTelegramCode(data.code);
+      } else {
+        alert('Failed to generate link code. Status: ' + response.status);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error linking telegram account.');
+    }
+  };
 
   const handleInvite = () => {
     const trimmed = inviteEmail.trim();
@@ -202,50 +202,90 @@ export default function ProfileView({
   const initials = getInitials(userEmail);
 
   return (
-    <Box>
-      {/* Page title */}
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#1A1A1A' }}>
-        Team Management
+        Profile & Settings
       </Typography>
 
-                        {/* Stat columns */}
-                        <Box sx={{ display: 'flex', gap: '48px', pt: '8px', flexWrap: 'wrap' }}>
-                            <StatColumn label="Role"    value={userRole} />
-                            <StatColumn label="Project" value={projectName} />
-                            <StatColumn label="Team"    value={`${totalMembers} member${totalMembers !== 1 ? 's' : ''}`} />                            <Box>
-                                <Typography sx={{ fontSize: '0.78rem', color: '#9E9E9E', mb: '4px', fontWeight: 500 }}>
-                                    Integrations
-                                </Typography>
-                                <Button 
-                                    variant="outlined" 
-                                    onClick={handleLinkTelegram} 
-                                    sx={{...outlinedButtonSx, mt: '4px'}}
-                                >
-                                    Link Telegram Account
-                                </Button>
-                                {telegramCode && (
-                                    <Typography sx={{ fontSize: '0.85rem', color: '#2E7D32', mt: '8px', fontWeight: 600 }}>
-                                        Verification Code: {telegramCode}<br/>
-                                        <span style={{fontWeight: 400, color: '#717171'}}>Send <strong style={{color: '#1A1A1A'}}>/link {telegramCode}</strong> to the bot.</span>
-                                    </Typography>
-                                )}
-                            </Box>                        </Box>
-                    </Box>
-                </CardContent>
-            </Card>
+      {/* User profile card */}
+      <Card
+        sx={{
+          border: '1px solid #E8E8E8',
+          borderRadius: '8px',
+          boxShadow: 'none',
+          bgcolor: '#ffffff',
+        }}
+      >
+        <CardContent sx={{ p: '28px !important' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '16px',
+                bgcolor: '#2B2B2B',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.8rem' }}>
+                {initials}
+              </Typography>
+            </Box>
 
-            {/* Stat columns */}
-            <Box sx={{ display: 'flex', gap: '48px', pt: '8px', flexWrap: 'wrap' }}>
-              <StatColumn label="Role" value={userRole} />
-              <StatColumn label="Project" value={projectName} />
-              <StatColumn
-                label="Team"
-                value={`${totalMembers} member${totalMembers !== 1 ? 's' : ''}`}
-              />
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography sx={{ fontWeight: 700, fontSize: '1.25rem', color: '#1A1A1A' }}>
+                {displayName}
+              </Typography>
+              <Typography sx={{ fontSize: '0.875rem', color: '#717171', mb: '16px' }}>
+                {userEmail}
+              </Typography>
+
+              {/* Stat columns */}
+              <Box sx={{ display: 'flex', gap: '48px', pt: '8px', flexWrap: 'wrap' }}>
+                <StatColumn label="Role" value={userRole} />
+                <StatColumn label="Project" value={projectName} />
+                <StatColumn
+                  label="Team"
+                  value={`${totalMembers} member${totalMembers !== 1 ? 's' : ''}`}
+                />
+                <Box>
+                  <Typography
+                    sx={{ fontSize: '0.78rem', color: '#9E9E9E', mb: '4px', fontWeight: 500 }}
+                  >
+                    Integrations
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    onClick={handleLinkTelegram}
+                    sx={{ ...outlinedButtonSx, mt: '4px' }}
+                  >
+                    Link Telegram Account
+                  </Button>
+                  {telegramCode && (
+                    <Typography
+                      sx={{ fontSize: '0.85rem', color: '#2E7D32', mt: '8px', fontWeight: 600 }}
+                    >
+                      Verification Code: {telegramCode}
+                      <br />
+                      <span style={{ fontWeight: 400, color: '#717171' }}>
+                        Send <strong style={{ color: '#1A1A1A' }}>/link {telegramCode}</strong> to
+                        the bot.
+                      </span>
+                    </Typography>
+                  )}
+                </Box>
+              </Box>
             </Box>
           </Box>
         </CardContent>
       </Card>
+
+      <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#1A1A1A', mt: '8px' }}>
+        Team Management
+      </Typography>
 
       {/* Team management card */}
       <Card

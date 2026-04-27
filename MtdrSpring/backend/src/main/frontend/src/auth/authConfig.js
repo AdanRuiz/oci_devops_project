@@ -6,5 +6,5 @@ export const oidcConfig = {
   scope: 'openid profile email',
   automaticSilentRenew: true,
   loadUserInfo: true,
-  prompt: "login",
+  prompt: 'login',
 };
