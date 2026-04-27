@@ -7,27 +7,27 @@ import { useProjectRole } from '../models/hooks/useProjectRole';
 import ProjectDetailView from '../views/projects/ProjectDetailView';
 
 export default function ProjectDetailController() {
-    const { projectId } = useParams();
-    const navigate      = useNavigate();
+  const { projectId } = useParams();
+  const navigate = useNavigate();
 
-    const { data: project, isLoading: loadingProject } = useProject(projectId);
-    const { data: sprints = [], isLoading: loadingSprints } = useSprints(projectId);
-    const { data: members = [] } = useMembers(projectId);
-    const createSprint = useCreateSprint(projectId);
-    const deleteSprint = useDeleteSprint(projectId);
-    const { isManager } = useProjectRole();
+  const { data: project, isLoading: loadingProject } = useProject(projectId);
+  const { data: sprints = [], isLoading: loadingSprints } = useSprints(projectId);
+  const { data: members = [] } = useMembers(projectId);
+  const createSprint = useCreateSprint(projectId);
+  const deleteSprint = useDeleteSprint(projectId);
+  const { isManager } = useProjectRole();
 
-    if (loadingProject) return <CircularProgress />;
+  if (loadingProject) return <CircularProgress />;
 
-    return (
-        <ProjectDetailView
-            project={project}
-            sprints={sprints}
-            loadingSprints={loadingSprints}
-            isManager={isManager}
-            onSprintSelect={(sprintId) => navigate(`/projects/${projectId}/sprints/${sprintId}`)}
-            onCreateSprint={(data) => createSprint.mutateAsync(data)}
-            onDeleteSprint={(sprintId) => deleteSprint.mutateAsync(sprintId)}
-        />
-    );
+  return (
+    <ProjectDetailView
+      project={project}
+      sprints={sprints}
+      loadingSprints={loadingSprints}
+      isManager={isManager}
+      onSprintSelect={(sprintId) => navigate(`/projects/${projectId}/sprints/${sprintId}`)}
+      onCreateSprint={(data) => createSprint.mutateAsync(data)}
+      onDeleteSprint={(sprintId) => deleteSprint.mutateAsync(sprintId)}
+    />
+  );
 }

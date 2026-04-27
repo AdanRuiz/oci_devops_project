@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot matches snapshot when task has no history or logs 1`] = `
+Object {
+  "history": "State HistoryNo transitions yet.",
+  "sidebar": "DetailsStatusDonePriorityHighAssigneealice.smith@oracle.comCreatedMar 1, 2024StartedMar 2, 2024CompletedMar 5, 2024",
+  "workLogs": "Work LogsNo work logged yet.",
+}
+`;

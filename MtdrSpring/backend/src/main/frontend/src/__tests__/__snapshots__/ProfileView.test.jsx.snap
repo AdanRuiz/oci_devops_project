@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshots matches snapshot for the DEVELOPER view 1`] = `
+Object {
+  "membersList": "ASAlice Smithalice.smith@oracle.comBJBob Jonesbob.jones@oracle.com",
+}
+`;
+
+exports[`Snapshots matches snapshot for the PROJECT_MANAGER view 1`] = `
+Object {
+  "inviteSection": "Invite member​Send invite",
+  "membersList": "ASAlice Smithalice.smith@oracle.comRemoveBJBob Jonesbob.jones@oracle.comRemove",
+}
+`;
