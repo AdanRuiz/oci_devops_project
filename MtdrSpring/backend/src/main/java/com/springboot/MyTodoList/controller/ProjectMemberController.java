@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.model.ProjectMember;
+import com.springboot.MyTodoList.service.InvitationService;
 import com.springboot.MyTodoList.service.ProjectMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -17,9 +19,24 @@ public class ProjectMemberController {
     @Autowired
     private ProjectMemberService projectMemberService;
 
+    @Autowired
+    private InvitationService invitationService;
+
     @GetMapping
     public List<ProjectMember> getMembersByProject(@PathVariable UUID projectId) {
         return projectMemberService.findByProjectId(projectId);
+    }
+
+    @PostMapping("/invitations")
+    public ResponseEntity<Map<String, String>> inviteMember(
+            @PathVariable UUID projectId,
+            @RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "email is required"));
+        }
+        Map<String, String> result = invitationService.invite(projectId, email.trim());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping

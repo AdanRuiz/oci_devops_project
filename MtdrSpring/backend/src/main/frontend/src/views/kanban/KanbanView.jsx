@@ -190,7 +190,22 @@ export default function KanbanView({ projectName, sprints = [], sprintId = '', u
                         );
                     })}
 
-                    {users.length === 0 && (
+                    {/* Unassigned tasks */}
+                    {(() => {
+                        const assignedIds = new Set(users.map(u => u.id));
+                        const unassigned = tasks.filter(t => !t.assignee || !assignedIds.has(t.assignee.id));
+                        if (!unassigned.length) return null;
+                        return (
+                            <UserRow
+                                key="unassigned"
+                                user={{ id: 'unassigned', email: 'Unassigned' }}
+                                tasks={unassigned}
+                                onTaskSelect={onTaskSelect}
+                            />
+                        );
+                    })()}
+
+                    {users.length === 0 && tasks.length === 0 && (
                         <Typography sx={{ fontSize: '0.875rem', color: '#9E9E9E' }}>
                             No members found.
                         </Typography>

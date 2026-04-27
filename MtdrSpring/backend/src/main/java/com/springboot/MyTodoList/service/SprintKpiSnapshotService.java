@@ -48,10 +48,10 @@ public class SprintKpiSnapshotService {
         List<Task> tasks = taskRepository.findBySprint_Id(sprintId);
         List<TaskWorkLog> workLogs = workLogRepository.findBySprintId(sprintId);
 
-        Map<UUID, BigDecimal> daysByUser = workLogs.stream()
+        Map<UUID, BigDecimal> hoursByUser = workLogs.stream()
             .collect(Collectors.groupingBy(
                 wl -> wl.getUser().getId(),
-                Collectors.reducing(BigDecimal.ZERO, TaskWorkLog::getDaysWorked, BigDecimal::add)
+                Collectors.reducing(BigDecimal.ZERO, TaskWorkLog::getHoursWorked, BigDecimal::add)
             ));
 
         Map<UUID, List<Task>> tasksByAssignee = tasks.stream()
@@ -65,8 +65,8 @@ public class SprintKpiSnapshotService {
                 String email = devTasks.get(0).getAssignee().getEmail();
                 int total = devTasks.size();
                 int completed = (int) devTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
-                BigDecimal days = daysByUser.getOrDefault(userId, BigDecimal.ZERO);
-                return new DeveloperStatDto(email, total, completed, days);
+                BigDecimal hours = hoursByUser.getOrDefault(userId, BigDecimal.ZERO);
+                return new DeveloperStatDto(email, total, completed, hours);
             })
             .sorted(Comparator.comparing(DeveloperStatDto::getEmail))
             .collect(Collectors.toList());
@@ -125,8 +125,8 @@ public class SprintKpiSnapshotService {
 
         int reworked = (int) tasks.stream().filter(t -> t.getReworkCount() > 0).count();
 
-        BigDecimal totalDays = workLogRepository.findBySprintId(sprint.getId()).stream()
-            .map(TaskWorkLog::getDaysWorked)
+        BigDecimal totalHours = workLogRepository.findBySprintId(sprint.getId()).stream()
+            .map(TaskWorkLog::getHoursWorked)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         SprintKpiSnapshot snapshot = snapshotRepository.findBySprint_Id(sprint.getId())
@@ -137,7 +137,7 @@ public class SprintKpiSnapshotService {
         snapshot.setBlockerResolutionDays(avgBlockerResolution);
         snapshot.setTasksReworked(reworked);
         snapshot.setTasksCompleted(completed.size());
-        snapshot.setTotalDaysWorked(totalDays.compareTo(BigDecimal.ZERO) == 0 ? null : totalDays);
+        snapshot.setTotalHoursWorked(totalHours.compareTo(BigDecimal.ZERO) == 0 ? null : totalHours);
 
         return snapshotRepository.save(snapshot);
     }

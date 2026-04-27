@@ -12,8 +12,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "TASK_WORK_LOGS",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"TASK_ID", "USER_ID", "WORK_DATE"}))
+@Table(name = "TASK_WORK_LOGS")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,8 +36,8 @@ public class TaskWorkLog {
     @Column(name = "WORK_DATE", nullable = false)
     private LocalDate workDate;
 
-    @Column(name = "DAYS_WORKED", nullable = false, precision = 3, scale = 1)
-    private BigDecimal daysWorked = BigDecimal.ONE;
+    @Column(name = "HOURS_WORKED", nullable = false, precision = 5, scale = 2)
+    private BigDecimal hoursWorked = BigDecimal.valueOf(8.0);
 
     @Column(name = "NOTE", length = 500)
     private String note;

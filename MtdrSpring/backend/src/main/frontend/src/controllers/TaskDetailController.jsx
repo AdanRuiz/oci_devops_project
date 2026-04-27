@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
-import { useTask, useTaskHistory, useTaskWorkLogs, useAddWorkLog } from '../models/hooks/useTasks';
+import { useTask, useTaskHistory, useTaskWorkLogs } from '../models/hooks/useTasks';
 import TaskDetailView from '../views/tasks/TaskDetailView';
 
 export default function TaskDetailController() {
@@ -10,7 +10,6 @@ export default function TaskDetailController() {
     const { data: task, isLoading } = useTask(taskId);
     const { data: history = [] } = useTaskHistory(taskId);
     const { data: logs = [] } = useTaskWorkLogs(taskId);
-    const addWorkLog = useAddWorkLog(taskId);
 
     if (isLoading) return <CircularProgress />;
 
@@ -20,7 +19,6 @@ export default function TaskDetailController() {
             history={history}
             logs={logs}
             onBack={() => navigate(-1)}
-            onLogWork={(payload) => addWorkLog.mutateAsync(payload)}
         />
     );
 }

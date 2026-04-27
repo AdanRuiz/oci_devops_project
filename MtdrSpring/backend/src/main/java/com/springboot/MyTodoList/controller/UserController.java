@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,20 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * Returns the DB user for the authenticated caller, auto-provisioning on first login.
+     * Reads the OCI IAM subject (sub) and email claims from the JWT.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<User> getMe(@AuthenticationPrincipal Jwt jwt) {
+        String ociIamId = jwt.getSubject();
+        String email = jwt.getClaimAsString("email");
+        if (email == null) email = jwt.getClaimAsString("preferred_username");
+        if (email == null) email = ociIamId.contains("@") ? ociIamId : ociIamId + "@unknown";
+        User user = userService.findOrProvision(ociIamId, email);
+        return ResponseEntity.ok(user);
+    }
 
     @GetMapping
     public List<User> getAllUsers() {

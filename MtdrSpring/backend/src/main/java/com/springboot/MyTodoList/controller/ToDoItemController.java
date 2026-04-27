@@ -1,17 +1,18 @@
 package com.springboot.MyTodoList.controller;
 
-import com.springboot.MyTodoList.model.ChangeSource;
-import com.springboot.MyTodoList.model.Task;
-import com.springboot.MyTodoList.model.User;
+import com.springboot.MyTodoList.model.*;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -76,6 +77,21 @@ public class ToDoItemController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /** Updates only the status of a task. Actor is resolved from the JWT. */
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Task> patchStatus(@PathVariable UUID id,
+                                             @RequestBody Map<String, String> body,
+                                             @AuthenticationPrincipal Jwt jwt) {
+        String ociIamId = jwt.getSubject();
+        String email    = jwt.getClaimAsString("email");
+        if (email == null) email = ociIamId.contains("@") ? ociIamId : ociIamId + "@unknown";
+        User actor = userService.findOrProvision(ociIamId, email);
+
+        Task updated = toDoItemService.patchStatus(id, TaskStatus.valueOf(body.get("status")), actor);
+        if (updated == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -85,29 +85,33 @@ function StatBarChart({ data, dataKey, fill, tooltipFormatter }) {
 
 export default function KpiDashboardView({
     projectName, sprints, sprintId,
-    developerStats, loadingStats, onSprintChange,
+    developerStats, currentUserEmail, loadingStats, onSprintChange,
 }) {
     const totalTasks = developerStats.reduce((s, d) => s + d.totalAssigned, 0);
-    const totalHours = developerStats.reduce((s, d) => s + Number(d.totalDaysWorked ?? 0), 0) * 8;
-    const devCount   = developerStats.length || 1;
-    const avgTasks   = developerStats.length ? (developerStats.reduce((s, d) => s + d.tasksCompleted, 0) / devCount).toFixed(1) : '—';
-    const avgHours   = developerStats.length ? (totalHours / devCount).toFixed(1) : '—';
+    const totalHours = developerStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
+
+    const myStat = currentUserEmail
+        ? developerStats.find(d => d.email === currentUserEmail) ?? null
+        : null;
+    const myTasks = myStat ? String(myStat.tasksCompleted) : '—';
+    const myHours = myStat ? Number(myStat.totalHoursWorked ?? 0).toFixed(1) : '—';
 
     const chartData = developerStats.map(d => ({
         name: d.email.split('@')[0],
         tasksCompleted: d.tasksCompleted,
-        totalHours: Number((Number(d.totalDaysWorked ?? 0) * 8).toFixed(1)),
+        totalHours: Number(Number(d.totalHoursWorked ?? 0).toFixed(1)),
     }));
 
     return (
         <Box>
+            {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: '28px' }}>
                 <Box>
                     <Typography sx={{ fontWeight: 700, fontSize: '1.5rem', color: '#1A1A1A', mb: '2px' }}>
                         KPI Dashboard
                     </Typography>
                     <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>
-                        Performance metrics per developer
+                        {projectName ?? 'Performance metrics per developer'}
                     </Typography>
                 </Box>
 
@@ -117,17 +121,12 @@ export default function KpiDashboardView({
                         onChange={e => onSprintChange(e.target.value)}
                         displayEmpty
                         sx={{
-                            fontSize: '0.85rem',
-                            fontWeight: 500,
-                            color: '#2B2B2B',
-                            '& .MuiSelect-select': { fontSize: '0.85rem', fontWeight: 500 },
-                            bgcolor: '#fbf9f8',
-                            borderRadius: '8px',
+                            fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B',
+                            bgcolor: '#fbf9f8', borderRadius: '8px',
                             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
                             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
                             '& .MuiSelect-icon': { color: '#2B2B2B' },
-                            '&:hover': { bgcolor: '#fbf9f8' },
                         }}
                     >
                         <MenuItem value="" disabled sx={{ fontSize: '0.85rem', color: '#717171' }}>
@@ -156,54 +155,36 @@ export default function KpiDashboardView({
 
             {sprintId && !loadingStats && (
                 <>
-                    <Grid container spacing="28px" sx={{ mb: '40px' }}>
+                    {/* Row 1: Sprint totals + Per-dev averages */}
+                    <Grid container spacing="28px" sx={{ mb: '28px' }}>
                         <Grid item xs={12} md={6}>
                             <ChartCard title="Sprint Totals">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Total Tasks"
-                                            value={totalTasks}
-                                            description="All tasks assigned this sprint"
-                                            borderColor={STAT_BORDERS.tasks}
-                                        />
+                                        <StatCard label="Total Tasks" value={totalTasks} description="All tasks assigned this sprint" borderColor={STAT_BORDERS.tasks} />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Total Real Hours"
-                                            value={totalHours.toFixed(1)}
-                                            description="Sum of hours logged by all developers"
-                                            borderColor={STAT_BORDERS.hours}
-                                        />
+                                        <StatCard label="Total Real Hours" value={totalHours.toFixed(1)} description="Sum of hours logged by all developers" borderColor={STAT_BORDERS.hours} />
                                     </Grid>
                                 </Grid>
                             </ChartCard>
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                            <ChartCard title="Per-Developer Averages">
+                            <ChartCard title="Your Stats">
                                 <Grid container spacing="12px">
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Avg Tasks / Developer"
-                                            value={avgTasks}
-                                            description="Mean completed tasks per developer"
-                                            borderColor={STAT_BORDERS.avgTasks}
-                                        />
+                                        <StatCard label="Tasks Completed" value={myTasks} description="Tasks you completed this sprint" borderColor={STAT_BORDERS.avgTasks} />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <StatCard
-                                            label="Avg Hours / Developer"
-                                            value={avgHours}
-                                            description="Mean hours worked per developer"
-                                            borderColor={STAT_BORDERS.avgHours}
-                                        />
+                                        <StatCard label="Hours Logged" value={myHours} description="Hours you logged this sprint" borderColor={STAT_BORDERS.avgHours} />
                                     </Grid>
                                 </Grid>
                             </ChartCard>
                         </Grid>
                     </Grid>
 
+                    {/* Row 2: Charts */}
                     {developerStats.length === 0 ? (
                         <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>
                             No developer data found for this sprint.

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import {
     Box, Button, Card, CardContent, CircularProgress,
     Dialog, DialogActions, DialogContent, DialogTitle,
@@ -75,7 +76,7 @@ function MemberCard({ member, onRemove, isRemoving }) {
                         </Typography>
                     </Box>
 
-                    <Button
+                    {onRemove && <Button
                         size="small"
                         variant="outlined"
                         onClick={() => setConfirmOpen(true)}
@@ -88,7 +89,7 @@ function MemberCard({ member, onRemove, isRemoving }) {
                         }}
                     >
                         Remove
-                    </Button>
+                    </Button>}
                 </CardContent>
             </Card>
 
@@ -126,11 +127,35 @@ function MemberCard({ member, onRemove, isRemoving }) {
 
 export default function ProfileView({
     userEmail, userRole, projectName,
-    members = [], isLoading,
+    totalMembers, members = [], isLoading, isManager,
     onRemoveMember, onInviteMember,
     isRemoving, isInviting, inviteError, inviteSuccess,
 }) {
+    const auth = useAuth();
     const [inviteEmail, setInviteEmail] = useState('');
+    const [telegramCode, setTelegramCode] = useState(null);
+
+    const handleLinkTelegram = async () => {
+        try {
+          const response = await fetch('/api/telegram/link-code', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${auth.user?.access_token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+             const data = await response.json();
+             setTelegramCode(data.code);
+          } else {
+             alert("Failed to generate link code. Status: " + response.status);
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Error linking telegram account.");
+        }
+    };
 
     const handleInvite = () => {
         const trimmed = inviteEmail.trim();
@@ -185,8 +210,24 @@ export default function ProfileView({
                         <Box sx={{ display: 'flex', gap: '48px', pt: '8px', flexWrap: 'wrap' }}>
                             <StatColumn label="Role"    value={userRole} />
                             <StatColumn label="Project" value={projectName} />
-                            <StatColumn label="Team"    value={`${members.length} member${members.length !== 1 ? 's' : ''}`} />
-                        </Box>
+                            <StatColumn label="Team"    value={`${totalMembers} member${totalMembers !== 1 ? 's' : ''}`} />                            <Box>
+                                <Typography sx={{ fontSize: '0.78rem', color: '#9E9E9E', mb: '4px', fontWeight: 500 }}>
+                                    Integrations
+                                </Typography>
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={handleLinkTelegram} 
+                                    sx={{...outlinedButtonSx, mt: '4px'}}
+                                >
+                                    Link Telegram Account
+                                </Button>
+                                {telegramCode && (
+                                    <Typography sx={{ fontSize: '0.85rem', color: '#2E7D32', mt: '8px', fontWeight: 600 }}>
+                                        Verification Code: {telegramCode}<br/>
+                                        <span style={{fontWeight: 400, color: '#717171'}}>Send <strong style={{color: '#1A1A1A'}}>/link {telegramCode}</strong> to the bot.</span>
+                                    </Typography>
+                                )}
+                            </Box>                        </Box>
                     </Box>
                 </CardContent>
             </Card>
@@ -195,35 +236,39 @@ export default function ProfileView({
             <Card sx={{ border: '1px solid #E8E8E8', borderRadius: '8px', boxShadow: 'none', bgcolor: '#ffffff' }}>
                 <CardContent sx={{ p: '28px !important' }}>
 
-                    {/* Invite section */}
-                    <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
-                        Invite member
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: '12px', alignItems: 'flex-start', mb: '32px' }}>
-                        <TextField
-                            size="small"
-                            placeholder="colleague@oracle.com"
-                            type="email"
-                            value={inviteEmail}
-                            onChange={e => setInviteEmail(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && handleInvite()}
-                            error={!!inviteError}
-                            helperText={inviteError ?? (inviteSuccess ? 'Invite sent!' : undefined)}
-                            FormHelperTextProps={{ sx: { color: inviteSuccess && !inviteError ? '#2E7D32' : undefined } }}
-                            sx={{
-                                flexGrow: 1,
-                                '& .MuiOutlinedInput-root': { borderRadius: '8px', fontSize: '0.875rem' },
-                            }}
-                        />
-                        <Button
-                            variant="contained"
-                            disabled={isInviting || !inviteEmail.trim()}
-                            onClick={handleInvite}
-                            sx={{ ...containedButtonSx, flexShrink: 0, py: '8px' }}
-                        >
-                            {isInviting ? 'Sending…' : 'Send invite'}
-                        </Button>
-                    </Box>
+                    {/* Invite section — managers only */}
+                    {isManager && (
+                        <>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
+                                Invite member
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: '12px', alignItems: 'flex-start', mb: '32px' }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="colleague@oracle.com"
+                                    type="email"
+                                    value={inviteEmail}
+                                    onChange={e => setInviteEmail(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && handleInvite()}
+                                    error={!!inviteError}
+                                    helperText={inviteError ?? (inviteSuccess ? 'Invite sent!' : undefined)}
+                                    FormHelperTextProps={{ sx: { color: inviteSuccess && !inviteError ? '#2E7D32' : undefined } }}
+                                    sx={{
+                                        flexGrow: 1,
+                                        '& .MuiOutlinedInput-root': { borderRadius: '8px', fontSize: '0.875rem' },
+                                    }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    disabled={isInviting || !inviteEmail.trim()}
+                                    onClick={handleInvite}
+                                    sx={{ ...containedButtonSx, flexShrink: 0, py: '8px' }}
+                                >
+                                    {isInviting ? 'Sending…' : 'Send invite'}
+                                </Button>
+                            </Box>
+                        </>
+                    )}
 
                     {/* Members list */}
                     <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A', mb: '12px' }}>
@@ -247,7 +292,7 @@ export default function ProfileView({
                             <MemberCard
                                 key={getMemberId(m)}
                                 member={m}
-                                onRemove={onRemoveMember}
+                                onRemove={isManager ? onRemoveMember : null}
                                 isRemoving={isRemoving}
                             />
                         ))}

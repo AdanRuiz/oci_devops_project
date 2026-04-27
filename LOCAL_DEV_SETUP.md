@@ -80,8 +80,8 @@ cd MtdrSpring/backend
 Then start the container:
 
 ```bash
-docker stop todolistapp 2>/dev/null; docker rm todolistapp 2>/dev/null
-docker run -d --name todolistapp -p 8080:8080 --env-file .env todolistapp-springboot:local
+docker stop todolistapp && docker rm todolistapp
+docker run -d --name todolistapp -p 8080:8080   todolistapp-springboot:local
 ```
 
 Open **http://localhost:8080**.

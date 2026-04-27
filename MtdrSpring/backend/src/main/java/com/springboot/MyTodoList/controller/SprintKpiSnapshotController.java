@@ -25,9 +25,13 @@ public class SprintKpiSnapshotController {
 
     @GetMapping
     public ResponseEntity<SprintKpiSnapshot> getKpi(@PathVariable UUID sprintId) {
-        return sprintKpiSnapshotService.findBySprintId(sprintId)
-            .map(kpi -> new ResponseEntity<>(kpi, HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        SprintKpiSnapshot snapshot = sprintKpiSnapshotService.findBySprintId(sprintId)
+            .orElseGet(() -> {
+                Sprint sprint = sprintService.findById(sprintId).orElse(null);
+                return sprint != null ? sprintKpiSnapshotService.compute(sprint) : null;
+            });
+        if (snapshot == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(snapshot, HttpStatus.OK);
     }
 
     @PostMapping("/compute")

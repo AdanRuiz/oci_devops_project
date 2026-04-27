@@ -200,25 +200,22 @@ CREATE INDEX idx_tsh_changed_at ON task_state_histories (changed_at);
 
 -- -----------------------------------------------------------------------------
 -- 7. TASK_WORK_LOGS
---    One row per day a developer actively works on a task.
---    Granularity is days (full or half) rather than hours — developers
---    log work at standup or end of day, not minute by minute.
---    The unique constraint on (task_id, user_id, work_date) prevents
---    accidental duplicate entries for the same day.
+--    One row per work session logged by a developer on a task.
+--    Logged automatically when marking a task DONE or when transferring
+--    a task to another developer. Granularity is hours (0.5-step).
 -- -----------------------------------------------------------------------------
 CREATE TABLE task_work_logs (
-    id          RAW(16)     DEFAULT SYS_GUID() NOT NULL,
-    task_id     RAW(16)     NOT NULL,
-    user_id     RAW(16)     NOT NULL,
-    work_date   DATE        NOT NULL,
-    days_worked NUMBER(3,1) DEFAULT 1.0 NOT NULL,
-    note        VARCHAR2(500),
+    id           RAW(16)     DEFAULT SYS_GUID() NOT NULL,
+    task_id      RAW(16)     NOT NULL,
+    user_id      RAW(16)     NOT NULL,
+    work_date    DATE        NOT NULL,
+    hours_worked NUMBER(5,2) DEFAULT 8.0 NOT NULL,
+    note         VARCHAR2(500),
 
-    CONSTRAINT pk_task_work_log     PRIMARY KEY (id),
-    CONSTRAINT fk_twl_task          FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
-    CONSTRAINT fk_twl_user          FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT uq_twl_task_user_day UNIQUE (task_id, user_id, work_date),
-    CONSTRAINT ck_twl_days          CHECK (days_worked IN (0.5, 1.0))
+    CONSTRAINT pk_task_work_log PRIMARY KEY (id),
+    CONSTRAINT fk_twl_task      FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
+    CONSTRAINT fk_twl_user      FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT ck_twl_hours     CHECK (hours_worked > 0 AND hours_worked <= 100)
 );
 
 CREATE INDEX idx_twl_task      ON task_work_logs (task_id);
@@ -293,13 +290,33 @@ CREATE TABLE sprint_kpi_snapshots (
     tasks_reworked           NUMBER(6)   DEFAULT 0 NOT NULL,
     -- Obligatory KPIs
     tasks_completed          NUMBER(6)   DEFAULT 0 NOT NULL,
-    total_days_worked        NUMBER(8,1),
+    total_hours_worked       NUMBER(8,2),
     calculated_at            TIMESTAMP   DEFAULT SYSTIMESTAMP NOT NULL,
 
     CONSTRAINT pk_sprint_kpi_snapshot   PRIMARY KEY (id),
     CONSTRAINT fk_sks_sprint            FOREIGN KEY (sprint_id) REFERENCES sprints (id) ON DELETE CASCADE,
     CONSTRAINT uq_sks_sprint            UNIQUE (sprint_id)
 );
+
+
+-- -----------------------------------------------------------------------------
+-- 11. INVITATIONS
+--     Pending invitations for users who have not yet logged in.
+--     When a user first signs in via OCI IAM, the backend checks this table
+--     by email and auto-adds them to the corresponding projects as DEVELOPER.
+-- -----------------------------------------------------------------------------
+CREATE TABLE invitations (
+    id         RAW(16)      DEFAULT SYS_GUID() NOT NULL,
+    project_id RAW(16)      NOT NULL,
+    email      VARCHAR2(255) NOT NULL,
+    created_at TIMESTAMP    DEFAULT SYSTIMESTAMP NOT NULL,
+
+    CONSTRAINT pk_invitation         PRIMARY KEY (id),
+    CONSTRAINT fk_inv_project        FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_inv_email      ON invitations (email);
+CREATE INDEX idx_inv_project_id ON invitations (project_id);
 
 
 -- =============================================================================
@@ -316,3 +333,4 @@ CREATE TABLE sprint_kpi_snapshots (
 -- Cascades: projects → sprints → tasks → task_state_histories, task_work_logs
 --           users   → telegram_link_codes, bot_conversations
 -- =============================================================================
+
