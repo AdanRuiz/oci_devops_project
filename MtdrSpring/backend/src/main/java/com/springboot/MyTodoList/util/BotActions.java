@@ -138,13 +138,13 @@ public class BotActions {
         }
 
         String normalized = requestText == null ? "" : requestText.trim().toLowerCase();
-        if (normalized.equals("confirm") || normalized.equals("yes")) {
+        if (normalized.equals("confirm") || normalized.equals("yes") || normalized.equals("confirm delete")) {
             pendingCommands.remove(chatId);
             executeCommand(pending.command());
             return true;
         }
 
-        if (normalized.equals("cancel") || normalized.equals("no")) {
+        if (normalized.equals("cancel") || normalized.equals("no") || normalized.equals("cancel delete")) {
             pendingCommands.remove(chatId);
             BotHelper.sendMessageToTelegram(chatId,
                 "Cancelled. No changes were applied.",
@@ -155,7 +155,7 @@ public class BotActions {
         }
 
         BotHelper.sendMessageToTelegram(chatId,
-            "You have a pending command. Reply 'confirm' to execute or 'cancel' to discard.",
+            "You have a pending command. Reply 'confirm'/'confirm delete' to execute or 'cancel'/'cancel delete' to discard.",
             telegramClient,
             null);
         exit = true;
