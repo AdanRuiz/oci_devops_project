@@ -57,14 +57,8 @@ export default function Layout({ children }) {
 
     const handleSignOut = async () => {
         clearProject();
-        try {
-            await auth.signoutRedirect({
-                post_logout_redirect_uri: window.location.origin,
-            });
-        } catch {
-            await auth.removeUser();
-            navigate('/auth/sign-in', { replace: true });
-        }
+        await auth.removeUser();
+        navigate('/auth/sign-in', { replace: true });
     };
 
     const splitY = APPBAR_H + 32 + BANNER_H;
