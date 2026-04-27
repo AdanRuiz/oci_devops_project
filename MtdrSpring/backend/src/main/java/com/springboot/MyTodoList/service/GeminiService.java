@@ -8,6 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Locale;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -82,6 +83,21 @@ public class GeminiService {
       String errorDetail
     ) {}
 
+    public record SemanticCandidate(
+      String id,
+      String kind,
+      String label,
+      String description
+    ) {}
+
+    public record SemanticSelection(
+      String id,
+      String kind,
+      String label,
+      double confidence,
+      String reason
+    ) {}
+
     public String generateText(String prompt) throws Exception {
         String body = buildTextRequestBody(prompt);
       GeminiApiResponse response = callGemini(body);
@@ -94,6 +110,96 @@ public class GeminiService {
             throw new IllegalStateException("Intent parsing failed at stage " + diagnostics.stage() + ": " + diagnostics.errorDetail());
         }
         return diagnostics.intent();
+    }
+
+    public SemanticSelection resolveSemanticCandidate(String userQuery, String context, List<SemanticCandidate> candidates) {
+      if (userQuery == null || userQuery.trim().isEmpty() || candidates == null || candidates.isEmpty()) {
+        return null;
+      }
+
+      try {
+        String prompt = """
+          You are matching a user's reference to one item from a provided candidate list.
+          Select the single best candidate for the query.
+          Return ONLY JSON with this exact schema:
+          {
+            "id": string|null,
+            "kind": string|null,
+            "label": string|null,
+            "confidence": number,
+            "reason": string
+          }
+          Rules:
+          - Confidence must be between 0 and 1.
+          - If no candidate is a good match, return id=null and confidence=0.
+          - Prefer semantic meaning over exact substring match.
+          - If the query mentions a sprint number or sprint name, choose a sprint candidate.
+          - If the query sounds like a task title, choose a task candidate.
+          Context: %s
+          User query: %s
+          Candidates:
+          %s
+          """.formatted(context, userQuery, buildCandidateListJson(candidates));
+
+        String body = buildJsonResponseRequestBody(prompt);
+        GeminiApiResponse response = callGemini(body);
+        String text = extractText(response.root());
+        if (text == null || text.trim().isEmpty()) {
+          return null;
+        }
+
+        String normalized = stripCodeFences(text).trim();
+        JsonNode node = objectMapper.readTree(normalized);
+        String id = node.path("id").isNull() ? null : node.path("id").asText(null);
+        String kind = node.path("kind").isNull() ? null : node.path("kind").asText(null);
+        String label = node.path("label").isNull() ? null : node.path("label").asText(null);
+        double confidence = node.path("confidence").isNumber() ? node.path("confidence").asDouble() : 0.0;
+        String reason = node.path("reason").isNull() ? null : node.path("reason").asText(null);
+
+        if (id == null || confidence < 0.55) {
+          return null;
+        }
+
+        return new SemanticSelection(id, kind, label, confidence, reason);
+      } catch (Exception e) {
+        logger.warn("Semantic resolution failed for query '{}': {}", userQuery, e.getMessage());
+        if (!allowHeuristicFallback) {
+          return null;
+        }
+        return heuristicSemanticSelection(userQuery, candidates);
+      }
+    }
+
+    private String buildCandidateListJson(List<SemanticCandidate> candidates) {
+      StringBuilder builder = new StringBuilder("[");
+      for (int i = 0; i < candidates.size(); i++) {
+        SemanticCandidate candidate = candidates.get(i);
+        builder.append("{")
+            .append("\"id\":\"").append(escapeJson(candidate.id())).append("\",")
+            .append("\"kind\":\"").append(escapeJson(candidate.kind())).append("\",")
+            .append("\"label\":\"").append(escapeJson(candidate.label())).append("\",")
+            .append("\"description\":\"").append(escapeJson(candidate.description())).append("\"")
+            .append("}");
+        if (i < candidates.size() - 1) builder.append(",");
+      }
+      builder.append("]");
+      return builder.toString();
+    }
+
+    private SemanticSelection heuristicSemanticSelection(String userQuery, List<SemanticCandidate> candidates) {
+      String lower = userQuery.toLowerCase(Locale.ROOT);
+      for (SemanticCandidate candidate : candidates) {
+        String label = candidate.label() == null ? "" : candidate.label().toLowerCase(Locale.ROOT);
+        if (lower.equals(label) || lower.contains(label) || label.contains(lower)) {
+          return new SemanticSelection(candidate.id(), candidate.kind(), candidate.label(), 0.75, "Heuristic substring match");
+        }
+      }
+      return null;
+    }
+
+    private String escapeJson(String value) {
+      if (value == null) return "";
+      return value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", " ").replace("\r", " ");
     }
 
     public IntentDiagnostics parseIntentWithDiagnostics(String userText) {

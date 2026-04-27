@@ -29,6 +29,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -221,6 +222,88 @@ public class BotActions {
             .orElse(activeSprints.get(0));
     }
 
+    private record ResolvedReference(String kind, UUID id, String label, double confidence) {}
+
+    private GeminiService.SemanticSelection resolveCandidate(String userQuery, String context, List<GeminiService.SemanticCandidate> candidates) {
+        if (userQuery == null || userQuery.trim().isEmpty() || candidates == null || candidates.isEmpty()) {
+            return null;
+        }
+        return geminiService.resolveSemanticCandidate(userQuery.trim(), context, candidates);
+    }
+
+    private ResolvedReference resolveStatusReference(Project project, String userQuery, List<Sprint> sprints, List<Task> tasks) {
+        List<GeminiService.SemanticCandidate> candidates = new ArrayList<>();
+        Map<String, Sprint> sprintById = new HashMap<>();
+        Map<String, Task> taskById = new HashMap<>();
+
+        for (Sprint sprint : sprints) {
+            String sprintId = sprint.getId().toString();
+            sprintById.put(sprintId, sprint);
+            candidates.add(new GeminiService.SemanticCandidate(
+                sprintId,
+                "SPRINT",
+                sprint.getName(),
+                String.format("Sprint status=%s start=%s end=%s", sprint.getStatus(), sprint.getStartDate(), sprint.getEndDate())
+            ));
+        }
+
+        for (Task task : tasks) {
+            String taskId = task.getId().toString();
+            taskById.put(taskId, task);
+            candidates.add(new GeminiService.SemanticCandidate(
+                taskId,
+                "TASK",
+                task.getTitle(),
+                String.format("Task status=%s priority=%s", task.getStatus(), task.getPriority())
+            ));
+        }
+
+        GeminiService.SemanticSelection selection = resolveCandidate(userQuery, "Resolve whether the user is referring to a sprint or a task in project status queries.", candidates);
+        if (selection == null || selection.id() == null) {
+            return null;
+        }
+
+        if ("SPRINT".equalsIgnoreCase(selection.kind()) && sprintById.containsKey(selection.id())) {
+            Sprint sprint = sprintById.get(selection.id());
+            return new ResolvedReference("SPRINT", sprint.getId(), sprint.getName(), selection.confidence());
+        }
+
+        if ("TASK".equalsIgnoreCase(selection.kind()) && taskById.containsKey(selection.id())) {
+            Task task = taskById.get(selection.id());
+            return new ResolvedReference("TASK", task.getId(), task.getTitle(), selection.confidence());
+        }
+
+        return null;
+    }
+
+    private ResolvedReference resolveTaskReference(String userQuery, String context, List<Task> tasks) {
+        List<GeminiService.SemanticCandidate> candidates = new ArrayList<>();
+        Map<String, Task> taskById = new HashMap<>();
+
+        for (Task task : tasks) {
+            String taskId = task.getId().toString();
+            taskById.put(taskId, task);
+            candidates.add(new GeminiService.SemanticCandidate(
+                taskId,
+                "TASK",
+                task.getTitle(),
+                String.format("Task status=%s priority=%s", task.getStatus(), task.getPriority())
+            ));
+        }
+
+        GeminiService.SemanticSelection selection = resolveCandidate(userQuery, context, candidates);
+        if (selection == null || selection.id() == null) {
+            return null;
+        }
+
+        if (taskById.containsKey(selection.id())) {
+            Task task = taskById.get(selection.id());
+            return new ResolvedReference("TASK", task.getId(), task.getTitle(), selection.confidence());
+        }
+
+        return null;
+    }
+
     public void setRequestText(String cmd) { requestText = cmd; }
     public void setChatId(long chId) { chatId = chId; }
     public void setTelegramClient(TelegramClient tc) { telegramClient = tc; }
@@ -302,10 +385,17 @@ public class BotActions {
         }
 
         String arg = requestText.trim().length() > 7 ? requestText.trim().substring(7).trim() : "";
+        List<Sprint> sprints = sprintRepository.findByProject_Id(project.getId());
+        List<Task> projectTasks = todoService.findByProjectId(project.getId());
+        ResolvedReference statusReference = null;
+
+        if (!arg.isEmpty()) {
+            statusReference = resolveStatusReference(project, arg, sprints, projectTasks);
+        }
 
         if (useHttpApi) {
             try {
-                String message = fetchStatusViaHttp(project.getId(), arg);
+                String message = fetchStatusViaHttp(project.getId(), statusReference != null ? statusReference.label() : arg);
                 BotHelper.sendMessageToTelegram(chatId, message, telegramClient);
                 exit = true;
                 return;
@@ -319,11 +409,10 @@ public class BotActions {
         }
 
         if (arg.isEmpty()) {
-            List<Task> tasks = todoService.findByProjectId(project.getId());
-            long todo = tasks.stream().filter(t -> t.getStatus() == TaskStatus.TODO).count();
-            long inProgress = tasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
-            long blocked = tasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
-            long done = tasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
+            long todo = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.TODO).count();
+            long inProgress = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
+            long blocked = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
+            long done = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
 
             String msg = String.format("Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d",
                                        project.getName(), todo, inProgress, blocked, done);
@@ -332,11 +421,31 @@ public class BotActions {
             return;
         }
 
-        List<Sprint> sprints = sprintRepository.findByProject_Id(project.getId());
-        Sprint sprintMatch = sprints.stream()
-            .filter(s -> s.getName().equalsIgnoreCase(arg))
-            .findFirst()
-            .orElse(null);
+        Sprint sprintMatch = null;
+        Task taskMatch = null;
+        final String resolvedKind = statusReference != null ? statusReference.kind() : null;
+        final UUID resolvedId = statusReference != null ? statusReference.id() : null;
+
+        if (statusReference != null) {
+            if ("SPRINT".equalsIgnoreCase(resolvedKind)) {
+                sprintMatch = sprints.stream()
+                    .filter(s -> s.getId().equals(resolvedId))
+                    .findFirst()
+                    .orElse(null);
+            } else if ("TASK".equalsIgnoreCase(resolvedKind)) {
+                taskMatch = projectTasks.stream()
+                    .filter(t -> t.getId().equals(resolvedId))
+                    .findFirst()
+                    .orElse(null);
+            }
+        }
+
+        if (sprintMatch == null && taskMatch == null) {
+            sprintMatch = sprints.stream()
+                .filter(s -> s.getName().equalsIgnoreCase(arg))
+                .findFirst()
+                .orElse(null);
+        }
 
         if (sprintMatch != null) {
             List<Task> sprintTasks = todoService.findBySprintId(sprintMatch.getId());
@@ -358,7 +467,26 @@ public class BotActions {
             return;
         }
 
-        List<Task> exactTaskMatches = todoService.findByProjectId(project.getId()).stream()
+        if (taskMatch == null) {
+            taskMatch = projectTasks.stream()
+                .filter(t -> t.getTitle().equalsIgnoreCase(arg))
+                .findFirst()
+                .orElse(null);
+        }
+
+        if (taskMatch != null) {
+            String msg = String.format(
+                "Task Status\nTitle: %s\nStatus: %s\nPriority: %s",
+                taskMatch.getTitle(),
+                taskMatch.getStatus(),
+                taskMatch.getPriority()
+            );
+            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+            exit = true;
+            return;
+        }
+
+        List<Task> exactTaskMatches = projectTasks.stream()
             .filter(t -> t.getTitle().equalsIgnoreCase(arg))
             .collect(Collectors.toList());
 
@@ -490,17 +618,28 @@ public class BotActions {
         
         UUID projectId = memberships.get(0).getProject().getId();
         List<Task> tasks = todoService.findByProjectId(projectId);
-        
-        List<Task> matchingTasks = tasks.stream()
-            .filter(t -> t.getTitle().equalsIgnoreCase(title))
-            .collect(Collectors.toList());
-            
-        if (matchingTasks.isEmpty()) {
-            BotHelper.sendMessageToTelegram(chatId, "Could not find a task matching: " + title, telegramClient);
-        } else if (matchingTasks.size() > 1) {
-            BotHelper.sendMessageToTelegram(chatId, "Found multiple tasks with that title. Please use the web UI to delete, or ensure task titles are unique.", telegramClient);
-        } else {
-            boolean deleted = todoService.deleteToDoItem(matchingTasks.get(0).getId());
+        ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task to delete.", tasks);
+        Task selectedTask = null;
+        if (taskReference != null) {
+            selectedTask = tasks.stream().filter(t -> t.getId().equals(taskReference.id())).findFirst().orElse(null);
+        }
+
+        if (selectedTask == null) {
+            List<Task> matchingTasks = tasks.stream()
+                .filter(t -> t.getTitle().equalsIgnoreCase(title))
+                .collect(Collectors.toList());
+
+            if (matchingTasks.isEmpty()) {
+                BotHelper.sendMessageToTelegram(chatId, "Could not find a task matching: " + title, telegramClient);
+            } else if (matchingTasks.size() > 1) {
+                BotHelper.sendMessageToTelegram(chatId, "Found multiple tasks with that title. Please use the web UI to delete, or ensure task titles are unique.", telegramClient);
+            } else {
+                selectedTask = matchingTasks.get(0);
+            }
+        }
+
+        if (selectedTask != null) {
+            boolean deleted = todoService.deleteToDoItem(selectedTask.getId());
             if (deleted) {
                 BotHelper.sendMessageToTelegram(chatId, "Task deleted successfully.", telegramClient);
             } else {
@@ -549,25 +688,45 @@ public class BotActions {
             UUID projectId = memberships.get(0).getProject().getId();
             Sprint activeSprint = getActiveSprint(projectId);
 
-            List<Task> matchingTasks = todoService.findByProjectId(projectId).stream()
-                .filter(t -> t.getTitle().equalsIgnoreCase(title))
-                .collect(Collectors.toList());
-
-            if (matchingTasks.isEmpty()) {
-                BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
-            } else if (matchingTasks.size() > 1) {
-                BotHelper.sendMessageToTelegram(chatId, "Multiple tasks found with that title, please use web UI.", telegramClient);
-            } else {
-                Task t = matchingTasks.get(0);
-                boolean assignedToSprint = t.getSprint() == null && activeSprint != null;
-                todoService.patchStatusAndSprint(t.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
-
-                String msg = "Task status updated to " + newStatus;
-                if (assignedToSprint) {
-                    msg += " in sprint '" + activeSprint.getName() + "'";
-                }
-                BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
+            List<Task> projectTasks = todoService.findByProjectId(projectId);
+            ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task for a status update.", projectTasks);
+            Task selectedTask = null;
+            if (taskReference != null) {
+                selectedTask = projectTasks.stream().filter(t -> t.getId().equals(taskReference.id())).findFirst().orElse(null);
             }
+
+            if (selectedTask == null) {
+                List<Task> matchingTasks = projectTasks.stream()
+                    .filter(t -> t.getTitle().equalsIgnoreCase(title))
+                    .collect(Collectors.toList());
+
+                if (matchingTasks.isEmpty()) {
+                    BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+                    exit = true;
+                    return;
+                } else if (matchingTasks.size() > 1) {
+                    BotHelper.sendMessageToTelegram(chatId, "Multiple tasks found with that title, please use web UI.", telegramClient);
+                    exit = true;
+                    return;
+                }
+
+                selectedTask = matchingTasks.get(0);
+            }
+
+            if (selectedTask == null) {
+                BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            boolean assignedToSprint = selectedTask.getSprint() == null && activeSprint != null;
+            todoService.patchStatusAndSprint(selectedTask.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+
+            String msg = "Task status updated to " + newStatus;
+            if (assignedToSprint) {
+                msg += " in sprint '" + activeSprint.getName() + "'";
+            }
+            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
         } catch (Exception e) {
             logger.error("Failed to update task status for chatId={}", chatId, e);
             BotHelper.sendMessageToTelegram(chatId, "Failed to update task status due to a server error.", telegramClient);
@@ -603,33 +762,51 @@ public class BotActions {
         
         UUID projectId = memberships.get(0).getProject().getId();
         Sprint activeSprint = getActiveSprint(projectId);
-        
-        
-        List<Task> matchingTasks = todoService.findByProjectId(projectId).stream()
-            .filter(t -> t.getTitle().equalsIgnoreCase(title))
-            .collect(Collectors.toList());
-            
-        if (matchingTasks.isEmpty()) {
-            BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
-        } else if (matchingTasks.size() > 1) {
-            BotHelper.sendMessageToTelegram(chatId, "Multiple tasks found.", telegramClient);
-        } else {
-            Task t = matchingTasks.get(0);
-            
-            // Move to active sprint if it is logged without a sprint
-            if (t.getSprint() == null && activeSprint != null) {
-                t.setSprint(activeSprint);
-                todoService.updateToDoItem(t.getId(), t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
-            }
-            
-            TaskWorkLog log = new TaskWorkLog();
-            log.setTask(t);
-            log.setUser(user);
-            log.setWorkDate(LocalDate.now());
-            log.setHoursWorked(BigDecimal.valueOf(hours));
-            taskWorkLogRepository.save(log);
-            BotHelper.sendMessageToTelegram(chatId, "Logged " + hours + " hours to task: " + title, telegramClient);
+
+        List<Task> projectTasks = todoService.findByProjectId(projectId);
+        ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task for logging hours.", projectTasks);
+        Task selectedTask = null;
+        if (taskReference != null) {
+            selectedTask = projectTasks.stream().filter(t -> t.getId().equals(taskReference.id())).findFirst().orElse(null);
         }
+
+        if (selectedTask == null) {
+            List<Task> matchingTasks = projectTasks.stream()
+                .filter(t -> t.getTitle().equalsIgnoreCase(title))
+                .collect(Collectors.toList());
+
+            if (matchingTasks.isEmpty()) {
+                BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+                exit = true;
+                return;
+            } else if (matchingTasks.size() > 1) {
+                BotHelper.sendMessageToTelegram(chatId, "Multiple tasks found.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            selectedTask = matchingTasks.get(0);
+        }
+
+        if (selectedTask == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        // Move to active sprint if it is logged without a sprint
+        if (selectedTask.getSprint() == null && activeSprint != null) {
+            selectedTask.setSprint(activeSprint);
+            todoService.updateToDoItem(selectedTask.getId(), selectedTask, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+        }
+
+        TaskWorkLog log = new TaskWorkLog();
+        log.setTask(selectedTask);
+        log.setUser(user);
+        log.setWorkDate(LocalDate.now());
+        log.setHoursWorked(BigDecimal.valueOf(hours));
+        taskWorkLogRepository.save(log);
+        BotHelper.sendMessageToTelegram(chatId, "Logged " + hours + " hours to task: " + selectedTask.getTitle(), telegramClient);
         exit = true;
     }
 
