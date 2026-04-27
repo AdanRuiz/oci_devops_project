@@ -37,6 +37,11 @@ DB_USER="TODOUSER_DEV"
 DB_PASSWORD="YOUR_DEV_DB_PASSWORD"
 DB_URL="URL_HERE"
 
+GEMINI_API_KEY=GEMINI_API_KEY_GOES_HERE
+
+TELEGRAM_BOT_TOKEN=TELEGRAM_BOT_TOKEN_GOES_HERE
+TELEGRAM_BOT_NAME=TELEGRAM_BOT_NAME_GOES_HERE
+
 if [ -z "${GEMINI_API_KEY}" ]; then
   echo "WARNING: GEMINI_API_KEY is not set. Natural language parsing will fail until you export it."
 fi
@@ -52,15 +57,20 @@ docker build -f DockerfileDev \
 
 echo ""
 echo "Build complete. Run locally with:"
-echo "  docker stop todolistapp 2>/dev/null; docker rm todolistapp 2>/dev/null"
-echo "  docker run -d --name todolistapp -p 8080:8080 \\"
-echo "    -e GEMINI_API_KEY=\"${GEMINI_API_KEY}\" \\"
-echo "    -e GEMINI_MODEL=\"${GEMINI_MODEL:-gemini-3.1-flash-lite-preview}\" \\"
-echo "    -e BOT_PARSER_DRY_RUN=\"${BOT_PARSER_DRY_RUN:-false}\" \\"
-echo "    -e BOT_PARSER_REQUIRE_CONFIRMATION=\"${BOT_PARSER_REQUIRE_CONFIRMATION:-false}\" \\"
-echo "    -e BOT_USE_HTTP_API=\"${BOT_USE_HTTP_API:-false}\" \\"
-echo "    -e BOT_INTERNAL_API_BASE_URL=\"${BOT_INTERNAL_API_BASE_URL:-http://localhost:8080}\" \\"
-echo "    -e BOT_INTERNAL_API_KEY=\"${BOT_INTERNAL_API_KEY:-}\" \\"
-echo "    ${IMAGE_NAME}:${IMAGE_VERSION}"
+echo "docker stop todolistapp; docker rm todolistapp"
+echo "docker run -d --name todolistapp -p 8080:8080 \\"
+echo "  -e TELEGRAM_BOT_TOKEN=\"${TELEGRAM_BOT_TOKEN}\" \\"
+echo "  -e TELEGRAM_BOT_NAME=\"${TELEGRAM_BOT_NAME}\" \\"
+echo "  -e GEMINI_API_KEY=\"${GEMINI_API_KEY}\" \\"
+echo "  -e GEMINI_MODEL=\"${GEMINI_MODEL:-gemini-3.1-flash-lite-preview}\" \\"
+echo "  -e GEMINI_API_BASE_URL=\"${GEMINI_API_BASE_URL:-https://generativelanguage.googleapis.com/v1beta}\" \\"
+echo "  -e BOT_PARSER_DRY_RUN=\"${BOT_PARSER_DRY_RUN:-false}\" \\"
+echo "  -e BOT_PARSER_REQUIRE_CONFIRMATION=\"${BOT_PARSER_REQUIRE_CONFIRMATION:-false}\" \\"
+echo "  -e BOT_PARSER_ALLOW_HEURISTIC_FALLBACK=\"${BOT_PARSER_ALLOW_HEURISTIC_FALLBACK:-false}\" \\"
+echo "  -e BOT_PARSER_DEBUG=\"${BOT_PARSER_DEBUG:-false}\" \\"
+echo "  -e BOT_USE_HTTP_API=\"${BOT_USE_HTTP_API:-false}\" \\"
+echo "  -e BOT_INTERNAL_API_BASE_URL=\"${BOT_INTERNAL_API_BASE_URL:-http://localhost:8080}\" \\"
+echo "  -e BOT_INTERNAL_API_KEY=\"${BOT_INTERNAL_API_KEY:-}\" \\"
+echo "  ${IMAGE_NAME}:${IMAGE_VERSION}"
 echo ""
 echo "Then open: http://localhost:8080"
