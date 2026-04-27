@@ -177,6 +177,10 @@ public class BotActions {
             fnLogHours();
             return;
         }
+        if (commandText.startsWith("/_deleteconfirm")) {
+            fnDeleteCommand();
+            return;
+        }
         if (commandText.startsWith("/delete")) {
             fnDeleteCommand();
             return;
@@ -350,7 +354,7 @@ public class BotActions {
                          "/help - Show available commands\n" +
                          "/status [sprint name | task title] - Get project summary, sprint summary, or task status\n" +
                          "/create <title> | <LOW|MEDIUM|HIGH> - Create a task with priority (e.g. /create Fix DB bug | HIGH)\n" +
-                         "/delete <title> - Delete a task by matching title\n" +
+                         "/delete <title> - Request deletion for a matching task (requires confirmation)\n" +
                          "/updatestatus <IN_PROGRESS/BLOCKED/DONE> <task title> - Update task status\n" +
                          "/loghours <hours> <task title> - Log hours worked on a task";
         BotHelper.sendMessageToTelegram(chatId, helpMsg, telegramClient);
@@ -593,7 +597,7 @@ public class BotActions {
     }
 
     public void fnDeleteCommand() {
-        if (!requestText.startsWith("/delete ") || exit) return;
+        if (!(requestText.startsWith("/delete ") || requestText.startsWith("/_deleteconfirm ")) || exit) return;
         
         User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
         if (user == null) {
@@ -618,6 +622,39 @@ public class BotActions {
         
         UUID projectId = memberships.get(0).getProject().getId();
         List<Task> tasks = todoService.findByProjectId(projectId);
+
+        if (requestText.startsWith("/_deleteconfirm ")) {
+            String idRaw = requestText.substring("/_deleteconfirm ".length()).trim();
+            UUID taskId;
+            try {
+                taskId = UUID.fromString(idRaw);
+            } catch (IllegalArgumentException e) {
+                BotHelper.sendMessageToTelegram(chatId, "Delete confirmation failed due to an invalid task id. Please try /delete again.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            Task taskToDelete = tasks.stream()
+                .filter(t -> t.getId().equals(taskId))
+                .findFirst()
+                .orElse(null);
+
+            if (taskToDelete == null) {
+                BotHelper.sendMessageToTelegram(chatId, "Task no longer exists or you no longer have access to it.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            boolean deleted = todoService.deleteToDoItem(taskToDelete.getId());
+            if (deleted) {
+                BotHelper.sendMessageToTelegram(chatId, "Task deleted successfully: " + taskToDelete.getTitle(), telegramClient);
+            } else {
+                BotHelper.sendMessageToTelegram(chatId, "Failed to delete task due to an error.", telegramClient);
+            }
+            exit = true;
+            return;
+        }
+
         ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task to delete.", tasks);
         Task selectedTask = null;
         if (taskReference != null) {
@@ -639,12 +676,21 @@ public class BotActions {
         }
 
         if (selectedTask != null) {
-            boolean deleted = todoService.deleteToDoItem(selectedTask.getId());
-            if (deleted) {
-                BotHelper.sendMessageToTelegram(chatId, "Task deleted successfully.", telegramClient);
-            } else {
-                BotHelper.sendMessageToTelegram(chatId, "Failed to delete task due to an error.", telegramClient);
+            PendingCommand previousPending = pendingCommands.put(
+                chatId,
+                new PendingCommand("/_deleteconfirm " + selectedTask.getId(), System.currentTimeMillis())
+            );
+            String baseConfirmMsg = String.format(
+                "Please confirm task deletion.\nTitle: %s\nStatus: %s\nPriority: %s\n\nReply 'confirm' to delete or 'cancel' to keep it.",
+                selectedTask.getTitle(),
+                selectedTask.getStatus(),
+                selectedTask.getPriority()
+            );
+            String confirmMsg = baseConfirmMsg;
+            if (previousPending != null && previousPending.command() != null && previousPending.command().startsWith("/_deleteconfirm ")) {
+                confirmMsg = "Previous delete request replaced.\n\n" + baseConfirmMsg;
             }
+            BotHelper.sendMessageToTelegram(chatId, confirmMsg, telegramClient, null);
         }
         exit = true;
     }
@@ -949,7 +995,7 @@ public class BotActions {
 
         if (requestText == null || requestText.trim().isEmpty()) return;
 
-        if (parserRequireConfirmation && tryHandlePendingConfirmation()) {
+        if (tryHandlePendingConfirmation()) {
             return;
         }
 
