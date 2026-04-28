@@ -12,6 +12,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import NewItem from './NewItem';
+import AIInsightsPanel from './AIInsightsPanel';
 import API_LIST from './API';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TableBody, CircularProgress } from '@mui/material';
@@ -186,6 +187,7 @@ function App() {
     return (
       <div className="App">
         <h1>MY TODO LIST</h1>
+        <AIInsightsPanel />
         <NewItem addItem={addItem} isInserting={isInserting}/>
         { error &&
           <p>Error: {error.message}</p>
