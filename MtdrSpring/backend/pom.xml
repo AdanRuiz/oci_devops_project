@@ -89,6 +89,17 @@
 			<version>1.18.30</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.oracle.oci.sdk</groupId>
+			<artifactId>oci-java-sdk-generativeaiinference</artifactId>
+			<version>3.46.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.oci.sdk</groupId>
+			<artifactId>oci-java-sdk-common-httpclient-jersey3</artifactId>
+			<version>3.46.1</version>
+			<scope>runtime</scope>
+		</dependency>
  </dependencies>
 	<build>
 		<plugins>
