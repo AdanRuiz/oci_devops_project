@@ -36,7 +36,8 @@ jobs:
       working-directory: MtdrSpring/backend
       run: |
         sudo apt update && sudo apt install openjdk-25-jdk
-        java -version
+        which java
+        ls -la /usr/lib/jvm/java-25-openjdk-amd64/bin/
         export DOCKER_REGISTRY=$DOCKER_REGISTRY
         export IMAGE_VERSION=${{ needs.setup.outputs.timestamp }}
         chmod +x build.sh
