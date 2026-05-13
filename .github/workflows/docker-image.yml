@@ -2,10 +2,7 @@ name: Build and publish backend
 
 on:
   push:
-    branches: [ "main" ]
-    paths: ["MtdrSpring/backend/**"]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "fix-java-version" ]
     paths: ["MtdrSpring/backend/**"]
 env:
   DOCKER_REGISTRY: ${{ vars.OCI_REGION }}/${{ vars.OCI_TENANCY_NAMESPACE }}/${{ vars.OCI_CONTAINER_REGISTRY }}
@@ -38,6 +35,7 @@ jobs:
     - name: Build the Docker image
       working-directory: MtdrSpring/backend
       run: |
+        sudo apt update && sudo apt install openjdk-25-jdk
         export DOCKER_REGISTRY=$DOCKER_REGISTRY
         export IMAGE_VERSION=${{ needs.setup.outputs.timestamp }}
         chmod +x build.sh
