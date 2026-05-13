@@ -3,7 +3,7 @@ name: Build and publish backend
 on:
   push:
     branches: [ "fix-java-version" ]
-    paths: ["MtdrSpring/backend/**"]
+    paths: [ ".github/**", "MtdrSpring/backend/**"]
 env:
   DOCKER_REGISTRY: ${{ vars.OCI_REGION }}/${{ vars.OCI_TENANCY_NAMESPACE }}/${{ vars.OCI_CONTAINER_REGISTRY }}
 
