@@ -32,30 +32,20 @@ public class AgentOrchestrator {
             return parsedIntent.getClarificationQuestion();
         }
 
-        switch (parsedIntent.getIntent()) {
-            case HELP:
-                return helpText(userRole);
-            case LIST_TASKS:
-                return formatTasks("Estas son las tareas registradas:", workspaceService.findAllTasks());
-            case LIST_TASKS_BY_ASSIGNEE:
-                return formatTasks("Estas son las tareas de " + safe(parsedIntent.getAssignee()) + ":",
-                    workspaceService.findTasksByAssignee(parsedIntent.getAssignee()));
-            case LIST_TASKS_BY_STATUS:
-                return formatTasks("Estas son las tareas con estado " + safe(parsedIntent.getStatus()) + ":",
-                    workspaceService.findTasksByStatus(parsedIntent.getStatus()));
-            case CREATE_TASK:
-                return createTask(parsedIntent);
-            case DELETE_TASK:
-                return deleteTaskResponse(parsedIntent);
-            case GET_DEVELOPER_KPI:
-                return getDeveloperKpiResponse(parsedIntent);
-            case CURRENT_SPRINT_SUMMARY:
-                return sprintSummary();
-            case TEAM_LOAD_SUMMARY:
-                return teamLoadSummary();
-            default:
-                return "No pude interpretar la solicitud. Escribe ayuda para ver ejemplos.";
-        }
+        return switch (parsedIntent.getIntent()) {
+            case HELP -> helpText(userRole);
+            case LIST_TASKS -> formatTasks("Estas son las tareas registradas:", workspaceService.findAllTasks());
+            case LIST_TASKS_BY_ASSIGNEE -> formatTasks("Estas son las tareas de " + safe(parsedIntent.getAssignee()) + ":",
+                workspaceService.findTasksByAssignee(parsedIntent.getAssignee()));
+            case LIST_TASKS_BY_STATUS -> formatTasks("Estas son las tareas con estado " + safe(parsedIntent.getStatus()) + ":",
+                workspaceService.findTasksByStatus(parsedIntent.getStatus()));
+            case CREATE_TASK -> createTask(parsedIntent);
+            case DELETE_TASK -> deleteTaskResponse(parsedIntent);
+            case GET_DEVELOPER_KPI -> getDeveloperKpiResponse(parsedIntent);
+            case CURRENT_SPRINT_SUMMARY -> sprintSummary();
+            case TEAM_LOAD_SUMMARY -> teamLoadSummary();
+            default -> "No pude interpretar la solicitud. Escribe ayuda para ver ejemplos.";
+        };
     }
 
     private String createTask(ParsedIntent parsedIntent) {
@@ -66,17 +56,30 @@ public class AgentOrchestrator {
         TaskItem task = workspaceService.createTask(
             parsedIntent.getTitle(),
             parsedIntent.getAssignee(),
-            parsedIntent.getStoryPoints() == null ? 3 : parsedIntent.getStoryPoints(),
-            parsedIntent.getSprintName()
+            parsedIntent.getExpectedHours() == null ? 1 : parsedIntent.getExpectedHours().intValue(),
+            parsedIntent.getSprintName(),
+            Boolean.TRUE.equals(parsedIntent.getIsBug())
         );
 
-        return "Tarea creada correctamente.\n"
-            + "Id: " + task.getId() + "\n"
-            + "Titulo: " + task.getTitle() + "\n"
-            + "Responsable: " + task.getAssignee() + "\n"
-            + "Estado: " + task.getStatus() + "\n"
-            + "Story points: " + task.getStoryPoints() + "\n"
-            + "Sprint: " + task.getSprintName();
+        return """
+            Tarea creada correctamente.
+            Id: %d
+            Titulo: %s
+            Responsable: %s
+            Estado: %s
+            Horas esperadas: %d
+            Horas realizadas: %d
+            Bug: %s
+            Sprint: %s
+            """.formatted(
+                task.getId(),
+                task.getTitle(),
+                task.getAssignee(),
+                task.getStatus(),
+                task.getExpectedHours(),
+                task.getHoursDone(),
+                task.isBug() ? "si" : "no",
+                task.getSprintName());
     }
 
     private String deleteTaskResponse(ParsedIntent parsedIntent) {
@@ -110,17 +113,33 @@ public class AgentOrchestrator {
         long done = sprintTasks.stream().filter(task -> "DONE".equals(task.getStatus())).count();
         long inProgress = sprintTasks.stream().filter(task -> "IN_PROGRESS".equals(task.getStatus())).count();
         long pending = sprintTasks.stream().filter(task -> "PENDING".equals(task.getStatus())).count();
-        int totalPoints = sprintTasks.stream().mapToInt(TaskItem::getStoryPoints).sum();
+        int expectedHours = sprintTasks.stream().mapToInt(TaskItem::getExpectedHours).sum();
+        int doneHours = sprintTasks.stream()
+            .filter(task -> "DONE".equals(task.getStatus()))
+            .mapToInt(TaskItem::getHoursDone)
+            .sum();
 
-        return "Resumen del sprint actual\n"
-            + "Sprint: " + sprint.getName() + "\n"
-            + "Inicio: " + sprint.getStartDate() + "\n"
-            + "Fin: " + sprint.getEndDate() + "\n"
-            + "Tareas: " + sprintTasks.size() + "\n"
-            + "DONE: " + done + "\n"
-            + "IN_PROGRESS: " + inProgress + "\n"
-            + "PENDING: " + pending + "\n"
-            + "Story points totales: " + totalPoints;
+        return """
+            Resumen del sprint actual
+            Sprint: %s
+            Inicio: %s
+            Fin: %s
+            Tareas: %d
+            DONE: %d
+            IN_PROGRESS: %d
+            PENDING: %d
+            Horas esperadas: %d
+            Horas realizadas: %d
+            """.formatted(
+                sprint.getName(),
+                sprint.getStartDate(),
+                sprint.getEndDate(),
+                sprintTasks.size(),
+                done,
+                inProgress,
+                pending,
+                expectedHours,
+                doneHours);
     }
 
     private String teamLoadSummary() {
@@ -139,12 +158,14 @@ public class AgentOrchestrator {
 
         StringJoiner joiner = new StringJoiner("\n", title + "\n", "");
         for (TaskItem task : tasks) {
-            joiner.add(String.format("- %d [%s] %s | %s | %d pts | %s",
+            joiner.add(String.format("- %d [%s] %s | %s | %d/%d h%s | %s",
                 task.getId(),
                 task.getStatus(),
                 task.getTitle(),
                 task.getAssignee(),
-                task.getStoryPoints(),
+                task.getHoursDone(),
+                task.getExpectedHours(),
+                task.isBug() ? " | BUG" : "",
                 task.getSprintName()
             ));
         }
@@ -152,26 +173,33 @@ public class AgentOrchestrator {
     }
 
     private String helpText(String userRole) {
-        String help = "Puedo ayudarte con consultas y acciones del proyecto, incluso en lenguaje natural.\n\n"
-            + "Ejemplos:\n"
-            + "- que tareas tiene ana\n"
-            + "- que tareas siguen pendientes\n"
-            + "- crea una tarea llamada revisar la api con descripcion validar contratos asignada a luis de prioridad alta con 4 horas\n"
-            + "- como va el sprint actual\n"
-            + "- quien tiene mas carga\n\n"
-            + "Comandos disponibles:\n"
-            + "/register - Registrarse como usuario\n"
-            + "/addtask - Agregar nueva tarea\n"
-            + "/deletetask - Eliminar una tarea\n"
-            + "/assigntask - Asignar tarea a un sprint\n"
-            + "/completetask - Marcar tarea como completada\n"
-            + "/mytasks - Ver mis tareas\n"
-            + "/llm - Hacer pregunta libre a la IA";
+        String help = """
+            Puedo ayudarte con consultas y acciones del proyecto, incluso en lenguaje natural.
+
+            Ejemplos:
+            - que tareas tiene ana
+            - que tareas siguen pendientes
+            - crea una tarea llamada revisar la api con descripcion validar contratos asignada a luis de prioridad alta con 4 horas
+            - como va el sprint actual
+            - quien tiene mas carga
+
+            Comandos disponibles:
+            /register - Registrarse como usuario
+            /addtask - Agregar nueva tarea
+            /deletetask - Eliminar una tarea
+            /assigntask - Asignar tarea a un sprint
+            /completetask - Marcar tarea como completada
+            /mytasks - Ver mis tareas
+            /llm - Hacer pregunta libre a la IA
+            """;
         
         if ("MANAGER".equalsIgnoreCase(userRole)) {
-            help += "\n\nComandos de GERENTE:\n"
-                + "/teamkpis <desarrollador> - Ver KPIs de un desarrollador\n"
-                + "/teamtasks - Ver todas las tareas del equipo";
+            help += """
+
+                Comandos de GERENTE:
+                /teamkpis <desarrollador> - Ver KPIs de un desarrollador
+                /teamtasks - Ver todas las tareas del equipo
+                """;
         }
         
         return help;

@@ -40,6 +40,7 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
 
     @Override
     public List<TaskItem> findAllTasks() {
+        syncCarryOverLinks();
         return buildTaskItems(taskService.findAll());
     }
 
@@ -48,6 +49,7 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
         if (assignee == null || assignee.isBlank()) {
             return findAllTasks();
         }
+        syncCarryOverLinks();
         String normalized = assignee.trim().toLowerCase(Locale.ROOT);
         List<Task> all = taskService.findAll();
         List<User> users = userService.findAll();
@@ -67,6 +69,7 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
 
     @Override
     public List<TaskItem> findTasksByStatus(String status) {
+        syncCarryOverLinks();
         String normalized = normalizeStatus(status);
         List<Task> all = taskService.findAll();
         List<Task> filtered = all.stream()
@@ -76,7 +79,7 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
     }
 
     @Override
-    public TaskItem createTask(String title, String assignee, int storyPoints, String sprintName) {
+    public TaskItem createTask(String title, String assignee, int expectedHours, String sprintName, boolean bug) {
         List<User> users = userService.findAll();
 
         User assignedUser = null;
@@ -91,17 +94,19 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
             assignedUser = users.get(0);
         }
 
-        Long assignedToId = assignedUser != null ? assignedUser.getId() : 1L;
+        Long assignedToId = assignedUser != null && assignedUser.getId() != null ? assignedUser.getId().longValue() : 1L;
 
         Task task = new Task();
         task.setTitle(title);
         task.setDescription("");
         task.setStatus(TaskStatus.PENDING);
-        task.setPriority(storyPointsToPriority(storyPoints));
+        task.setPriority(hoursToPriority(expectedHours));
         task.setAssignedTo(assignedToId);
         task.setCreatedBy(assignedToId);
         task.setVector("TELEGRAM_AGENT");
-        task.setDueDate(LocalDateTime.now().plusDays(5));
+        task.setExpectedHours(expectedHours);
+        task.setHoursDone(0);
+        task.setIsBug(bug);
 
         Task saved = taskService.add(task);
 
@@ -120,14 +125,18 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
             ? assignedUser.getName()
             : "Sin asignar";
 
+        Integer savedExpectedHours = saved.getExpectedHours();
+        Integer savedHoursDone = saved.getHoursDone();
+
         return new TaskItem(
             saved.getId(),
             saved.getTitle(),
             assigneeName,
             saved.getStatus().name(),
-            storyPoints > 0 ? storyPoints : 3,
-            resolvedSprintName,
-            saved.getDueDate() != null ? saved.getDueDate().toLocalDate() : LocalDate.now().plusDays(5)
+            savedExpectedHours == null ? Math.max(expectedHours, 0) : savedExpectedHours.intValue(),
+            savedHoursDone == null ? 0 : savedHoursDone.intValue(),
+            Boolean.TRUE.equals(saved.getIsBug()),
+            resolvedSprintName
         );
     }
 
@@ -159,6 +168,7 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
 
     @Override
     public Map<String, Integer> storyPointsByAssignee() {
+        syncCarryOverLinks();
         List<Task> tasks = taskService.findAll();
         List<User> users = userService.findAll();
         Map<Long, String> userNameById = users.stream()
@@ -167,7 +177,11 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
         Map<String, Integer> totals = new LinkedHashMap<>();
         for (Task task : tasks) {
             String name = userNameById.getOrDefault(task.getAssignedTo(), "Sin asignar");
-            int pts = priorityToStoryPoints(task.getPriority());
+            Integer taskHoursDone = task.getHoursDone();
+            Integer taskExpectedHours = task.getExpectedHours();
+            int pts = task.getStatus() == TaskStatus.DONE
+                ? (taskHoursDone == null ? 0 : taskHoursDone.intValue())
+                : (taskExpectedHours == null ? 0 : taskExpectedHours.intValue());
             totals.merge(name, pts, Integer::sum);
         }
         return totals;
@@ -184,16 +198,17 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
         Map<Long, String> sprintNameById = sprints.stream()
             .collect(Collectors.toMap(Sprint::getId, Sprint::getName));
 
-        // For each task, find its most recent sprint assignment
+        // For each task, find its latest active sprint assignment
         Map<Long, String> sprintNameByTaskId = new HashMap<>();
-        for (SprintTask st : sprintTasks) {
-            if (st.getRemovedAt() == null) {
+        sprintTasks.stream()
+            .filter(st -> st.getRemovedAt() == null)
+            .sorted(Comparator.comparing(SprintTask::getAddedAt, Comparator.nullsFirst(Comparator.naturalOrder())))
+            .forEach(st -> {
                 String sprintName = sprintNameById.get(st.getSprintId());
-                if (sprintName != null) {
+                if (sprintName != null && st.getTaskId() != null) {
                     sprintNameByTaskId.put(st.getTaskId(), sprintName);
                 }
-            }
-        }
+            });
 
         return tasks.stream()
             .sorted(Comparator.comparing(Task::getId))
@@ -202,9 +217,10 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
                 task.getTitle(),
                 userNameById.getOrDefault(task.getAssignedTo(), "Sin asignar"),
                 task.getStatus() != null ? task.getStatus().name() : "PENDING",
-                priorityToStoryPoints(task.getPriority()),
-                sprintNameByTaskId.getOrDefault(task.getId(), "Sin sprint"),
-                task.getDueDate() != null ? task.getDueDate().toLocalDate() : null
+                task.getExpectedHours() == null ? 0 : task.getExpectedHours().intValue(),
+                task.getHoursDone() == null ? 0 : task.getHoursDone().intValue(),
+                Boolean.TRUE.equals(task.getIsBug()),
+                sprintNameByTaskId.getOrDefault(task.getId(), "Sin sprint")
             ))
             .collect(Collectors.toList());
     }
@@ -240,44 +256,78 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
             return "PENDING";
         }
         String normalized = value.trim().toLowerCase(Locale.ROOT);
-        switch (normalized) {
-            case "pendiente":
-            case "pending":
-                return "PENDING";
-            case "en progreso":
-            case "in progress":
-            case "in_progress":
-                return "IN_PROGRESS";
-            case "done":
-            case "hecha":
-            case "terminada":
-                return "DONE";
-            default:
-                return normalized.toUpperCase(Locale.ROOT);
-        }
+        return switch (normalized) {
+            case "pendiente", "pending" -> "PENDING";
+            case "en progreso", "in progress", "in_progress" -> "IN_PROGRESS";
+            case "done", "hecha", "terminada" -> "DONE";
+            default -> normalized.toUpperCase(Locale.ROOT);
+        };
     }
 
-    private int priorityToStoryPoints(TaskPriority priority) {
-        if (priority == null) {
-            return 3;
-        }
-        switch (priority) {
-            case LOW:
-                return 1;
-            case HIGH:
-                return 5;
-            default:
-                return 3;
-        }
-    }
-
-    private TaskPriority storyPointsToPriority(int storyPoints) {
-        if (storyPoints <= 1) {
+    private TaskPriority hoursToPriority(int hours) {
+        if (hours <= 1) {
             return TaskPriority.LOW;
-        } else if (storyPoints >= 5) {
+        } else if (hours >= 5) {
             return TaskPriority.HIGH;
         } else {
             return TaskPriority.MEDIUM;
+        }
+    }
+
+    private void syncCarryOverLinks() {
+        List<Sprint> sprints = sprintService.findAll();
+        if (sprints.size() < 2) {
+            return;
+        }
+
+        List<SprintTask> sprintTasks = sprintTaskService.findAll();
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Sprint> endedSprints = sprints.stream()
+            .filter(sprint -> sprint.getEndDate() != null && sprint.getEndDate().isBefore(now))
+            .sorted(Comparator.comparing(Sprint::getEndDate))
+            .collect(Collectors.toList());
+
+        for (Sprint endedSprint : endedSprints) {
+            Sprint nextSprint = sprints.stream()
+                .filter(candidate -> candidate.getStartDate() != null && endedSprint.getEndDate() != null
+                    && candidate.getStartDate().isAfter(endedSprint.getEndDate()))
+                .sorted(Comparator.comparing(Sprint::getStartDate))
+                .findFirst()
+                .orElse(null);
+
+            if (nextSprint == null) {
+                continue;
+            }
+
+            List<SprintTask> endedSprintTasks = sprintTasks.stream()
+                .filter(link -> endedSprint.getId().equals(link.getSprintId()) && link.getRemovedAt() == null)
+                .collect(Collectors.toList());
+
+            for (SprintTask link : endedSprintTasks) {
+                if (link.getTaskId() == null) {
+                    continue;
+                }
+
+                Task task = taskService.getById(link.getTaskId()).getBody();
+                if (task == null || task.getStatus() == TaskStatus.DONE) {
+                    continue;
+                }
+
+                boolean alreadyCarried = sprintTasks.stream().anyMatch(existing ->
+                    nextSprint.getId().equals(existing.getSprintId())
+                        && link.getTaskId().equals(existing.getTaskId())
+                        && existing.getRemovedAt() == null);
+                if (alreadyCarried) {
+                    continue;
+                }
+
+                SprintTask carried = new SprintTask();
+                carried.setSprintId(nextSprint.getId());
+                carried.setTaskId(link.getTaskId());
+                carried.setAddedAt(now);
+                sprintTaskService.add(carried);
+            }
         }
     }
 }

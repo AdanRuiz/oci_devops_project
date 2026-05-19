@@ -113,7 +113,20 @@ public class TaskController {
     }
 
     private TaskWithSprintResponse buildTaskWithSprint(Task task) {
-        Optional<SprintTask> sprintTask = sprintTaskRepository.findFirstByIdTaskIdAndRemovedAtIsNull(task.getId());
+        Optional<SprintTask> sprintTask = sprintTaskRepository.findByIdTaskId(task.getId()).stream()
+            .filter(link -> link.getRemovedAt() == null)
+            .max((left, right) -> {
+                if (left.getAddedAt() == null && right.getAddedAt() == null) {
+                    return 0;
+                }
+                if (left.getAddedAt() == null) {
+                    return -1;
+                }
+                if (right.getAddedAt() == null) {
+                    return 1;
+                }
+                return left.getAddedAt().compareTo(right.getAddedAt());
+            });
         SprintSummaryResponse sprintSummary = null;
 
         if (sprintTask.isPresent() && sprintTask.get().getSprintId() != null) {

@@ -123,7 +123,7 @@ class BotActionsTest {
         when(userService.findAll()).thenReturn(List.of(developer));
         when(taskService.add(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
         botActions.setRequestText(
-                "/addtask \"Implementar prueba Telegram\" | \"Validar integración\" | 2 | 1 | 5 | HIGH | false | DEVELOPER");
+                "/addtask \"Implementar prueba Telegram\" | \"Validar integración\" | 2 | HIGH | true | DEVELOPER");
 
         botActions.fnAddTask();
 
@@ -133,12 +133,9 @@ class BotActionsTest {
         assertThat(savedTask.getTitle()).isEqualTo("Implementar prueba Telegram");
         assertThat(savedTask.getDescription()).isEqualTo("Validar integración");
         assertThat(savedTask.getExpectedHours()).isEqualTo(2);
-        assertThat(savedTask.getHoursDone()).isEqualTo(1);
-        assertThat(savedTask.getStoryPoints()).isEqualTo(5);
         assertThat(savedTask.getPriority()).isEqualTo(TaskPriority.HIGH);
-        assertThat(savedTask.getIsBug()).isEqualTo(false);
-        assertThat(savedTask.getBugsReported()).isEqualTo(0);
-        assertThat(savedTask.getCarryOverCount()).isEqualTo(0);
+        assertThat(savedTask.getHoursDone()).isEqualTo(0);
+        assertThat(savedTask.getIsBug()).isEqualTo(true);
         assertThat(savedTask.getAssignedTo()).isEqualTo(USER_ID_DEVELOPER);
         assertThat(savedTask.getCreatedBy()).isEqualTo(USER_ID_DEVELOPER);
         assertThat(savedTask.getStatus()).isEqualTo(TaskStatus.PENDING);
@@ -223,29 +220,6 @@ class BotActionsTest {
         verify(telegramClient).execute(sendMessageCaptor.capture());
         assertThat(sendMessageCaptor.getValue().getText())
                 .isEqualTo(BotMessages.TASK_COMPLETED.getMessage() + " (3h)");
-    }
-
-    @Test
-    void fnReportBug() throws Exception {
-        Task task = new Task();
-        task.setId(5L);
-        task.setTitle("UI Bug");
-        task.setStatus(TaskStatus.IN_PROGRESS);
-        task.setBugsReported(0);
-        when(taskService.getById(5L)).thenReturn(ResponseEntity.ok(task));
-        botActions.setRequestText("/reportbug 5 | 2 | HIGH");
-
-        botActions.fnReportBug();
-
-        ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
-        verify(taskService).update(eq(5L), taskCaptor.capture());
-        assertThat(taskCaptor.getValue().getIsBug()).isEqualTo(true);
-        assertThat(taskCaptor.getValue().getBugsReported()).isEqualTo(2);
-        assertThat(taskCaptor.getValue().getBugSeverity()).isEqualTo("HIGH");
-
-        verify(telegramClient).execute(sendMessageCaptor.capture());
-        assertThat(sendMessageCaptor.getValue().getText())
-                .isEqualTo(BotMessages.BUG_REPORTED.getMessage());
     }
 
     @Test

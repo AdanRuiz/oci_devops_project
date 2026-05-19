@@ -6,10 +6,8 @@ public class ParsedIntent {
     private String assignee;
     private String status;
     private String title;
-    private Integer storyPoints;
     private Integer expectedHours;
     private Boolean isBug;
-    private String bugSeverity;
     private String sprintName;
     private String taskId;
     private String developerName;
@@ -47,14 +45,6 @@ public class ParsedIntent {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getStoryPoints() {
-        return storyPoints;
-    }
-
-    public void setStoryPoints(Integer storyPoints) {
-        this.storyPoints = storyPoints;
     }
 
     public String getSprintName() {
@@ -119,13 +109,5 @@ public class ParsedIntent {
 
     public void setIsBug(Boolean isBug) {
         this.isBug = isBug;
-    }
-
-    public String getBugSeverity() {
-        return bugSeverity;
-    }
-
-    public void setBugSeverity(String bugSeverity) {
-        this.bugSeverity = bugSeverity;
     }
 }

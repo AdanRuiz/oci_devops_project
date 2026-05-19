@@ -11,7 +11,7 @@ public interface ProjectWorkspaceService {
 
     List<TaskItem> findTasksByStatus(String status);
 
-    TaskItem createTask(String title, String assignee, int storyPoints, String sprintName);
+    TaskItem createTask(String title, String assignee, int expectedHours, String sprintName, boolean bug);
 
     SprintInfo getCurrentSprint();
 

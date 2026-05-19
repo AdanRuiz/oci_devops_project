@@ -13,11 +13,11 @@ public class TaskWithSprintResponse {
     private String priority;
     private Long assignedTo;
     private Long createdBy;
-    private LocalDateTime dueDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String vector;
     private Integer hoursDone;
+    private Boolean isBug;
     private SprintSummaryResponse sprint;
 
     public TaskWithSprintResponse() {
@@ -31,11 +31,11 @@ public class TaskWithSprintResponse {
         this.priority = task.getPriority() != null ? task.getPriority().name() : null;
         this.assignedTo = task.getAssignedTo();
         this.createdBy = task.getCreatedBy();
-        this.dueDate = task.getDueDate();
         this.createdAt = task.getCreatedAt();
         this.updatedAt = task.getUpdatedAt();
         this.vector = task.getVector();
         this.hoursDone = task.getHoursDone();
+        this.isBug = task.getIsBug();
         this.sprint = sprint;
     }
 
@@ -103,12 +103,13 @@ public class TaskWithSprintResponse {
         this.createdBy = createdBy;
     }
 
-    public LocalDateTime getDueDate() {
-        return dueDate;
+
+    public Boolean getIsBug() {
+        return isBug;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
+    public void setIsBug(Boolean isBug) {
+        this.isBug = isBug;
     }
 
     public LocalDateTime getCreatedAt() {

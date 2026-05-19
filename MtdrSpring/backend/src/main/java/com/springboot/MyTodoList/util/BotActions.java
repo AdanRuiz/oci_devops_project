@@ -3,7 +3,6 @@ package com.springboot.MyTodoList.util;
 import com.springboot.MyTodoList.agent.AgentOrchestrator;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.SprintTask;
-import com.springboot.MyTodoList.model.SprintTaskId;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.model.Team;
 import com.springboot.MyTodoList.model.TeamMember;
@@ -17,7 +16,6 @@ import com.springboot.MyTodoList.service.UserService;
 import com.springboot.MyTodoList.service.TeamService;
 import com.springboot.MyTodoList.service.TeamMemberService;
 import com.springboot.MyTodoList.service.DeepSeekService;
-import java.time.OffsetDateTime;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +23,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 public class BotActions{
@@ -156,7 +152,7 @@ public class BotActions{
         try {
             String[] parts = requestText.replace("/addtask", "").trim().split("\\|");
 
-            if (parts.length < 8) {
+            if (parts.length < 6) {
                 throw new IllegalArgumentException("Formato incompleto para /addtask");
             }
 
@@ -168,16 +164,6 @@ public class BotActions{
             String description = extractQuotedValue(parts[1]);
 
             int expectedHours = Integer.parseInt(parts[2]);
-            int hoursDone = Integer.parseInt(parts[3]);
-            int storyPoints = Integer.parseInt(parts[4]);
-
-            if (expectedHours > 4) {
-                BotHelper.sendMessageToTelegram(chatId,
-                        BotMessages.TASK_MAX_HOURS.getMessage(),
-                        telegramClient);
-                exit = true;
-                return;
-            }
 
             User user = findUserByTelegramId(String.valueOf(telegramUserId));
 
@@ -189,7 +175,7 @@ public class BotActions{
                 return;
             }
 
-            Long assignedUserId = resolveUserId(parts[7], false);
+            Long assignedUserId = resolveUserId(parts[5], false);
 
             if (assignedUserId == null) {
                 BotHelper.sendMessageToTelegram(chatId,
@@ -199,18 +185,15 @@ public class BotActions{
                 return;
             }
 
-            Boolean isBug = Boolean.parseBoolean(parts[6]);
+            Boolean isBug = parts.length > 4 ? Boolean.parseBoolean(parts[4]) : false;
 
             Task task = new Task();
             task.setTitle(title);
             task.setDescription(description);
             task.setExpectedHours(expectedHours);
-            task.setHoursDone(hoursDone);
-            task.setStoryPoints(storyPoints);
-            task.setPriority(parsePriority(parts[5]));
+            task.setHoursDone(0);
+            task.setPriority(parsePriority(parts[3]));
             task.setIsBug(isBug);
-            task.setBugsReported(0);
-            task.setCarryOverCount(0);
             task.setAssignedTo(assignedUserId);
             task.setCreatedBy(user.getId());
             task.setStatus(TaskStatus.PENDING);
@@ -345,7 +328,6 @@ public class BotActions{
 
             task.setStatus(TaskStatus.DONE);
             task.setHoursDone(horas);
-            task.setCompletedDate(LocalDateTime.now());
             taskService.update(taskId, task);
 
             logger.info("Task completada");
@@ -411,69 +393,6 @@ public class BotActions{
 
             BotHelper.sendMessageToTelegram(chatId,
                     BotMessages.TASK_DELETE_ERROR.getMessage(),
-                    telegramClient);
-        }
-
-        exit = true;
-    }
-
-    public void fnReportBug() {
-        if (!requestText.startsWith(BotCommands.REPORT_BUG.getCommand()) || exit) return;
-
-        try {
-            String[] parts = requestText.replace("/reportbug", "").trim().split("\\|");
-
-            if (parts.length < 3) {
-                throw new IllegalArgumentException("Formato incompleto para /reportbug");
-            }
-
-            for (int i = 0; i < parts.length; i++) {
-                parts[i] = parts[i].trim();
-            }
-
-            Long taskId = resolveTaskId(parts[0]);
-            if (taskId == null) {
-                BotHelper.sendMessageToTelegram(chatId,
-                        BotMessages.TASK_NOT_FOUND.getMessage(),
-                        telegramClient);
-                exit = true;
-                return;
-            }
-
-            Task task = taskService.getById(taskId).getBody();
-
-            if (task == null) {
-                BotHelper.sendMessageToTelegram(chatId,
-                        BotMessages.TASK_NOT_FOUND.getMessage(),
-                        telegramClient);
-                exit = true;
-                return;
-            }
-
-            int bugsReported = Integer.parseInt(parts[1]);
-            String bugSeverity = parts[2].toUpperCase();
-
-            // Validate severity
-            if (!bugSeverity.matches("LOW|MEDIUM|HIGH|CRITICAL")) {
-                throw new IllegalArgumentException("Severidad inválida");
-            }
-
-            task.setIsBug(true);
-            task.setBugsReported((task.getBugsReported() != null ? task.getBugsReported() : 0) + bugsReported);
-            task.setBugSeverity(bugSeverity);
-            taskService.update(taskId, task);
-
-            logger.info("Bug reportado para tarea: " + task.getTitle());
-
-            BotHelper.sendMessageToTelegram(chatId,
-                    BotMessages.BUG_REPORTED.getMessage(),
-                    telegramClient);
-
-        } catch (Exception e) {
-            logger.error("Error reporting bug", e);
-
-            BotHelper.sendMessageToTelegram(chatId,
-                    BotMessages.BUG_REPORT_ERROR.getMessage(),
                     telegramClient);
         }
 
@@ -819,7 +738,6 @@ public class BotActions{
         fnStart();
         fnRegister();
         fnAddTask();
-        fnReportBug();
         fnDeleteTask();
         fnAssignTask();
         fnCompleteTask();
@@ -847,13 +765,13 @@ public class BotActions{
             return allowCurrentUserFallback ? resolveCurrentUserId() : null;
         }
 
-        String trimmed = value.trim();
         try {
-            return Long.parseLong(trimmed);
+            return Long.parseLong(value.trim());
         } catch (NumberFormatException ignored) {
             // Fall through to name lookup.
         }
 
+        String trimmed = value.trim();
         String normalized = trimmed.toLowerCase(Locale.ROOT);
         for (User user : userService.findAll()) {
             String name = user.getName();
@@ -870,13 +788,13 @@ public class BotActions{
             return null;
         }
 
-        String trimmed = value.trim();
         try {
-            return Long.parseLong(trimmed);
+            return Long.parseLong(value.trim());
         } catch (NumberFormatException ignored) {
             // Fall through to title lookup.
         }
 
+        String trimmed = value.trim();
         String normalized = trimmed.toLowerCase(Locale.ROOT);
         for (Task task : taskService.findAll()) {
             String title = task.getTitle();
@@ -893,13 +811,13 @@ public class BotActions{
             return null;
         }
 
-        String trimmed = value.trim();
         try {
-            return Long.parseLong(trimmed);
+            return Long.parseLong(value.trim());
         } catch (NumberFormatException ignored) {
             // Fall through to name lookup.
         }
 
+        String trimmed = value.trim();
         String normalized = trimmed.toLowerCase(Locale.ROOT);
         for (Sprint sprint : sprintService.findAll()) {
             String name = sprint.getName();

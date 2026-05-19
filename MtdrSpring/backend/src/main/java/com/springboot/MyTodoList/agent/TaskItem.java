@@ -1,25 +1,25 @@
 package com.springboot.MyTodoList.agent;
 
-import java.time.LocalDate;
-
 public class TaskItem {
 
     private final long id;
     private String title;
     private String assignee;
     private String status;
-    private int storyPoints;
+    private int expectedHours;
+    private int hoursDone;
+    private boolean bug;
     private String sprintName;
-    private LocalDate dueDate;
 
-    public TaskItem(long id, String title, String assignee, String status, int storyPoints, String sprintName, LocalDate dueDate) {
+    public TaskItem(long id, String title, String assignee, String status, int expectedHours, int hoursDone, boolean bug, String sprintName) {
         this.id = id;
         this.title = title;
         this.assignee = assignee;
         this.status = status;
-        this.storyPoints = storyPoints;
+        this.expectedHours = expectedHours;
+        this.hoursDone = hoursDone;
+        this.bug = bug;
         this.sprintName = sprintName;
-        this.dueDate = dueDate;
     }
 
     public long getId() {
@@ -50,12 +50,28 @@ public class TaskItem {
         this.status = status;
     }
 
-    public int getStoryPoints() {
-        return storyPoints;
+    public int getExpectedHours() {
+        return expectedHours;
     }
 
-    public void setStoryPoints(int storyPoints) {
-        this.storyPoints = storyPoints;
+    public void setExpectedHours(int expectedHours) {
+        this.expectedHours = expectedHours;
+    }
+
+    public int getHoursDone() {
+        return hoursDone;
+    }
+
+    public void setHoursDone(int hoursDone) {
+        this.hoursDone = hoursDone;
+    }
+
+    public boolean isBug() {
+        return bug;
+    }
+
+    public void setBug(boolean bug) {
+        this.bug = bug;
     }
 
     public String getSprintName() {
@@ -64,13 +80,5 @@ public class TaskItem {
 
     public void setSprintName(String sprintName) {
         this.sprintName = sprintName;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
     }
 }

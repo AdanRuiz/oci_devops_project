@@ -45,9 +45,6 @@ public class Task {
     @Column(name = "CREATED_BY", nullable = false)
     private Long createdBy;
 
-    @Column(name = "DUE_DATE")
-    private LocalDateTime dueDate;
-
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -63,23 +60,8 @@ public class Task {
     @Column(name = "EXPECTED_HOURS")
     private Integer expectedHours;
 
-    @Column(name = "STORY_POINTS")
-    private Integer storyPoints;
-
-    @Column(name = "IS_BUG", nullable = false, columnDefinition = "number(1,0) default 0")
+    @Column(name = "IS_BUG", nullable = false)
     private Boolean isBug = false;
-
-    @Column(name = "BUGS_REPORTED")
-    private Integer bugsReported = 0;
-
-    @Column(name = "BUG_SEVERITY", length = 20)
-    private String bugSeverity;
-
-    @Column(name = "COMPLETED_DATE")
-    private LocalDateTime completedDate;
-
-    @Column(name = "CARRY_OVER_COUNT")
-    private Integer carryOverCount = 0;
 
     public Task() {
     }
@@ -158,14 +140,6 @@ public class Task {
         this.createdBy = createdBy;
     }
 
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -206,51 +180,11 @@ public class Task {
         this.expectedHours = expectedHours;
     }
 
-    public Integer getStoryPoints() {
-        return storyPoints;
-    }
-
-    public void setStoryPoints(Integer storyPoints) {
-        this.storyPoints = storyPoints;
-    }
-
     public Boolean getIsBug() {
         return isBug;
     }
 
     public void setIsBug(Boolean isBug) {
         this.isBug = isBug;
-    }
-
-    public Integer getBugsReported() {
-        return bugsReported;
-    }
-
-    public void setBugsReported(Integer bugsReported) {
-        this.bugsReported = bugsReported;
-    }
-
-    public String getBugSeverity() {
-        return bugSeverity;
-    }
-
-    public void setBugSeverity(String bugSeverity) {
-        this.bugSeverity = bugSeverity;
-    }
-
-    public LocalDateTime getCompletedDate() {
-        return completedDate;
-    }
-
-    public void setCompletedDate(LocalDateTime completedDate) {
-        this.completedDate = completedDate;
-    }
-
-    public Integer getCarryOverCount() {
-        return carryOverCount;
-    }
-
-    public void setCarryOverCount(Integer carryOverCount) {
-        this.carryOverCount = carryOverCount;
     }
 }
