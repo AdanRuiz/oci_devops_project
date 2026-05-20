@@ -9,7 +9,6 @@ export default function DevTaskRow({
   priorityPillClass,
   pendingDeleteId,
   onAdvance,
-  onMarkDone,
   onReopen,
   onEdit,
   onDeleteRequest,
@@ -19,6 +18,9 @@ export default function DevTaskRow({
 }) {
   const isConfirming = pendingDeleteId === item.id;
   const status = String(item.status || '').toUpperCase();
+  const advanceLabel =
+    status === 'PENDING' ? 'Start' : status === 'IN_PROGRESS' ? 'Finish' : 'Advance';
+  const isFinishAction = status === 'IN_PROGRESS';
 
   if (isCompleted) {
     return (
@@ -106,19 +108,14 @@ export default function DevTaskRow({
             <button
               type="button"
               onClick={() => onAdvance(item)}
-              className="rounded-full border border-[#2A1814]/15 px-3 py-1.5 text-xs font-medium text-[#2A1814] transition hover:bg-[#faf9f6]"
+              className={
+                isFinishAction
+                  ? 'inline-flex items-center gap-1 rounded-full bg-[#2A1814] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#1d110e]'
+                  : 'rounded-full border border-[#2A1814]/15 px-3 py-1.5 text-xs font-medium text-[#2A1814] transition hover:bg-[#faf9f6]'
+              }
             >
-              {status === 'PENDING' ? 'Start' : status === 'IN_PROGRESS' ? 'Finish' : 'Advance'}
-            </button>
-          )}
-          {status !== 'DONE' && (
-            <button
-              type="button"
-              onClick={() => onMarkDone(item)}
-              className="inline-flex items-center gap-1 rounded-full bg-[#2A1814] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#1d110e]"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Done
+              {isFinishAction && <CheckCircle2 className="h-3.5 w-3.5" />}
+              {advanceLabel}
             </button>
           )}
           <button

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Bell } from 'lucide-react';
+import HeaderAccountActions from '../ui/HeaderAccountActions';
 import { dashboardTopRowClassName } from '../../constants/dashboardTheme';
 
 const DEFAULT_USER = { firstName: 'Alex', initials: 'AR' };
@@ -29,6 +29,7 @@ function formatToday() {
 
 function DashboardHeader() {
   const [firstName, setFirstName] = useState(DEFAULT_USER.firstName);
+  const [displayName, setDisplayName] = useState('Alex Rivera');
   const [initials, setInitials] = useState(DEFAULT_USER.initials);
   const today = formatToday();
 
@@ -41,10 +42,11 @@ function DashboardHeader() {
         const users = await res.json();
         const primary = users?.[0];
         if (!primary) return;
-        const displayName = primary.name || primary.username;
+        const name = primary.name || primary.username;
         if (!cancelled) {
-          setFirstName(getFirstName(displayName));
-          setInitials(getInitials(displayName));
+          setDisplayName(name);
+          setFirstName(getFirstName(name));
+          setInitials(getInitials(name));
         }
       } catch {
         /* keep defaults */
@@ -65,21 +67,12 @@ function DashboardHeader() {
         <div className="flex shrink-0 items-center gap-3 sm:gap-4">
           <p className="m-0 hidden text-sm leading-none text-[#6B6560] md:block">{today}</p>
 
-          <button
-            type="button"
-            className="relative rounded-full p-2 text-[#6B6560] transition hover:bg-[#faf9f6]/60 hover:text-[#2A1814]"
-            aria-label="Notifications"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#c74634]" />
-          </button>
-
-          <div
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c74634]/15 text-sm font-semibold text-[#c74634]"
-            aria-label={`${firstName}'s profile`}
-          >
-            {initials}
-          </div>
+          <HeaderAccountActions
+            variant="manager"
+            displayName={displayName}
+            initials={initials}
+            hoverClass="hover:bg-[#faf9f6]/60"
+          />
         </div>
       </div>
 

@@ -786,8 +786,23 @@ html:has(.dev-app-page)::-webkit-scrollbar-thumb:active {
   }
 }
 
+@keyframes appToastExit {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
 .app-toast-enter {
-  animation: appToastEnter 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: appToastEnter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-toast-exit {
+  animation: appToastExit 220ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .task-type-toggle--bug .task-type-toggle__pill {
