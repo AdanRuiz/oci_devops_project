@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   ChevronDown,
@@ -84,7 +84,6 @@ function sortSprints(sprintList, currentSprint) {
 }
 
 function App() {
-  const navigate = useNavigate();
   const [isLoading, setLoading] = useState(true);
   const [isInserting, setInserting] = useState(false);
   const [items, setItems] = useState([]);
