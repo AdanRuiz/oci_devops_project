@@ -4,6 +4,8 @@ import {
   ArrowLeft,
   MessageCirclePlus,
   MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
   Pin,
   PinOff,
   Search,
@@ -282,6 +284,13 @@ function dateLabel(timestamp) {
   return value.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 }
 
+function initialsFromName(name) {
+  const parts = name?.trim().split(/\s+/).filter(Boolean) ?? [];
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return 'LU';
+}
+
 function LumiAssistant() {
   const [chats, setChats] = useState(readChats);
   const [selectedChatId, setSelectedChatId] = useState(() => readChats()[0]?.id);
@@ -289,9 +298,12 @@ function LumiAssistant() {
   const [searchTerm, setSearchTerm] = useState('');
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
-  const [heroLine, setHeroLine] = useState('Hi fabby, how can I help you today?');
-  const [heroSubline, setHeroSubline] = useState('Where should we start?');
+  const [heroLine, setHeroLine] = useState('Hi Alex, how can I help you today?');
   const [chatMenuOpenId, setChatMenuOpenId] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [profileName, setProfileName] = useState('Alex');
+  const [profileEmail, setProfileEmail] = useState('alex@lumen.app');
+  const [profileAvatar, setProfileAvatar] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -300,22 +312,18 @@ function LumiAssistant() {
         const users = await fetchJson('/users');
         if (cancelled) return;
         const primary = users?.[0];
-        const name = primary?.name || primary?.username || 'fabby';
-        const resolvedFirstName = name.split(/\s+/)[0] || 'fabby';
+        const name = primary?.name || primary?.username || 'Alex';
+        const resolvedFirstName = name.split(/\s+/)[0] || 'Alex';
+        setProfileName(name);
+        setProfileEmail(primary?.email || 'alex@lumen.app');
+        setProfileAvatar(primary?.avatarUrl || primary?.imageUrl || '');
         const lines = [
           `Hi ${resolvedFirstName}, how can I help you today?`,
           `What can I help with, ${resolvedFirstName}?`,
           `Welcome back ${resolvedFirstName}, what are we building today?`,
           `Hey ${resolvedFirstName}, ready to plan this sprint?`,
         ];
-        const sublines = [
-          'Where should we start?',
-          'Tell me what you want to ship next.',
-          'I can create teams, projects, and sprints for you.',
-          'Ask me anything about your team workload.',
-        ];
         setHeroLine(lines[Math.floor(Math.random() * lines.length)]);
-        setHeroSubline(sublines[Math.floor(Math.random() * sublines.length)]);
       } catch {
         // keep fallback
       }
@@ -415,10 +423,23 @@ function LumiAssistant() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-white text-[#2A1814]">
-      <aside className="flex w-72 shrink-0 flex-col bg-white p-4">
-        <div className="mb-4">
-          <p className="text-sm font-semibold text-[#2A1814]">Lumi</p>
-          <p className="mt-1 text-xs text-[#6B6560]">Your pet assistant for project ops</p>
+      {isSidebarOpen ? (
+        <aside className="lumi-sidebar-enter flex w-72 shrink-0 flex-col bg-white p-4">
+        <div className="mb-5">
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <img src="/lumi.svg" alt="" aria-hidden className="h-8 w-8 shrink-0" />
+              <p className="text-xl font-semibold text-[#2A1814]">Lumi</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen(false)}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#6B6560] transition hover:bg-[#f5f2ec] hover:text-[#2A1814]"
+              aria-label="Hide sidebar"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -451,14 +472,14 @@ function LumiAssistant() {
             className="flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm text-[#2A1814] transition hover:bg-[#f5f2ec]"
           >
             <ArrowLeft className="h-4 w-4" />
-            Return to app
+            Return to Lumen
           </Link>
         </div>
 
         <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-1">
           {pinnedChats.length > 0 && (
             <>
-              <p className="mb-2 px-2 text-xs text-[#6B6560]">Pinned</p>
+              <p className="mb-2 px-2 text-sm font-semibold text-[#6B6560]">Pinned</p>
               <div className="space-y-1">
                 {pinnedChats.map((chat) => (
                   <div key={chat.id} className="group relative">
@@ -530,7 +551,7 @@ function LumiAssistant() {
               </div>
             </>
           )}
-          <p className="mb-2 mt-3 px-2 text-xs text-[#6B6560]">Recent</p>
+          <p className="mb-2 mt-3 px-2 text-sm font-semibold text-[#6B6560]">Recent</p>
           <div className="space-y-1">
             {recentChats.map((chat) => (
               <div key={chat.id} className="group relative">
@@ -603,14 +624,39 @@ function LumiAssistant() {
             ))}
           </div>
         </div>
+        <div className="mt-4 pt-3">
+          <div className="flex items-center gap-3 rounded-xl px-2 py-2">
+            {profileAvatar ? (
+              <img src={profileAvatar} alt={profileName} className="h-9 w-9 rounded-full object-cover" />
+            ) : (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c74634]/15 text-xs font-semibold text-[#c74634]">
+                {initialsFromName(profileName)}
+              </span>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-[#2A1814]">{profileName}</p>
+              <p className="truncate text-xs text-[#6B6560]">{profileEmail}</p>
+            </div>
+          </div>
+        </div>
       </aside>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setIsSidebarOpen(true)}
+          className="lumi-sidebar-toggle-enter absolute left-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#6B6560] shadow-sm transition hover:bg-[#f5f2ec] hover:text-[#2A1814]"
+          aria-label="Show sidebar"
+        >
+          <PanelLeftOpen className="h-4 w-4" />
+        </button>
+      )}
 
       <section className="relative flex min-w-0 flex-1 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(199,70,52,0.18),transparent_55%)]" />
 
         <div className="relative z-10 flex min-h-0 w-full flex-col items-center overflow-y-auto px-6 py-10">
           {activeView === VIEW_SEARCH ? (
-            <div className="w-full max-w-3xl">
+            <div className="lumi-view-enter w-full max-w-3xl">
               <label className="mx-auto mt-2 flex w-full items-center gap-2 rounded-full border border-[#2A1814]/10 bg-white px-4 py-3">
                 <Search className="h-4 w-4 text-[#6B6560]" />
                 <input
@@ -622,8 +668,8 @@ function LumiAssistant() {
               </label>
               <div className="mt-5">
                 <p className="mb-2 text-xs text-[#6B6560]">Recent</p>
-                <div className="overflow-hidden rounded-xl border border-[#2A1814]/10 bg-white">
-                  {visibleChats.map((chat) => (
+                <div>
+                  {visibleChats.map((chat, index) => (
                     <button
                       key={chat.id}
                       type="button"
@@ -631,10 +677,11 @@ function LumiAssistant() {
                         setSelectedChatId(chat.id);
                         setActiveView(VIEW_CHAT);
                       }}
-                      className="grid w-full grid-cols-[minmax(0,1fr)_90px] items-center border-b border-[#2A1814]/[0.06] px-4 py-2.5 text-left text-sm text-[#2A1814] last:border-b-0 hover:bg-[#faf9f6]"
+                      className="lumi-search-row grid w-full grid-cols-[minmax(0,1fr)_90px] items-center rounded-lg px-4 py-2.5 text-left text-base text-[#2A1814] transition hover:bg-[#faf9f6] lumi-message-enter"
+                      style={{ animationDelay: `${Math.min(index * 20, 180)}ms` }}
                     >
                       <span className="truncate">{chat.title}</span>
-                      <span className="text-right text-xs text-[#6B6560]">{dateLabel(chat.updatedAt)}</span>
+                      <span className="text-right text-sm text-[#6B6560]">{dateLabel(chat.updatedAt)}</span>
                     </button>
                   ))}
                 </div>
@@ -643,17 +690,14 @@ function LumiAssistant() {
           ) : (
             <div className="flex h-full w-full max-w-5xl flex-col">
               {activeView === VIEW_NEW ? (
-                <div className="animate-[fadeIn_220ms_ease-out]">
+                <div className="lumi-view-enter">
                     <div className="mx-auto mt-28 w-full max-w-4xl">
                       <h1 className="text-center text-[46px] font-semibold leading-tight tracking-tight text-[#2A1814]">
                         {heroLine}
                       </h1>
-                      <p className="mt-3 text-center text-[34px] font-semibold leading-tight text-[#2A1814]/90">
-                        {heroSubline}
-                      </p>
                     </div>
                     <div className="mx-auto mt-12 w-full max-w-4xl">
-                      <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white px-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
+                      <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white pl-6 pr-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
                         <input
                           value={draft}
                           onChange={(event) => setDraft(event.target.value)}
@@ -670,7 +714,7 @@ function LumiAssistant() {
                           type="button"
                           onClick={sendMessage}
                           disabled={loading}
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#c74634] text-white transition hover:bg-[#b13d2e] disabled:opacity-60"
+                          className="inline-flex h-10 w-10 shrink-0 aspect-square items-center justify-center rounded-full bg-[#cf6a5d] text-white transition hover:bg-[#bf5f53] disabled:opacity-60"
                         >
                           <Send className="h-4 w-4" />
                         </button>
@@ -678,27 +722,37 @@ function LumiAssistant() {
                     </div>
                 </div>
               ) : (
-                <div key={`chat-view-${selectedChatId || 'none'}`} className="flex h-full flex-col animate-[fadeIn_220ms_ease-out]">
+                <div key={`chat-view-${selectedChatId || 'none'}`} className="lumi-view-enter flex h-full flex-col">
                     <div className="min-h-0 flex-1 overflow-y-auto px-2 pt-14">
                       <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 pb-6">
-                        {selectedChat?.messages?.map((message) =>
+                        {selectedChat?.messages?.map((message, index) =>
                           message.role === 'user' ? (
-                            <div key={message.id} className="ml-auto max-w-[56%] rounded-full bg-[#f2f2f2] px-5 py-2.5 text-sm text-[#2A1814]">
+                            <div
+                              key={message.id}
+                              className="lumi-message-enter ml-auto max-w-[56%] rounded-full bg-[#f2f2f2] px-5 py-2.5 text-sm text-[#2A1814]"
+                              style={{ animationDelay: `${Math.min(index * 26, 220)}ms` }}
+                            >
                               {message.content}
                             </div>
                           ) : (
-                            <div key={message.id} className="max-w-[72%] text-sm leading-relaxed text-[#2A1814]">
+                            <div
+                              key={message.id}
+                              className="lumi-message-enter max-w-[72%] text-sm leading-relaxed text-[#2A1814]"
+                              style={{ animationDelay: `${Math.min(index * 26, 220)}ms` }}
+                            >
                               {message.content}
                             </div>
                           )
                         )}
                         {loading && (
-                          <div className="max-w-[72%] text-sm text-[#6B6560]">Lumi is thinking...</div>
+                          <div className="lumi-message-enter max-w-[72%] text-sm text-[#6B6560]">
+                            Lumi is thinking...
+                          </div>
                         )}
                       </div>
                     </div>
-                    <div className="mx-auto w-full max-w-4xl pb-6 pt-2">
-                      <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white px-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
+                    <div className="lumi-composer-enter mx-auto w-full max-w-4xl pb-6 pt-2">
+                      <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white pl-6 pr-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
                         <input
                           value={draft}
                           onChange={(event) => setDraft(event.target.value)}
@@ -715,7 +769,7 @@ function LumiAssistant() {
                           type="button"
                           onClick={sendMessage}
                           disabled={loading}
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#c74634] text-white transition hover:bg-[#b13d2e] disabled:opacity-60"
+                          className="inline-flex h-10 w-10 shrink-0 aspect-square items-center justify-center rounded-full bg-[#cf6a5d] text-white transition hover:bg-[#bf5f53] disabled:opacity-60"
                         >
                           <Send className="h-4 w-4" />
                         </button>
