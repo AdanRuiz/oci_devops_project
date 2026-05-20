@@ -13,11 +13,7 @@ function scrollToHero(event) {
 
 function LandingNavbar() {
   return (
-    <header className="landing-header-glass landing-nav-enter relative sticky top-0 z-50 w-full border-b border-white/40 bg-white/30 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/25">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-white/15 to-transparent"
-      />
+    <header className="landing-header-glass landing-nav-enter sticky top-0 z-50 w-full">
       <nav className="relative container mx-auto flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-14 xl:px-20">
         <button
           type="button"
