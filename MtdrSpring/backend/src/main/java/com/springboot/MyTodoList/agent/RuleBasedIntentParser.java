@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 public class RuleBasedIntentParser implements IntentParser {
 
     private static final Pattern CREATE_TASK_PATTERN =
-        Pattern.compile("crea(?:r)? (?:una tarea|un bug) para (.+?)(?= y asigna| con \\d|$)(?: y asigna(?:la)? a ((?:(?! con \\d)[a-zA-ZáéíóúÁÉÍÓÚñÑ ])+))?(?: con (\\d+) puntos?)?", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern BUG_REPORT_PATTERN =
-        Pattern.compile("reporta(?:r)? (?:un )?bug(?: en| para)? (?:tarea )?(\\d+)(?: con severidad ([a-zA-Z]+))?", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("crea(?:r)? (?:una tarea|un bug) para (.+?)(?= y asigna| con \\d|$)(?: y asigna(?:la)? a ((?:(?! con \\d)[a-zA-ZáéíóúÁÉÍÓÚñÑ ])+))?", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern EXPECTED_HOURS_PATTERN =
         Pattern.compile("(\\d+)\\s*horas?\\s*(?:esperadas?|estimadas?)", Pattern.CASE_INSENSITIVE);
@@ -106,30 +103,16 @@ public class RuleBasedIntentParser implements IntentParser {
             intent.setIntent(IntentType.CREATE_TASK);
             intent.setTitle(matcher.group(1) == null ? null : matcher.group(1).trim());
             intent.setAssignee(matcher.group(2) == null ? null : capitalize(matcher.group(2).trim()));
-            intent.setStoryPoints(matcher.group(3) == null ? null : Integer.parseInt(matcher.group(3)));
-            
-            // Extract expected hours from the full text
+
             Matcher hoursMatcher = EXPECTED_HOURS_PATTERN.matcher(text);
             if (hoursMatcher.find()) {
                 intent.setExpectedHours(Integer.parseInt(hoursMatcher.group(1)));
             }
-            
-            // Check if it's a bug
+
             if (normalized.contains("bug")) {
                 intent.setIsBug(true);
             }
-            
-            return intent;
-        }
 
-        // Bug report queries: "reporta un bug en tarea 5 con severidad HIGH"
-        Matcher bugMatcher = BUG_REPORT_PATTERN.matcher(text);
-        if (bugMatcher.find()) {
-            intent.setIntent(IntentType.REPORT_BUG);
-            intent.setTaskId(bugMatcher.group(1));
-            if (bugMatcher.group(2) != null) {
-                intent.setBugSeverity(bugMatcher.group(2).toUpperCase());
-            }
             return intent;
         }
 
@@ -137,8 +120,7 @@ public class RuleBasedIntentParser implements IntentParser {
         intent.setClarificationNeeded(true);
         intent.setClarificationQuestion(
             "No entendi la solicitud. Tambien puedo explicar formatos de comandos.\n"
-                + "Ejemplo para crear tarea: /addtask \"<titulo>\" | \"<descripcion>\" | <horas esperadas> | <horas realizadas> | <puntos de historia> | <prioridad (LOW, MEDIUM, HIGH)> | <es bug (true/false)> | <ID de Usuario>\n"
-                + "Ejemplo para reportar bug: /reportbug <ID de tarea> | <cantidad de bugs> | <severidad (LOW, MEDIUM, HIGH, CRITICAL)>"
+                + "Ejemplo para crear tarea: /addtask \"<titulo>\" | \"<descripcion>\" | <horas esperadas> | <prioridad (LOW, MEDIUM, HIGH)> | <es bug (true/false)> | <ID de Usuario>"
         );
         return intent;
     }

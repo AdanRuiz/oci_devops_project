@@ -13,6 +13,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import BugReportIcon from '@mui/icons-material/BugReport';
 import moment from 'moment';
 
 function App() {
@@ -155,8 +156,10 @@ function App() {
     const data = {
       title: taskData.title,
       description: taskData.description,
-      status: taskData.status,
       priority: taskData.priority,
+      expectedHours: taskData.expectedHours,
+      hoursDone: 0,
+      isBug: taskData.isBug,
       assignedTo: 1,
       createdBy: 1,
       vector: 'web'
@@ -386,6 +389,9 @@ function App() {
                                         Title
                                       </th>
                                       <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">
+                                        Type
+                                      </th>
+                                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">
                                         Description
                                       </th>
                                       <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">
@@ -403,6 +409,16 @@ function App() {
                                     {filteredTasks.map((item) => (
                                       <tr key={item.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.title}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-700">
+                                          {item.isBug ? (
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 text-xs font-semibold text-red-700">
+                                              <BugReportIcon fontSize="inherit" />
+                                              Bug
+                                            </span>
+                                          ) : (
+                                            <span className="text-gray-400">Task</span>
+                                          )}
+                                        </td>
                                         <td className="max-w-xs px-6 py-4 text-sm text-gray-700">{item.description || '-'}</td>
                                         <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
                                         <td className="px-6 py-4 text-sm text-gray-700">{item.priority}</td>

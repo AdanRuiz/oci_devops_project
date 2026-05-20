@@ -5,7 +5,6 @@ public enum BotCommands {
 	START_COMMAND("/start"), 
 	REGISTER_COMMAND("/register"), 
 	ADD_TASK("/addtask"),
-	REPORT_BUG("/reportbug"),
 	DELETE_TASK("/deletetask"),
 	ASSIGN_TASK("/assigntask"),
 	COMPLETE_TASK("/completetask"),
@@ -14,7 +13,7 @@ public enum BotCommands {
 	TEAM_TASKS("/teamtasks"),
 	LLM_REQ("/llm");
 
-	private String command;
+	private final String command;
 
 	BotCommands(String enumCommand) {
 		this.command = enumCommand;

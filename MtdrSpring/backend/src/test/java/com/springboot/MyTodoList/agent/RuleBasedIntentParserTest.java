@@ -33,13 +33,13 @@ class RuleBasedIntentParserTest {
     }
 
     @Test
-    void parseCreateTaskWithStoryPoints() {
-        ParsedIntent intent = parser.parse("crea una tarea para refactorizar código y asigna a Juan con 8 puntos");
+    void parseCreateTaskWithAssigneeAndHours() {
+        ParsedIntent intent = parser.parse("crea una tarea para refactorizar código y asigna a Juan con 8 horas esperadas");
 
         assertThat(intent.getIntent()).isEqualTo(IntentType.CREATE_TASK);
         assertThat(intent.getTitle()).contains("refactorizar código");
         assertThat(intent.getAssignee()).isEqualTo("Juan");
-        assertThat(intent.getStoryPoints()).isEqualTo(8);
+        assertThat(intent.getExpectedHours()).isEqualTo(8);
     }
 
     @Test
@@ -60,20 +60,4 @@ class RuleBasedIntentParserTest {
         assertThat(intent.getIsBug()).isEqualTo(true);
     }
 
-    @Test
-    void parseReportBug() {
-        ParsedIntent intent = parser.parse("reporta un bug en tarea 3 con severidad HIGH");
-
-        assertThat(intent.getIntent()).isEqualTo(IntentType.REPORT_BUG);
-        assertThat(intent.getTaskId()).isEqualTo("3");
-        assertThat(intent.getBugSeverity()).isEqualTo("HIGH");
-    }
-
-    @Test
-    void parseReportBugWithoutSeverity() {
-        ParsedIntent intent = parser.parse("reporta un bug en tarea 7");
-
-        assertThat(intent.getIntent()).isEqualTo(IntentType.REPORT_BUG);
-        assertThat(intent.getTaskId()).isEqualTo("7");
-    }
 }

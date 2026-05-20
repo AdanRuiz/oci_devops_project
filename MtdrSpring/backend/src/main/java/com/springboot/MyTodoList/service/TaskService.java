@@ -41,7 +41,9 @@ public class TaskService {
             current.setPriority(updated.getPriority());
             current.setAssignedTo(updated.getAssignedTo());
             current.setCreatedBy(updated.getCreatedBy());
-            current.setDueDate(updated.getDueDate());
+            current.setHoursDone(updated.getHoursDone());
+            current.setExpectedHours(updated.getExpectedHours());
+            current.setIsBug(updated.getIsBug());
             if (updated.getCreatedAt() != null) {
                 current.setCreatedAt(updated.getCreatedAt());
             }

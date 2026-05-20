@@ -15,8 +15,9 @@ function NewItem(props) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    status: "PENDING",
+    expectedHours: "",
     priority: "MEDIUM",
+    isBug: false,
     sprintId: ""
   });
 
@@ -26,15 +27,17 @@ function NewItem(props) {
     props.addItem({
       title: formData.title.trim(),
       description: formData.description.trim(),
-      status: formData.status,
+      expectedHours: Number(formData.expectedHours),
       priority: formData.priority,
+      isBug: formData.isBug,
       sprintId: formData.sprintId ? Number(formData.sprintId) : null
     });
     setFormData({
       title: "",
       description: "",
-      status: "PENDING",
+      expectedHours: "",
       priority: "MEDIUM",
+      isBug: false,
       sprintId: ""
     });
   }
@@ -65,16 +68,17 @@ function NewItem(props) {
           onChange={handleChange}
           className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200 lg:col-span-2"
         />
-        <select
-          name="status"
-          value={formData.status}
+        <input
+          placeholder="Expected hours"
+          name="expectedHours"
+          type="number"
+          min="1"
+          step="1"
+          autoComplete="off"
+          value={formData.expectedHours}
           onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200"
-        >
-          <option value="PENDING">PENDING</option>
-          <option value="IN_PROGRESS">IN_PROGRESS</option>
-          <option value="DONE">DONE</option>
-        </select>
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200"
+        />
         <select
           name="priority"
           value={formData.priority}
@@ -85,6 +89,16 @@ function NewItem(props) {
           <option value="MEDIUM">MEDIUM</option>
           <option value="HIGH">HIGH</option>
         </select>
+        <label className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-200">
+          <input
+            type="checkbox"
+            name="isBug"
+            checked={formData.isBug}
+            onChange={(e) => setFormData((prev) => ({ ...prev, isBug: e.target.checked }))}
+            className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+          />
+          <span>Bug</span>
+        </label>
         <select
           name="sprintId"
           value={formData.sprintId}

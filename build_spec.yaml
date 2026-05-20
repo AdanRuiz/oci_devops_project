@@ -36,5 +36,35 @@ steps:
               source env.sh;
               (cd backend;source build.sh)
 
+  - type: Command
+    name: "Install K8s"
+    command:  mkdir -p $HOME/.kube;
+              cd $HOME;
+              ls -la;
+              mkdir k8s;
+              ls -la;
+              cd k8s;
+              wget https://dl.k8s.io/v1.31.2/bin/linux/amd64/kubectl;
+              ls -la;
+              chmod +x kubectl;
+              export PATH=$PATH:$HOME/k8s;
+              kubectl version --client;
+              cd ..;
+              cd .kube;
+              oci ce cluster create-kubeconfig
+              --cluster-id ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaa4senab2h7qoguuivb6lo37m645sglcldmwjvswof4ck6gjremxvq
+              --file $HOME/.kube/config --region mx-queretaro-1 --token-version 2.0.0 
+              --kube-endpoint PUBLIC_ENDPOINT;
+              export KUBECONFIG=$HOME/.kube/config;
 
-
+  - type: Command
+    name: "Undeploy"
+    ignoreFailure: True
+    command: export PATH=$PATH:$HOME/k8s;kubectl version;
+      export KUBECONFIG=$HOME/.kube/config;
+      cd MtdrSpring;
+      source env.sh;
+      cd backend;
+      ls -l;
+      kubectl config view;
+      source undeploy.sh;
