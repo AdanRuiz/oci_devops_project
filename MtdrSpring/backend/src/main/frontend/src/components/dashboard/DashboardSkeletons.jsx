@@ -261,3 +261,85 @@ export function DashboardListViewSkeleton({ title = 'Loading…', showFilters = 
     </div>
   );
 }
+
+/** Skeleton for the developer app route (/app). */
+export function DevAppSkeleton() {
+  const sprintBlocks = [
+    { expanded: true, pendingCount: 3 },
+    { expanded: false, pendingCount: 0 },
+    { expanded: false, pendingCount: 0 },
+  ];
+
+  return (
+    <div className="dashboard-section-enter space-y-8" aria-busy="true" aria-label="Loading sprints and tasks">
+      <section className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+          <div>
+            <Bar className="mb-2 h-3.5 w-24" />
+            <Bar className="h-px w-full max-w-xl bg-[#2A1814]/15" />
+          </div>
+          <div className="flex items-center gap-3">
+            <Bar className="h-10 w-36 rounded-full" />
+            <Bar className="h-3 w-28" />
+          </div>
+        </div>
+      </section>
+
+      <div className="space-y-4">
+        {sprintBlocks.map((sprint, sprintIndex) => (
+          <section
+            key={sprintIndex}
+            className="overflow-hidden border-b border-[#2A1814]/10 pb-4"
+          >
+            <div className="flex items-center justify-between gap-4 px-1 py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <Bar className="h-4 w-4 shrink-0 rounded-sm" />
+                <div className="min-w-0 space-y-2">
+                  <Bar className="h-4 w-40 sm:w-48" />
+                  <Bar className="h-3 w-52 max-w-full" />
+                </div>
+              </div>
+              <Bar className="h-7 w-[4.5rem] shrink-0 rounded-full" />
+            </div>
+
+            {sprint.expanded && (
+              <div className="space-y-6 border-t border-[#2A1814]/[0.08] px-1 py-5">
+                <div>
+                  <div className="mb-3 flex items-center justify-between">
+                    <Bar className="h-3.5 w-28" />
+                    <Bar className="h-3 w-5" />
+                  </div>
+                  <div className="overflow-hidden">
+                    {Array.from({ length: sprint.pendingCount }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-3 border-b border-[#2A1814]/[0.08] py-3.5 last:border-b-0"
+                      >
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <Bar className="h-3.5 max-w-[16rem]" />
+                          <Bar className="h-3 max-w-[12rem]" />
+                          <div className="flex flex-wrap gap-2">
+                            <Bar className="h-5 w-14 rounded-full" />
+                            <Bar className="h-5 w-20 rounded-full" />
+                          </div>
+                        </div>
+                        <Bar className="h-8 w-[4.75rem] shrink-0 rounded-full" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-3 flex items-center justify-between">
+                    <Bar className="h-3.5 w-24" />
+                    <Bar className="h-3 w-5" />
+                  </div>
+                  <Bar className="h-3.5 w-full max-w-xs" />
+                </div>
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}

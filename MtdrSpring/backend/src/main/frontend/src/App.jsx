@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import NewItem from './NewItem';
 import API_LIST from './API';
+import { DevAppSkeleton } from './components/dashboard/DashboardSkeletons';
 
 function getInitials(name) {
   const parts = name?.trim().split(/\s+/).filter(Boolean) ?? [];
@@ -187,7 +188,7 @@ function App() {
       vector: 'web',
     };
 
-    fetch(API_LIST, {
+    return fetch(API_LIST, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -313,9 +314,7 @@ function App() {
           )}
 
           {isLoading ? (
-            <div className="dashboard-section-enter flex justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#2A1814]/15 border-t-[#c74634]" />
-            </div>
+            <DevAppSkeleton />
           ) : (
             <div className="dashboard-section-enter space-y-8" style={{ animationDelay: '140ms' }}>
               <section className="dashboard-section-enter space-y-4" style={{ animationDelay: '180ms' }}>
