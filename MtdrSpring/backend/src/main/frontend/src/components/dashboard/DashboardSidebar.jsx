@@ -7,6 +7,7 @@ import {
   Info,
   LayoutGrid,
   LogOut,
+  Sparkles,
   Users,
 } from 'lucide-react';
 import { dashboardTopRowClassName } from '../../constants/dashboardTheme';
@@ -17,6 +18,7 @@ const mainNav = [
   { to: '/dashboard/tasks', label: 'Tasks', icon: ClipboardList },
   { to: '/dashboard/team', label: 'Team', icon: Users },
   { to: '/dashboard/activity', label: 'Activity', icon: Activity },
+  { to: '/lumi', label: 'Lumi AI', icon: Sparkles },
 ];
 
 function navLinkClass({ isActive }) {

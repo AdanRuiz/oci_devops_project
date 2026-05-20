@@ -16,6 +16,7 @@ import App from './App';
 import Landing from './Landing';
 import Login from './Login';
 import Dashboard from './Dashboard';
+import LumiAssistant from './components/dashboard/LumiAssistant';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -26,6 +27,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/app" element={<App />} />
         <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/lumi" element={<LumiAssistant />} />
         <Route path="/manager" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
