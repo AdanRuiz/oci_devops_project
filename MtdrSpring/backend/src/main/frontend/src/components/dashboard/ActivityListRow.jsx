@@ -7,7 +7,7 @@ function ActivityListRow({ item, isLast }) {
         isLast ? '' : 'border-b border-[#2A1814]/[0.06]'
       }`}
     >
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2A1814]/[0.05] text-xs font-semibold text-[#c74634]">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#c74634]/15 text-xs font-semibold text-[#c74634]">
         {item.title.charAt(0)}
       </div>
       <div className="min-w-0 flex-1">

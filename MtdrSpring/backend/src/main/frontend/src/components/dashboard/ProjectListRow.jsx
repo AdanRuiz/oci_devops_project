@@ -49,7 +49,7 @@ function ProjectListRow({ project, isLast }) {
                 <div
                   key={member.id}
                   title={member.name}
-                  className="flex h-7 w-7 items-center justify-center rounded-full border border-white bg-[#faf9f6] text-[9px] font-semibold text-[#c74634]"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c74634]/15 text-[9px] font-semibold text-[#c74634]"
                 >
                   {member.initials}
                 </div>

@@ -24,7 +24,7 @@ function MetricShell({ title, subtitle, children, className = '' }) {
 }
 
 function DashboardProjectOverview() {
-  const { teamTasks, orderedSprints } = useOutletContext();
+  const { project, teamTasks, orderedSprints } = useOutletContext();
 
   const carry = useMemo(() => buildCarryOverChartData(teamTasks, orderedSprints), [teamTasks, orderedSprints]);
   const bugs = useMemo(() => buildBugRatioChartData(teamTasks, orderedSprints), [teamTasks, orderedSprints]);
@@ -92,6 +92,23 @@ function DashboardProjectOverview() {
         <div className="h-56 [&_canvas]:bg-transparent">
           <Line data={bugData} options={bugOptions} />
         </div>
+      </MetricShell>
+
+      <MetricShell title="Team working on this project" subtitle="Current assigned members">
+        {project?.members?.length ? (
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            {project.members.map((member) => (
+              <div key={member.id} className="inline-flex items-center gap-2 text-sm text-[#2A1814]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c74634]/15 text-[10px] font-semibold text-[#c74634]">
+                  {member.initials}
+                </span>
+                {member.name}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-[#6B6560]">No team members assigned yet.</p>
+        )}
       </MetricShell>
     </div>
   );

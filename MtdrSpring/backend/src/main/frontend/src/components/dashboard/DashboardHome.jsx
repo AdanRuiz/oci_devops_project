@@ -195,13 +195,8 @@ function DashboardHome() {
         </div>
 
         <DashboardSection
-          title="Activity"
+          title="Recent Activity"
           className="flex min-h-0 flex-col lg:border-l lg:border-[#2A1814]/[0.08] lg:pl-10"
-          headerEnd={
-            <span className="shrink-0 rounded-full bg-[#c74634]/10 px-2.5 py-0.5 text-xs font-medium text-[#c74634]">
-              Recent
-            </span>
-          }
         >
           {activityItems.length === 0 ? (
             <ChartEmpty message="No recent activity." />
@@ -219,7 +214,7 @@ function DashboardHome() {
           <div className="mt-4 flex shrink-0 justify-center border-t border-[#2A1814]/[0.06] pt-4">
             <Link
               to="/dashboard/activity"
-              className="inline-flex items-center justify-center rounded-full border border-[#2A1814]/[0.08] bg-[#faf9f6] px-5 py-2 text-sm font-medium text-[#2A1814] transition hover:border-[#c74634]/30 hover:text-[#c74634]"
+              className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-[#2A1814] px-10 py-2.5 text-sm font-medium text-white transition hover:bg-[#1d110e]"
             >
               View all
             </Link>
