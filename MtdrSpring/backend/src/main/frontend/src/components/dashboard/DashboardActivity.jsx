@@ -102,7 +102,12 @@ function DashboardActivity() {
         ) : (
           <div>
             {items.map((item, index) => (
-              <ActivityListRow key={`${item.title}-${index}`} item={item} isLast={index === items.length - 1} />
+              <ActivityListRow
+                key={`${item.title}-${index}`}
+                item={item}
+                isLast={index === items.length - 1}
+                rowIndex={index}
+              />
             ))}
           </div>
         )}

@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Circle } from 'lucide-react';
 
-function ProjectListRow({ project, isLast }) {
+function ProjectListRow({ project, isLast, rowIndex = 0 }) {
   const isCompleted = project.status === 'Completed';
 
   return (
     <Link
       to={`/dashboard/projects/${project.id}`}
-      className={`group flex flex-col gap-4 py-5 transition-colors hover:bg-[#2A1814]/[0.02] sm:flex-row sm:items-center sm:justify-between sm:gap-6 ${
+      className={`group dashboard-row-enter flex flex-col gap-4 py-5 transition-colors hover:bg-[#2A1814]/[0.02] sm:flex-row sm:items-center sm:justify-between sm:gap-6 ${
         isLast ? '' : 'border-b border-[#2A1814]/[0.06]'
       }`}
+      style={{ animationDelay: `${Math.min(rowIndex * 24, 220)}ms` }}
     >
       <div className="flex min-w-0 flex-1 items-start gap-4">
         <div

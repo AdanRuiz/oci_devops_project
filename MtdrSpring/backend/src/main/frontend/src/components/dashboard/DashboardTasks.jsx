@@ -215,7 +215,8 @@ function DashboardTasks() {
                 {filtered.map((task, index) => (
                   <tr
                     key={task.id}
-                    className={`transition-colors hover:bg-[#2A1814]/[0.02] ${index === filtered.length - 1 ? 'border-b-0' : ''}`}
+                    className={`dashboard-row-enter transition-colors hover:bg-[#2A1814]/[0.02] ${index === filtered.length - 1 ? 'border-b-0' : ''}`}
+                    style={{ animationDelay: `${Math.min(index * 20, 220)}ms` }}
                   >
                     <td className="px-1 py-3.5">
                       <p className="font-medium text-[#2A1814]">{task.title || `Task ${task.id}`}</p>

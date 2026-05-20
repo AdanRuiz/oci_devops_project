@@ -220,6 +220,7 @@ function DashboardHome() {
                   isLast={index === activityItems.length - 1}
                   showBy={false}
                   showTime={false}
+                  rowIndex={index}
                 />
               ))}
             </div>

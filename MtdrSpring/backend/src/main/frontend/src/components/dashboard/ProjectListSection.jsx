@@ -24,6 +24,7 @@ function ProjectListSection({ title, count, projects, emptyMessage }) {
             key={project.id}
             project={project}
             isLast={index === projects.length - 1}
+            rowIndex={index}
           />
         ))}
       </div>

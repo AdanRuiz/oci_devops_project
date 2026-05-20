@@ -242,8 +242,12 @@ function DashboardTeam() {
         {teams.length === 0 ? (
           <p className="text-sm text-[#6B6560]">No teams yet.</p>
         ) : (
-          teams.map((team) => (
-            <section key={team.id}>
+          teams.map((team, teamIndex) => (
+            <section
+              key={team.id}
+              className="dashboard-row-enter"
+              style={{ animationDelay: `${Math.min(teamIndex * 30, 180)}ms` }}
+            >
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#2A1814]/[0.08] pb-3">
                 <div>
                   <h3 className="text-base font-semibold text-[#2A1814]">{team.name}</h3>
@@ -251,10 +255,11 @@ function DashboardTeam() {
                 </div>
               </div>
               <div className="mt-2">
-                {(team.users || []).map((user) => (
+                {(team.users || []).map((user, memberIndex) => (
                   <div
                     key={user.id}
-                    className="flex items-center justify-between gap-3 border-b border-[#2A1814]/[0.06] py-3"
+                    className="dashboard-row-enter flex items-center justify-between gap-3 border-b border-[#2A1814]/[0.06] py-3"
+                    style={{ animationDelay: `${Math.min(memberIndex * 18, 200)}ms` }}
                   >
                     <div className="flex items-center gap-3">
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c74634]/15 text-[10px] font-semibold text-[#c74634]">

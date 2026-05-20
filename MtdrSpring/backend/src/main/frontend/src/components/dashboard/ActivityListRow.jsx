@@ -1,4 +1,4 @@
-function ActivityListRow({ item, isLast, showBy = true, showTime = true }) {
+function ActivityListRow({ item, isLast, showBy = true, showTime = true, rowIndex = 0 }) {
   const layoutClass =
     showBy || showTime ? 'grid grid-cols-[minmax(0,1fr)_150px_170px] gap-3' : 'flex flex-col gap-1';
   const alignmentClass = showBy || showTime ? 'items-center' : 'items-start';
@@ -7,7 +7,8 @@ function ActivityListRow({ item, isLast, showBy = true, showTime = true }) {
     <article
       className={`${layoutClass} ${alignmentClass} py-4 transition-colors hover:bg-[#2A1814]/[0.02] ${
         isLast ? '' : 'border-b border-[#2A1814]/[0.06]'
-      }`}
+      } dashboard-row-enter`}
+      style={{ animationDelay: `${Math.min(rowIndex * 22, 200)}ms` }}
     >
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-[#2A1814]">{item.title}</p>
