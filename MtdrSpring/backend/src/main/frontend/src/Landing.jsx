@@ -101,7 +101,7 @@ function Landing() {
       <section className="border-b border-black/8 bg-white py-10 sm:py-12">
         <div className={`${landingContainer} flex flex-col items-center text-center`}>
           <p className="text-sm leading-relaxed text-[#2a1814]/70">
-            Trusted by engineers at
+            Trusted by teams at
           </p>
           <img
             src="/oracle.svg"

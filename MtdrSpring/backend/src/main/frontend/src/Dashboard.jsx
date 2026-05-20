@@ -1,12 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
 import DashboardHeader from './components/dashboard/DashboardHeader';
+import DashboardActivity from './components/dashboard/DashboardActivity';
 import DashboardHome from './components/dashboard/DashboardHome';
-import DashboardPlaceholder from './components/dashboard/DashboardPlaceholder';
 import DashboardProjectLayout from './components/dashboard/DashboardProjectLayout';
 import DashboardProjectOverview from './components/dashboard/DashboardProjectOverview';
 import DashboardProjectSprint from './components/dashboard/DashboardProjectSprint';
 import DashboardProjects from './components/dashboard/DashboardProjects';
 import DashboardSidebar from './components/dashboard/DashboardSidebar';
+import DashboardTasks from './components/dashboard/DashboardTasks';
+import DashboardTeam from './components/dashboard/DashboardTeam';
 import { dashboardScrollbarClassName } from './constants/dashboardTheme';
 
 function Dashboard() {
@@ -26,33 +28,9 @@ function Dashboard() {
               <Route index element={<DashboardProjectOverview />} />
               <Route path="sprints/:sprintId" element={<DashboardProjectSprint />} />
             </Route>
-            <Route
-              path="tasks"
-              element={
-                <DashboardPlaceholder
-                  title="Tasks"
-                  description="Task management views will appear here."
-                />
-              }
-            />
-            <Route
-              path="team"
-              element={
-                <DashboardPlaceholder
-                  title="Team"
-                  description="Team roster and assignments will appear here."
-                />
-              }
-            />
-            <Route
-              path="activity"
-              element={
-                <DashboardPlaceholder
-                  title="Activity"
-                  description="Full activity feed will appear here."
-                />
-              }
-            />
+            <Route path="tasks" element={<DashboardTasks />} />
+            <Route path="team" element={<DashboardTeam />} />
+            <Route path="activity" element={<DashboardActivity />} />
           </Routes>
         </main>
       </div>

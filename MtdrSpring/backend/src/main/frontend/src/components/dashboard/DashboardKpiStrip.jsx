@@ -14,7 +14,7 @@ function TrendBadge({ direction, label }) {
   );
 }
 
-function KpiCell({ icon, label, value, trend }) {
+function KpiCell({ icon, label, value, trend, metaLabel = 'vs last month' }) {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-4 px-2 py-5 sm:px-4 sm:py-6">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2A1814]/[0.05] text-[#2A1814]">
@@ -26,7 +26,7 @@ function KpiCell({ icon, label, value, trend }) {
           <span className="text-2xl font-semibold tracking-tight text-[#2A1814]">{value}</span>
           {trend && <TrendBadge direction={trend.direction} label={trend.label} />}
         </div>
-        <p className="mt-1 text-xs text-[#6B6560]">vs last month</p>
+        {metaLabel ? <p className="mt-1 text-xs text-[#6B6560]">{metaLabel}</p> : null}
       </div>
     </div>
   );

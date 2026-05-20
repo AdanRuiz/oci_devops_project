@@ -212,3 +212,52 @@ export function DashboardProjectShellSkeleton() {
     </div>
   );
 }
+
+export function DashboardListViewSkeleton({ title = 'Loading…', showFilters = true }) {
+  return (
+    <div className="space-y-8" aria-busy="true" aria-label={title}>
+      <div>
+        <Bar className="h-6 w-32" />
+        <Bar className="mt-2 h-4 max-w-md" />
+      </div>
+
+      <div className="flex flex-col border-y border-[#2A1814]/[0.08] sm:flex-row sm:items-stretch">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex min-w-0 flex-1 items-center gap-4 px-2 py-5 sm:px-4 sm:py-6">
+            <Bar className="h-11 w-11 shrink-0 rounded-full" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Bar className="h-3.5 w-24" />
+              <Bar className="h-8 w-16" />
+              <Bar className="h-3 w-28" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {showFilters ? (
+        <div className="flex flex-wrap gap-3">
+          <Bar className="h-10 min-w-[240px] flex-1 rounded-xl" />
+          <Bar className="h-10 w-44 rounded-xl" />
+        </div>
+      ) : null}
+
+      <div className="overflow-hidden rounded-2xl border border-[#2A1814]/[0.06] bg-white shadow-sm">
+        <div className="border-b border-[#2A1814]/[0.06] px-4 py-3">
+          <Bar className="h-4 w-28" />
+        </div>
+        <div className="space-y-0 divide-y divide-[#2A1814]/[0.06] p-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center gap-3 px-3 py-4">
+              <Bar className="h-9 w-9 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Bar className="h-3.5 max-w-[16rem]" />
+                <Bar className="h-3 max-w-[12rem]" />
+              </div>
+              <Bar className="h-3 w-14" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

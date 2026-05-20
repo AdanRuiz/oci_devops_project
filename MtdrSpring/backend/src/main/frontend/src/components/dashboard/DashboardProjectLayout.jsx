@@ -251,36 +251,38 @@ function DashboardProjectLayout() {
             </div>
             <form className="space-y-4" onSubmit={handleCreateSprint}>
               <label className="block">
-                <span className="mb-1 block text-sm font-medium text-[#2A1814]">Sprint name</span>
-                <input
-                  type="text"
-                  value={sprintForm.name}
-                  onChange={(e) => setSprintForm((prev) => ({ ...prev, name: e.target.value }))}
-                  className="w-full rounded-xl border border-[#2A1814]/15 px-3 py-2 text-sm outline-none ring-[#c74634]/30 focus:ring"
-                  placeholder="Sprint 15"
-                />
+                <span className="mb-2 block text-sm text-[#2a1814]/60">Sprint name</span>
+                <span className="flex items-center gap-2 border-0 border-b border-[#2a1814]/20 py-2.5 focus-within:border-[#2a1814]">
+                  <input
+                    type="text"
+                    value={sprintForm.name}
+                    onChange={(e) => setSprintForm((prev) => ({ ...prev, name: e.target.value }))}
+                    className="w-full border-0 bg-transparent text-sm text-[#2a1814] placeholder:text-[#2a1814]/35 focus:outline-none focus:ring-0"
+                    placeholder="Sprint 15"
+                  />
+                </span>
               </label>
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-[#2A1814]">Start</span>
+                  <span className="mb-2 block text-sm text-[#2a1814]/60">Start</span>
                   <input
                     type="datetime-local"
                     value={sprintForm.startDate}
                     onChange={(e) =>
                       setSprintForm((prev) => ({ ...prev, startDate: e.target.value }))
                     }
-                    className="w-full rounded-xl border border-[#2A1814]/15 px-3 py-2 text-sm outline-none ring-[#c74634]/30 focus:ring"
+                    className="w-full border-0 border-b border-[#2a1814]/20 bg-transparent py-2.5 text-sm text-[#2a1814] focus:border-[#2a1814] focus:outline-none focus:ring-0"
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-[#2A1814]">End</span>
+                  <span className="mb-2 block text-sm text-[#2a1814]/60">End</span>
                   <input
                     type="datetime-local"
                     value={sprintForm.endDate}
                     onChange={(e) =>
                       setSprintForm((prev) => ({ ...prev, endDate: e.target.value }))
                     }
-                    className="w-full rounded-xl border border-[#2A1814]/15 px-3 py-2 text-sm outline-none ring-[#c74634]/30 focus:ring"
+                    className="w-full border-0 border-b border-[#2a1814]/20 bg-transparent py-2.5 text-sm text-[#2a1814] focus:border-[#2a1814] focus:outline-none focus:ring-0"
                   />
                 </label>
               </div>

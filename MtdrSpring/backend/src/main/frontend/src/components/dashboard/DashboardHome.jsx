@@ -75,24 +75,35 @@ function buildMemberPoints(tasks, users) {
 }
 
 function buildActivity(tasks, users) {
-  const usersMap = {};
-  users.forEach((u) => {
-    usersMap[u.id] = u.name || u.username || 'User';
-  });
+  const usersMap = new Map(
+    users.map((u) => [String(u.id), u.name || u.username || u.email || `User ${u.id}`])
+  );
 
   const sorted = [...tasks]
-    .sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0))
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
+    )
     .slice(0, 6);
 
   if (sorted.length === 0) {
     return [];
   }
 
-  return sorted.map((t, i) => ({
-    title: t.title || `User Task ${i + 1}`,
-    detail: t.description?.slice(0, 40) || `Assigned to ${usersMap[t.assignedTo] || 'team'}`,
-    time: 'Today',
-  }));
+  return sorted.map((t, i) => {
+    const actorId = t.assignedTo ?? t.createdBy;
+    const actor =
+      usersMap.get(String(actorId)) ||
+      t.assignedToName ||
+      t.createdByName ||
+      t.assigneeName ||
+      'Team member';
+    return {
+      title: t.title || `User Task ${i + 1}`,
+      detail: t.description?.slice(0, 40) || `Assigned to ${actor}`,
+      by: actor,
+    };
+  });
 }
 
 function resolveTasksForHome(tasksResult) {
@@ -207,6 +218,8 @@ function DashboardHome() {
                   key={item.title + item.detail}
                   item={item}
                   isLast={index === activityItems.length - 1}
+                  showBy={false}
+                  showTime={false}
                 />
               ))}
             </div>
