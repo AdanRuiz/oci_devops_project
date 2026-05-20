@@ -6,6 +6,7 @@ import { mapTeamsToProjects, partitionProjects, summarizeProjects } from './mapP
 import ProjectListSection from './ProjectListSection';
 import ProjectsKpiStrip from './ProjectsKpiStrip';
 import { DashboardProjectsSkeleton } from './DashboardSkeletons';
+import { useToast } from '../ui/ToastProvider';
 
 function initialsFromName(name) {
   const parts = name?.trim().split(/\s+/).filter(Boolean) ?? [];
@@ -15,6 +16,7 @@ function initialsFromName(name) {
 }
 
 function DashboardProjects() {
+  const { showSuccess, showError } = useToast();
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
@@ -27,7 +29,6 @@ function DashboardProjects() {
     teamId: '',
     memberIds: [],
   });
-  const [createError, setCreateError] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
@@ -101,23 +102,22 @@ function DashboardProjects() {
 
   const handleCreateProject = async (event) => {
     event.preventDefault();
-    setCreateError('');
     const name = createForm.name.trim();
     const managerId = Number(createForm.managerId);
     if (!name) {
-      setCreateError('Project name is required.');
+      showError('Project name is required.');
       return;
     }
     if (!managerId) {
-      setCreateError('Manager is required.');
+      showError('Manager is required.');
       return;
     }
     if (!createForm.teamId) {
-      setCreateError('Team is required.');
+      showError('Team is required.');
       return;
     }
     if (createForm.teamId === '__new__' && createForm.memberIds.length === 0) {
-      setCreateError('Select at least one member for the new team.');
+      showError('Select at least one member for the new team.');
       return;
     }
 
@@ -162,8 +162,9 @@ function DashboardProjects() {
       setIsManagerOpen(false);
       setIsTeamOpen(false);
       setCreateForm({ name: '', managerId: '', teamId: '', memberIds: [] });
+      showSuccess(`Project “${name}” created.`);
     } catch (error) {
-      setCreateError(error.message || 'Failed to create project.');
+      showError(error.message || 'Failed to create project.');
     } finally {
       setIsCreating(false);
     }
@@ -417,7 +418,6 @@ function DashboardProjects() {
                   </div>
                 </div>
               )}
-              {createError && <p className="text-sm text-[#c74634]">{createError}</p>}
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button"

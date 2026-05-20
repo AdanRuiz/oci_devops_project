@@ -15,8 +15,9 @@ import NewItem from './NewItem';
 import API_LIST from './API';
 import { DevAppSkeleton } from './components/dashboard/DashboardSkeletons';
 import DevTaskRow from './components/dev/DevTaskRow';
-import DevToast from './components/dev/DevToast';
+import AppToast from './components/ui/AppToast';
 import EditTaskModal from './components/dev/EditTaskModal';
+import { useAppToast } from './hooks/useAppToast';
 import { DEV_STATUS_OPTIONS, nextStatus, updateTask } from './components/dev/devTaskApi';
 
 const BACKLOG_KEY = 'backlog';
@@ -92,7 +93,7 @@ function App() {
   const [isInserting, setInserting] = useState(false);
   const [items, setItems] = useState([]);
   const [sprints, setSprints] = useState([]);
-  const [error, setError] = useState();
+  const { toast, showSuccess, showError, dismissToast } = useAppToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [priorityFilter, setPriorityFilter] = useState('ALL');
@@ -109,7 +110,6 @@ function App() {
   const [editingTask, setEditingTask] = useState(null);
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const [highlightedTaskId, setHighlightedTaskId] = useState(null);
-  const [toastMessage, setToastMessage] = useState('');
 
   const getSprintTasks = (sprintId) => items.filter((item) => item.sprint?.id === sprintId);
   const unassignedTasks = useMemo(() => items.filter((item) => !item.sprint?.id), [items]);
@@ -137,19 +137,15 @@ function App() {
     setItems((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
   }
 
-  function showToast(message) {
-    setToastMessage(message);
-  }
-
   function handleTaskSaved(updated, message) {
     replaceTask(updated);
-    showToast(message);
+    showSuccess(message);
   }
 
   function handleStatusChange(task, status) {
     updateTask(task, { status })
       .then((updated) => handleTaskSaved(updated, `Status updated to ${formatStatusLabel(status)}`))
-      .catch((err) => setError(err));
+      .catch((err) => showError(err));
   }
 
   function deleteItem(deleteId) {
@@ -161,9 +157,9 @@ function App() {
       .then(() => {
         setItems((prev) => prev.filter((item) => item.id !== deleteId));
         setPendingDeleteId(null);
-        showToast('Task deleted');
+        showSuccess('Task deleted');
       })
-      .catch((err) => setError(err));
+      .catch((err) => showError(err));
   }
 
   function renderTaskGroups(tasks, groupKey) {
@@ -285,7 +281,7 @@ function App() {
           setExpandedSprints(initialExpanded);
         }
       } catch (err) {
-        if (!cancelled) setError(err);
+        if (!cancelled) showError(err);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -294,6 +290,11 @@ function App() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.add('dev-app-active');
+    return () => document.documentElement.classList.remove('dev-app-active');
   }, []);
 
   useEffect(() => {
@@ -389,10 +390,10 @@ function App() {
         } else {
           setExpandedSprints((prev) => ({ ...prev, [BACKLOG_KEY]: true }));
         }
-        showToast(`“${createdTask.title}” added to your ${createdTask.sprint?.name ? 'sprint' : 'backlog'}`);
+        showSuccess(`“${createdTask.title}” added to your ${createdTask.sprint?.name ? 'sprint' : 'backlog'}`);
         return createdTask;
       })
-      .catch((err) => setError(err))
+      .catch((err) => showError(err))
       .finally(() => setInserting(false));
   }
 
@@ -407,7 +408,7 @@ function App() {
   const today = formatToday();
 
   return (
-    <section className="dev-app-page app-scrollbar min-h-screen bg-[#faf9f6] text-[#2A1814]">
+    <section className="dev-app-page app-scrollbar min-h-dvh min-h-screen w-full bg-[#faf9f6] text-[#2A1814]">
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-8">
         <div className="dashboard-page-enter space-y-8">
           <header className="border-b border-[#2A1814]/[0.08] pb-6">
@@ -544,12 +545,6 @@ function App() {
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-
-          {error && (
-            <p className="dashboard-section-enter rounded-xl border border-[#c74634]/25 bg-[#fff6f4] px-4 py-2.5 text-sm text-[#c74634]">
-              Error: {error.message}
-            </p>
-          )}
 
           {isLoading ? (
             <DevAppSkeleton />
@@ -784,9 +779,9 @@ function App() {
         sprints={sprints}
         onClose={() => setEditingTask(null)}
         onSaved={(updated) => handleTaskSaved(updated, 'Task updated')}
-        onError={setError}
+        onError={showError}
       />
-      <DevToast message={toastMessage} onDismiss={() => setToastMessage('')} />
+      <AppToast toast={toast} onDismiss={dismissToast} />
     </section>
   );
 }

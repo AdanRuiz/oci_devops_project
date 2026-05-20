@@ -10,11 +10,13 @@ import DashboardSidebar from './components/dashboard/DashboardSidebar';
 import DashboardTasks from './components/dashboard/DashboardTasks';
 import DashboardTeam from './components/dashboard/DashboardTeam';
 import { dashboardScrollbarClassName } from './constants/dashboardTheme';
+import { ToastProvider } from './components/ui/ToastProvider';
 
 function Dashboard() {
   const location = useLocation();
 
   return (
+    <ToastProvider>
     <div className="h-screen overflow-hidden bg-white text-[#2A1814]">
       <DashboardSidebar />
 
@@ -39,6 +41,7 @@ function Dashboard() {
         </main>
       </div>
     </div>
+    </ToastProvider>
   );
 }
 

@@ -53,11 +53,16 @@ body,
   background-color: rgba(37, 150, 190, 0.75);
 }
 
-/* Developer app page background */
+/* Developer app page background (#faf9f6) */
 .dev-app-page {
   background-color: #faf9f6;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
+html.dev-app-active,
+html.dev-app-active body,
+html.dev-app-active #root,
 #root:has(.dev-app-page) {
   background-color: #faf9f6;
   min-height: 100%;
@@ -768,6 +773,21 @@ html:has(.dev-app-page)::-webkit-scrollbar-thumb:active {
 
 .dev-toast-enter {
   animation: devToastEnter 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes appToastEnter {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.app-toast-enter {
+  animation: appToastEnter 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .task-type-toggle--bug .task-type-toggle__pill {

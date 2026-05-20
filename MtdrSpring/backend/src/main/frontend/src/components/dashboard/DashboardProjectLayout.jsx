@@ -6,6 +6,7 @@ import { fetchDashboardBundle } from './dashboardApi';
 import { MOCK_SPRINTS, MOCK_TASKS, MOCK_TEAMS } from './dashboardMocks';
 import { mapTeamsToProjects } from './mapProjects';
 import { DashboardProjectShellSkeleton } from './DashboardSkeletons';
+import { useToast } from '../ui/ToastProvider';
 
 ChartJS.register(
   ArcElement,
@@ -28,6 +29,7 @@ function sprintNavClass({ isActive }) {
 }
 
 function DashboardProjectLayout() {
+  const { showSuccess, showError } = useToast();
   const { projectId } = useParams();
   const location = useLocation();
   const id = Number(projectId);
@@ -43,7 +45,6 @@ function DashboardProjectLayout() {
     startDate: '',
     endDate: '',
   });
-  const [sprintError, setSprintError] = useState('');
   const [isCreatingSprint, setIsCreatingSprint] = useState(false);
 
   useEffect(() => {
@@ -132,17 +133,17 @@ function DashboardProjectLayout() {
 
   const handleCreateSprint = async (event) => {
     event.preventDefault();
-    setSprintError('');
-    if (!sprintForm.name.trim()) {
-      setSprintError('Sprint name is required.');
+    const sprintName = sprintForm.name.trim();
+    if (!sprintName) {
+      showError('Sprint name is required.');
       return;
     }
     if (!sprintForm.startDate || !sprintForm.endDate) {
-      setSprintError('Start and end dates are required.');
+      showError('Start and end dates are required.');
       return;
     }
     if (new Date(sprintForm.startDate) > new Date(sprintForm.endDate)) {
-      setSprintError('End date must be after start date.');
+      showError('End date must be after start date.');
       return;
     }
 
@@ -152,7 +153,7 @@ function DashboardProjectLayout() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: sprintForm.name.trim(),
+          name: sprintName,
           startDate: sprintForm.startDate,
           endDate: sprintForm.endDate,
         }),
@@ -162,8 +163,9 @@ function DashboardProjectLayout() {
       setLocalSprints((prev) => [...prev, created]);
       setSprintForm({ name: '', startDate: '', endDate: '' });
       setShowCreateSprintModal(false);
+      showSuccess(`Sprint “${sprintName}” created.`);
     } catch (error) {
-      setSprintError(error.message || 'Failed to create sprint.');
+      showError(error.message || 'Failed to create sprint.');
     } finally {
       setIsCreatingSprint(false);
     }
@@ -289,7 +291,6 @@ function DashboardProjectLayout() {
                   />
                 </label>
               </div>
-              {sprintError && <p className="text-sm text-[#c74634]">{sprintError}</p>}
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button"

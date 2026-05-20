@@ -4,6 +4,7 @@ import { fetchDashboardBundle } from './dashboardApi';
 import { MOCK_TEAMS } from './dashboardMocks';
 import DashboardKpiStrip from './DashboardKpiStrip';
 import { DashboardListViewSkeleton } from './DashboardSkeletons';
+import { useToast } from '../ui/ToastProvider';
 
 function initialsFromName(name) {
   const parts = name?.trim().split(/\s+/).filter(Boolean) ?? [];
@@ -13,13 +14,13 @@ function initialsFromName(name) {
 }
 
 function DashboardTeam() {
+  const { showSuccess, showError } = useToast();
   const [loading, setLoading] = useState(true);
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
   const [source, setSource] = useState('api');
   const [showModal, setShowModal] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [error, setError] = useState('');
   const [teamForm, setTeamForm] = useState({
     name: '',
     managerId: '',
@@ -85,11 +86,10 @@ function DashboardTeam() {
   };
 
   const inviteDeveloper = async () => {
-    setError('');
     const name = inviteForm.name.trim();
     const email = inviteForm.email.trim();
     if (!name || !email) {
-      setError('Invite requires name and email.');
+      showError('Invite requires name and email.');
       return;
     }
     const payload = {
@@ -107,7 +107,7 @@ function DashboardTeam() {
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
-      setError('Could not invite developer.');
+      showError('Could not invite developer.');
       return;
     }
     const usersRes = await fetch('/users');
@@ -126,15 +126,21 @@ function DashboardTeam() {
       }
     }
     setInviteForm({ name: '', email: '' });
+    showSuccess(`${name} was invited and added to the team.`);
   };
 
   const createTeam = async (event) => {
     event.preventDefault();
-    setError('');
     const name = teamForm.name.trim();
     const managerId = Number(teamForm.managerId);
-    if (!name) return setError('Team name is required.');
-    if (!managerId) return setError('Manager is required.');
+    if (!name) {
+      showError('Team name is required.');
+      return;
+    }
+    if (!managerId) {
+      showError('Manager is required.');
+      return;
+    }
 
     setIsCreating(true);
     try {
@@ -167,8 +173,9 @@ function DashboardTeam() {
       setIsManagerOpen(false);
       setTeamForm({ name: '', managerId: '', memberIds: [] });
       setInviteForm({ name: '', email: '' });
+      showSuccess(`Team “${name}” created.`);
     } catch (e) {
-      setError(e.message || 'Failed to create team.');
+      showError(e.message || 'Failed to create team.');
     } finally {
       setIsCreating(false);
     }
@@ -208,8 +215,9 @@ function DashboardTeam() {
       setTeams(refreshed.teamsData);
       setUsers(refreshed.usersData);
       setMemberToDelete(null);
+      showSuccess('Member removed from team.');
     } catch (e) {
-      setError(e.message || 'Failed to remove member.');
+      showError(e.message || 'Failed to remove member.');
       setMemberToDelete(null);
     }
   };
@@ -446,8 +454,6 @@ function DashboardTeam() {
                   </button>
                 </div>
               </div>
-
-              {error && <p className="text-sm text-[#c74634]">{error}</p>}
 
               <div className="flex justify-end gap-2">
                 <button
