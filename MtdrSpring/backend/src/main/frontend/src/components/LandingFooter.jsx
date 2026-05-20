@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const footerLinks = {
-  Producto: [
+  Product: [
     { label: 'Features', href: '#features' },
     { label: 'Product', href: '#product' },
     { label: 'Documentation', href: '#documentation' },
@@ -11,7 +11,7 @@ const footerLinks = {
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Log in', to: '/login' },
   ],
-  Recursos: [
+  Resources: [
     { label: 'API (Swagger JSON)', href: '/swagger_APIs_definition.json', external: true },
     { label: 'API (Swagger YAML)', href: '/swagger_APIs_definition.yaml', external: true },
   ],
@@ -23,11 +23,11 @@ function LandingFooter() {
       <div className="container mx-auto px-5 py-14 sm:px-8 lg:px-14 xl:px-20">
         <div className="grid gap-10 md:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div>
-            <Link to="/" className="inline-flex items-center" aria-label="JavaPlan home">
-              <img src="/lettermark-b.svg" alt="JavaPlan" className="h-7 w-auto" />
+            <Link to="/" className="inline-flex items-center" aria-label="Lumen home">
+              <img src="/lettermark-b.svg" alt="Lumen" className="h-7 w-auto" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#2a1814]/70">
-              Gestión de sprints y tareas para equipos de desarrollo. Construido con React y Spring Boot.
+              Sprint and task management for development teams. Built with React and Spring Boot.
             </p>
           </div>
 
@@ -61,8 +61,8 @@ function LandingFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-black/10 pt-8 text-sm text-[#2a1814]/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} JavaPlan. Oracle UPL License.</p>
-          <p>MyTodoList · OCI DevOps Project</p>
+          <p>© {new Date().getFullYear()} Lumen. Oracle UPL License.</p>
+      
         </div>
       </div>
     </footer>

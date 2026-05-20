@@ -6,21 +6,31 @@ const navLinks = [
   { label: 'Documentation', href: '#documentation' },
 ];
 
+function scrollToHero(event) {
+  event.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function LandingNavbar() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/80 bg-white/70 backdrop-blur-[8px] supports-[backdrop-filter]:bg-white/60">
+    <header className="landing-header-glass landing-nav-enter relative sticky top-0 z-50 w-full border-b border-white/40 bg-white/30 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/25">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/65 via-white/25 to-transparent"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-white/15 to-transparent"
       />
       <nav className="relative container mx-auto flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-14 xl:px-20">
-        <Link to="/" className="flex shrink-0 items-center" aria-label="JavaPlan home">
+        <button
+          type="button"
+          onClick={scrollToHero}
+          className="flex shrink-0 items-center border-0 bg-transparent p-0 transition-opacity hover:opacity-80"
+          aria-label="Go to top"
+        >
           <img
             src="/lettermark-b.svg"
-            alt="JavaPlan"
+            alt="Lumen"
             className="h-7 w-auto sm:h-8"
           />
-        </Link>
+        </button>
 
         <div className="flex items-center gap-6 sm:gap-8">
           <ul className="hidden items-center gap-1 md:flex">

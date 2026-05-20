@@ -1,7 +1,18 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import LandingFooter from './components/LandingFooter';
 import LandingNavbar from './components/LandingNavbar';
+import {
+  LandingScrollBlock,
+  LandingScrollCard,
+  LandingScrollSection,
+  LandingScrollStagger,
+  LandingScrollStaggerGrid,
+  LandingScrollStaggerItem,
+  LandingScrollStaggerList,
+  LandingScrollStaggerListItem,
+} from './components/LandingScrollMotion';
 import Grainient from '@/components/Grainient/Grainient';
 import {
   primaryAuthButtonCompactClass,
@@ -13,17 +24,17 @@ const features = [
   {
     title: 'Sprints',
     description:
-      'Organiza el trabajo por iteraciones. Visualiza el sprint actual, filtra por fechas y expande cada bloque de tareas.',
+      'Organize work by iteration. View the current sprint, filter by dates, and expand each task block.',
   },
   {
-    title: 'Tareas',
+    title: 'Tasks',
     description:
-      'Crea, busca y elimina tareas con título, descripción, estado y prioridad. Asignación a sprints desde la misma vista.',
+      'Create, search, and delete tasks with title, description, status, and priority. Assign to sprints from the same view.',
   },
   {
-    title: 'Búsqueda y filtros',
+    title: 'Search & filters',
     description:
-      'Encuentra tareas al instante y controla qué sprints se muestran en pantalla sin perder el contexto del equipo.',
+      'Find tasks instantly and control which sprints appear on screen without losing team context.',
   },
 ];
 
@@ -32,8 +43,8 @@ const productRoles = [
     title: 'Developer',
     path: '/app',
     description:
-      'Vista operativa para el día a día: backlog por sprint, alta de tareas y seguimiento del trabajo activo.',
-    cta: 'Entrar como Developer',
+      'Day-to-day operational view: sprint backlog, task creation, and active work tracking.',
+    cta: 'Enter as Developer',
   },
   {
     title: 'Dashboard',
@@ -45,23 +56,31 @@ const productRoles = [
 ];
 
 const docSteps = [
-  'Clona el repositorio y levanta el backend Spring Boot en el puerto 8080.',
-  'En desarrollo, ejecuta el frontend con pnpm install y pnpm run dev.',
-  'Consulta la definición OpenAPI en los archivos Swagger incluidos en el proyecto.',
+  'Clone the repository and start the Spring Boot backend on port 8080.',
+  'For local development, run the frontend with pnpm install and pnpm run dev.',
+  'Review the OpenAPI definition in the Swagger files included in the project.',
 ];
 
 function Landing() {
-  return (
-    <div className="min-h-screen w-full bg-white text-[#2a1814]">
-      <LandingNavbar />
+  useEffect(() => {
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = 'manual';
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+    return () => {
+      history.scrollRestoration = previous;
+    };
+  }, []);
 
-      {/* Hero */}
-      <section className="relative h-screen w-full overflow-hidden">
-        <div className="absolute inset-0">
+  return (
+    <div className="landing-page-enter app-scrollbar min-h-screen w-full bg-white text-[#2a1814]">
+      <div className="relative w-full">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-screen overflow-hidden">
           <Grainient
             color1="#fbebde"
-            color2="#c74634"
-            color3="#d2cfde"
+            color2="#f66a48"
+            color3="#B497cf"
             timeSpeed={0.25}
             colorBalance={-0.31}
             warpStrength={1.05}
@@ -84,21 +103,25 @@ function Landing() {
           />
         </div>
 
-        <div
-          className={`relative z-10 flex h-full w-full flex-col items-center justify-center py-24 pt-16 ${landingContainer} md:flex-row md:items-center md:justify-start`}
-        >
-          <div className="mb-16 flex flex-col items-center text-center md:mb-0 md:w-1/2 md:items-start md:pr-16 md:text-left lg:flex-grow lg:pr-24">
-            <h1 className="title-font mb-4 text-4xl font-semibold tracking-tight text-[#2a1814] sm:text-5xl lg:text-6xl">
-              Sprints y tareas, en un solo lugar
-            </h1>
-            <p className="max-w-xl text-sm font-medium tracking-wide text-[#2a1814]/70 sm:text-base">
-              Planificación ágil para equipos de desarrollo
-            </p>
-          </div>
-        </div>
-      </section>
+        <LandingNavbar />
 
-      <section className="border-b border-black/8 bg-white py-10 sm:py-12">
+        <section id="hero" className="relative z-10 h-screen w-full">
+          <div
+            className={`relative flex h-full w-full flex-col items-center justify-center py-24 ${landingContainer} md:flex-row md:items-center md:justify-start`}
+          >
+            <div className="mb-16 flex flex-col items-center text-center md:mb-0 md:w-1/2 md:items-start md:pr-16 md:text-left lg:flex-grow lg:pr-24">
+              <h1 className="landing-hero-enter title-font mb-4 text-4xl font-semibold tracking-tight text-[#2a1814] sm:text-5xl lg:text-6xl">
+                Sprints and tasks, in one place
+              </h1>
+              <p className="landing-hero-enter-delayed max-w-xl text-sm font-medium tracking-wide text-[#2a1814]/70 sm:text-base">
+                Agile planning for development teams
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <LandingScrollSection className="border-b border-black/8 bg-white py-10 sm:py-12">
         <div className={`${landingContainer} flex flex-col items-center text-center`}>
           <p className="text-sm leading-relaxed text-[#2a1814]/70">
             Trusted by teams at
@@ -109,44 +132,47 @@ function Landing() {
             className="mt-4 h-5 w-auto sm:h-6"
           />
         </div>
-      </section>
+      </LandingScrollSection>
 
-      {/* Features */}
-      <section id="features" className={landingSection}>
+      <LandingScrollSection id="features" className={landingSection}>
         <div className={landingContainer}>
-          <div className="max-w-2xl">
+          <LandingScrollBlock className="max-w-2xl">
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Features</h2>
             <p className="mt-4 text-base leading-relaxed text-[#2a1814]/70">
-              Lo esencial para mover tu equipo sin cambiar de herramienta en cada sprint.
+              Everything your team needs to move fast without switching tools every sprint.
             </p>
-          </div>
-          <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ title, description }) => (
-              <li
+          </LandingScrollBlock>
+          <LandingScrollStagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map(({ title, description }, index) => (
+              <LandingScrollStaggerItem
                 key={title}
+                index={index}
                 className="rounded-2xl border border-black/8 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
               >
                 <h3 className="text-lg font-semibold">{title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-[#2a1814]/70">{description}</p>
-              </li>
+              </LandingScrollStaggerItem>
             ))}
-          </ul>
+          </LandingScrollStagger>
         </div>
-      </section>
+      </LandingScrollSection>
 
-      {/* Product */}
-      <section id="product" className={`${landingSection} border-t border-black/8 bg-[#fafafa]`}>
+      <LandingScrollSection
+        id="product"
+        className={`scroll-mt-16 ${landingSection} border-t border-black/8 bg-[#fafafa]`}
+      >
         <div className={landingContainer}>
-          <div className="max-w-2xl">
+          <LandingScrollBlock className="max-w-2xl">
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Product</h2>
             <p className="mt-4 text-base leading-relaxed text-[#2a1814]/70">
-              Dos experiencias según tu rol. Misma API, distintas pantallas.
+              Two experiences based on your role. Same API, different screens.
             </p>
-          </div>
-          <div className="mt-14 grid gap-8 lg:grid-cols-2">
-            {productRoles.map(({ title, path, description, cta }) => (
-              <article
+          </LandingScrollBlock>
+          <LandingScrollStaggerGrid className="mt-14 grid gap-8 lg:grid-cols-2">
+            {productRoles.map(({ title, path, description, cta }, index) => (
+              <LandingScrollCard
                 key={title}
+                index={index}
                 className="flex flex-col rounded-2xl border border-black/8 bg-white p-8 shadow-sm"
               >
                 <h3 className="text-xl font-semibold">{title}</h3>
@@ -157,33 +183,36 @@ function Landing() {
                 >
                   {cta}
                 </Link>
-              </article>
+              </LandingScrollCard>
             ))}
-          </div>
+          </LandingScrollStaggerGrid>
         </div>
-      </section>
+      </LandingScrollSection>
 
-      {/* Documentation */}
-      <section id="documentation" className={landingSection}>
+      <LandingScrollSection id="documentation" className={`scroll-mt-16 ${landingSection}`}>
         <div className={landingContainer}>
           <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-            <div>
+            <LandingScrollBlock>
               <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Documentation</h2>
               <p className="mt-4 text-base leading-relaxed text-[#2a1814]/70">
-                Arranca el stack local y explora los endpoints REST documentados con OpenAPI.
+                Start the local stack and explore REST endpoints documented with OpenAPI.
               </p>
-            </div>
-            <div className="rounded-2xl border border-black/8 bg-[#fafafa] p-8">
-              <ol className="space-y-4">
+            </LandingScrollBlock>
+            <LandingScrollBlock delay={0.08} className="rounded-2xl border border-black/8 bg-[#fafafa] p-8">
+              <LandingScrollStaggerList className="space-y-4">
                 {docSteps.map((step, index) => (
-                  <li key={step} className="flex gap-4 text-sm leading-relaxed text-[#2a1814]/80">
+                  <LandingScrollStaggerListItem
+                    key={step}
+                    index={index}
+                    className="flex gap-4 text-sm leading-relaxed text-[#2a1814]/80"
+                  >
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2a1814] text-xs font-semibold text-white">
                       {index + 1}
                     </span>
                     {step}
-                  </li>
+                  </LandingScrollStaggerListItem>
                 ))}
-              </ol>
+              </LandingScrollStaggerList>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
                   href="/swagger_APIs_definition.yaml"
@@ -202,30 +231,39 @@ function Landing() {
                   Swagger JSON
                 </a>
               </div>
-            </div>
+            </LandingScrollBlock>
           </div>
         </div>
-      </section>
+      </LandingScrollSection>
 
-      {/* CTA */}
-      <section className="border-t border-black/8 bg-[#fafafa] py-20 sm:py-24">
+      <LandingScrollSection className="border-t border-black/8 bg-[#fafafa] py-20 sm:py-24">
         <div className={`${landingContainer} text-center`}>
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Listo para planificar tu próximo sprint
+            Ready to plan your next sprint
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-[#2a1814]/70">
-            Entra con tu rol y empieza a organizar tareas en minutos.
+            Sign in with your role and start organizing tasks in minutes.
           </p>
-          <Link
-            to="/login"
-            className={`mt-8 ${primaryAuthButtonLargeClass}`}
+          <LandingScrollBlock
+            delay={0.12}
+            className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
           >
-            Log in
-          </Link>
+            <Link to="/login" className={primaryAuthButtonLargeClass}>
+              Log in
+            </Link>
+            <a
+              href="mailto:support@lumen.app"
+              className="inline-flex items-center justify-center rounded-full border border-[#2a1814]/20 bg-white px-6 py-2.5 text-sm font-medium text-[#2a1814] transition hover:bg-black/[0.04]"
+            >
+              Contact us
+            </a>
+          </LandingScrollBlock>
         </div>
-      </section>
+      </LandingScrollSection>
 
-      <LandingFooter />
+      <LandingScrollBlock>
+        <LandingFooter />
+      </LandingScrollBlock>
     </div>
   );
 }

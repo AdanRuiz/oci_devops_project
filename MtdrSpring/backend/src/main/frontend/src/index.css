@@ -17,28 +17,75 @@ body,
   min-height: 100%;
 }
 
-/* Dashboard: scrollbar fina, track transparente */
-.dashboard-thin-scrollbar {
+/* Scrollbar: dashboard panels, landing & dev app (page scroll) */
+.dashboard-thin-scrollbar,
+.app-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(42, 24, 20, 0.18) transparent;
+  scrollbar-color: rgba(42, 24, 20, 0.2) transparent;
 }
 
-.dashboard-thin-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.dashboard-thin-scrollbar::-webkit-scrollbar,
+.app-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
 
-.dashboard-thin-scrollbar::-webkit-scrollbar-track {
+.dashboard-thin-scrollbar::-webkit-scrollbar-track,
+.app-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.dashboard-thin-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(42, 24, 20, 0.14);
+.dashboard-thin-scrollbar::-webkit-scrollbar-thumb,
+.app-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(42, 24, 20, 0.16);
+  border: 2px solid transparent;
   border-radius: 999px;
+  background-clip: padding-box;
 }
 
-.dashboard-thin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(42, 24, 20, 0.22);
+.dashboard-thin-scrollbar::-webkit-scrollbar-thumb:hover,
+.app-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(37, 150, 190, 0.55);
+}
+
+.dashboard-thin-scrollbar::-webkit-scrollbar-thumb:active,
+.app-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: rgba(37, 150, 190, 0.75);
+}
+
+/* Page-level scrollbar when landing or dev app is mounted */
+html:has(.landing-page-enter),
+html:has(.dev-app-page) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(42, 24, 20, 0.2) rgba(250, 249, 246, 0.6);
+}
+
+html:has(.landing-page-enter)::-webkit-scrollbar,
+html:has(.dev-app-page)::-webkit-scrollbar {
+  width: 8px;
+}
+
+html:has(.landing-page-enter)::-webkit-scrollbar-track,
+html:has(.dev-app-page)::-webkit-scrollbar-track {
+  background: rgba(250, 249, 246, 0.5);
+}
+
+html:has(.landing-page-enter)::-webkit-scrollbar-thumb,
+html:has(.dev-app-page)::-webkit-scrollbar-thumb {
+  background-color: rgba(42, 24, 20, 0.18);
+  border: 2px solid rgba(250, 249, 246, 0.5);
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+html:has(.landing-page-enter)::-webkit-scrollbar-thumb:hover,
+html:has(.dev-app-page)::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(37, 150, 190, 0.5);
+}
+
+html:has(.landing-page-enter)::-webkit-scrollbar-thumb:active,
+html:has(.dev-app-page)::-webkit-scrollbar-thumb:active {
+  background-color: rgba(37, 150, 190, 0.7);
 }
 
 /* Lumi transitions */
@@ -196,4 +243,70 @@ body,
 
 .dashboard-row-enter {
   animation: dashboardSectionEnter 210ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Landing & marketing page transitions */
+@keyframes landingHeroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes landingNavEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-page-enter {
+  animation: dashboardPageEnter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-nav-enter {
+  animation: landingNavEnter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-hero-enter {
+  animation: landingHeroEnter 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-hero-enter-delayed {
+  animation: landingHeroEnter 560ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
+.landing-section-enter {
+  animation: dashboardSectionEnter 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-row-enter {
+  animation: dashboardSectionEnter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-header-glass {
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+/* Landing scroll reveal (replaces framer-motion — stable with React 19) */
+.landing-scroll-hidden {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+.landing-scroll-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
 }
