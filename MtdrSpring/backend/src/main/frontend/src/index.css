@@ -5,3 +5,38 @@
 ** Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 */
 @import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+/* Dashboard: scrollbar fina, track transparente */
+.dashboard-thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(42, 24, 20, 0.18) transparent;
+}
+
+.dashboard-thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dashboard-thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(42, 24, 20, 0.14);
+  border-radius: 999px;
+}
+
+.dashboard-thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(42, 24, 20, 0.22);
+}

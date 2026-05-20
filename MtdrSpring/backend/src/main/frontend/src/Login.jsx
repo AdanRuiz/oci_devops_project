@@ -1,36 +1,28 @@
-import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import LoginForm from './components/LoginForm';
+import LoginHeroPanel from './components/LoginHeroPanel';
 
 function Login() {
-  const navigate = useNavigate();
-
   return (
-    <section className="min-h-screen flex">
+    <section className="flex min-h-screen bg-white text-[#2a1814]">
+      <div className="flex w-full flex-col items-center justify-center px-8 py-12 sm:px-12 md:w-1/2 lg:px-16 xl:px-24">
+        <div className="w-full max-w-md text-left">
+          <Link to="/" className="mb-8 inline-flex w-fit" aria-label="Lumen home">
+            <img src="/lettermark-b.svg" alt="Lumen" className="h-10 w-auto sm:h-12" />
+          </Link>
 
-      <div className="w-full md:w-1/2 flex flex-col justify-center px-10 lg:px-20 bg-white">
-        <h1 className="text-4xl font-semibold text-gray-900">
-          Bienvenido
-        </h1>
-        <h2 className="text-4xl text-red-500 italic mb-4">
-          de vuelta
-        </h2>
+          <h1 className="text-3xl font-semibold tracking-tight text-[#2a1814] sm:text-4xl">
+            Welcome back
+          </h1>
+          <p className="mt-2 text-sm text-[#2a1814]/60 sm:text-base">
+            Welcome back! Please enter your details.
+          </p>
 
-        <p className="text-gray-500 mb-8">Elige tu modo de acceso</p>
-
-        <div className="space-y-4">
-          <button onClick={() => navigate('/app')} className="w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-lg font-medium text-white hover:bg-blue-700">Entrar como Developer (App)</button>
-          <button onClick={() => navigate('/manager')} className="w-full inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-3 text-lg font-medium text-white hover:bg-green-700">Entrar como Manager</button>
+          <LoginForm />
         </div>
-
       </div>
 
-      <div className="hidden md:block md:w-1/2">
-        <img
-          src="https://dummyimage.com/720x600"
-          alt="login"
-          className="w-full h-full object-cover"
-        />
-      </div>
+      <LoginHeroPanel />
     </section>
   );
 }

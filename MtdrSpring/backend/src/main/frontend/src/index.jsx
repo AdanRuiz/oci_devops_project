@@ -15,17 +15,18 @@ import './index.css';
 import App from './App';
 import Landing from './Landing';
 import Login from './Login';
-import Manager from './Manager';
+import Dashboard from './Dashboard';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/landing" replace />} />
-        <Route path="/landing" element={<Landing />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/landing" element={<Navigate to="/" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/app" element={<App />} />
-        <Route path="/manager" element={<Manager />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/manager" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
