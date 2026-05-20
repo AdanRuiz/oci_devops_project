@@ -5,6 +5,7 @@ import { Chart as ChartJS, ArcElement, CategoryScale, Filler, Legend, LinearScal
 import { fetchDashboardBundle } from './dashboardApi';
 import { MOCK_SPRINTS, MOCK_TASKS, MOCK_TEAMS } from './dashboardMocks';
 import { mapTeamsToProjects } from './mapProjects';
+import { DashboardProjectShellSkeleton } from './DashboardSkeletons';
 
 ChartJS.register(
   ArcElement,
@@ -85,7 +86,7 @@ function DashboardProjectLayout() {
   );
 
   if (loading) {
-    return <p className="text-sm text-[#6B6560]">Loading project…</p>;
+    return <DashboardProjectShellSkeleton />;
   }
 
   if (!project) {

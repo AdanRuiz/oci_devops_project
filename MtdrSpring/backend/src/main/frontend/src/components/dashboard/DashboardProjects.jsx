@@ -4,6 +4,7 @@ import { MOCK_SPRINTS, MOCK_TASKS, MOCK_TEAMS } from './dashboardMocks';
 import { mapTeamsToProjects, partitionProjects, summarizeProjects } from './mapProjects';
 import ProjectListSection from './ProjectListSection';
 import ProjectsKpiStrip from './ProjectsKpiStrip';
+import { DashboardProjectsSkeleton } from './DashboardSkeletons';
 
 function DashboardProjects() {
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ function DashboardProjects() {
   const { active, completed } = useMemo(() => partitionProjects(projects), [projects]);
 
   if (loading) {
-    return <p className="text-sm text-[#6B6560]">Loading projects…</p>;
+    return <DashboardProjectsSkeleton />;
   }
 
   return (

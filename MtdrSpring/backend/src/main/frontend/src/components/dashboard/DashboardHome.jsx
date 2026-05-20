@@ -23,6 +23,7 @@ import { fetchJsonSafe } from './dashboardApi';
 import { MOCK_TASKS } from './dashboardMocks';
 import ActivityListRow from './ActivityListRow';
 import DashboardSection from './DashboardSection';
+import { DashboardHomeSkeleton } from './DashboardSkeletons';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -162,7 +163,7 @@ function DashboardHome() {
   );
 
   if (loading) {
-    return <p className="text-sm text-[#6B6560]">Loading dashboard…</p>;
+    return <DashboardHomeSkeleton />;
   }
 
   return (
