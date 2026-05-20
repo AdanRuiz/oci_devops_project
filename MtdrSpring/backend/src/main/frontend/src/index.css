@@ -728,6 +728,57 @@ html:has(.dev-app-page)::-webkit-scrollbar-thumb:active {
   animation: dashboardModalPanelEnter 230ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Add-task modal: Task / Bug segmented toggle */
+.task-type-toggle__pill {
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes addTaskDropdownEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.add-task-dropdown-enter {
+  animation: addTaskDropdownEnter 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: top center;
+}
+
+@keyframes devToastEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.dev-toast-enter {
+  animation: devToastEnter 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.task-type-toggle--bug .task-type-toggle__pill {
+  transform: translateX(calc(100% + 0px));
+  box-shadow: 0 2px 10px -4px rgba(199, 70, 52, 0.45);
+}
+
+.task-type-toggle:not(.task-type-toggle--bug) .task-type-toggle__pill {
+  box-shadow: 0 2px 8px -4px rgba(42, 24, 20, 0.35);
+}
+
 .dashboard-row-enter {
   animation: dashboardSectionEnter 210ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
