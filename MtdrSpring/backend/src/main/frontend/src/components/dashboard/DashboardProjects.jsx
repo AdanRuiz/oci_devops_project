@@ -177,7 +177,7 @@ function DashboardProjects() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="dashboard-page-enter space-y-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-[#2A1814]">Projects</h2>
@@ -221,8 +221,8 @@ function DashboardProjects() {
       )}
 
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
-          <div className="w-full max-w-lg rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
+        <div className="dashboard-modal-overlay-enter fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+          <div className="dashboard-modal-panel-enter w-full max-w-lg rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[#2A1814]">Create new project</h3>
               <p className="mt-1 text-sm text-[#6B6560]">Set name, manager, and source team.</p>

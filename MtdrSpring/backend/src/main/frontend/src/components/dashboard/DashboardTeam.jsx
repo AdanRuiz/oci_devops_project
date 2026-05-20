@@ -217,7 +217,7 @@ function DashboardTeam() {
   if (loading) return <DashboardListViewSkeleton title="Loading teams" showFilters={false} />;
 
   return (
-    <div className="space-y-8">
+    <div className="dashboard-page-enter space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-[#2A1814]">Team</h2>
@@ -286,8 +286,8 @@ function DashboardTeam() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
-          <div className="max-h-[86vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
+        <div className="dashboard-modal-overlay-enter fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+          <div className="dashboard-modal-panel-enter max-h-[86vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[#2A1814]">Create new team</h3>
               <p className="mt-1 text-sm text-[#6B6560]">
@@ -466,8 +466,8 @@ function DashboardTeam() {
       )}
 
       {memberToDelete && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/35 px-4">
-          <div className="w-full max-w-sm rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
+        <div className="dashboard-modal-overlay-enter fixed inset-0 z-[60] flex items-center justify-center bg-black/35 px-4">
+          <div className="dashboard-modal-panel-enter w-full max-w-sm rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
             <h4 className="text-base font-semibold text-[#2A1814]">Are you sure?</h4>
             <p className="mt-2 text-sm text-[#6B6560]">
               This will remove <span className="font-medium text-[#2A1814]">{memberToDelete.userName}</span> from{' '}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, NavLink, Outlet, useParams } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Chart as ChartJS, ArcElement, CategoryScale, Filler, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
 import { fetchDashboardBundle } from './dashboardApi';
@@ -29,6 +29,7 @@ function sprintNavClass({ isActive }) {
 
 function DashboardProjectLayout() {
   const { projectId } = useParams();
+  const location = useLocation();
   const id = Number(projectId);
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
@@ -169,7 +170,7 @@ function DashboardProjectLayout() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="dashboard-page-enter space-y-8">
       <div>
         <Link
           to="/dashboard/projects"
@@ -238,11 +239,13 @@ function DashboardProjectLayout() {
         </div>
       </div>
 
-      <Outlet context={outletContext} />
+      <div key={`${project.id}-${location.pathname}`} className="dashboard-section-enter">
+        <Outlet context={outletContext} />
+      </div>
 
       {showCreateSprintModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
+        <div className="dashboard-modal-overlay-enter fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+          <div className="dashboard-modal-panel-enter w-full max-w-md rounded-2xl border border-[#2A1814]/10 bg-white p-6 shadow-xl">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[#2A1814]">Create sprint</h3>
               <p className="mt-1 text-sm text-[#6B6560]">

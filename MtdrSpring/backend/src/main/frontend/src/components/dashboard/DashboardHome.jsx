@@ -178,7 +178,7 @@ function DashboardHome() {
   }
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="dashboard-page-enter flex h-full min-h-0 w-full flex-col">
       <div className="grid min-h-0 flex-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] lg:gap-12">
         <div className="flex min-h-0 flex-col gap-10">
           <DashboardSection

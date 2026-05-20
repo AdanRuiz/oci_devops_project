@@ -122,7 +122,7 @@ function DashboardTasks() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="dashboard-page-enter space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-[#2A1814]">Tasks</h2>
