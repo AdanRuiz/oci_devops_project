@@ -2,6 +2,9 @@ import { Route, Routes } from 'react-router-dom';
 import DashboardHeader from './components/dashboard/DashboardHeader';
 import DashboardHome from './components/dashboard/DashboardHome';
 import DashboardPlaceholder from './components/dashboard/DashboardPlaceholder';
+import DashboardProjectLayout from './components/dashboard/DashboardProjectLayout';
+import DashboardProjectOverview from './components/dashboard/DashboardProjectOverview';
+import DashboardProjectSprint from './components/dashboard/DashboardProjectSprint';
 import DashboardProjects from './components/dashboard/DashboardProjects';
 import DashboardSidebar from './components/dashboard/DashboardSidebar';
 import { dashboardScrollbarClassName } from './constants/dashboardTheme';
@@ -19,6 +22,10 @@ function Dashboard() {
           <Routes>
             <Route index element={<DashboardHome />} />
             <Route path="projects" element={<DashboardProjects />} />
+            <Route path="projects/:projectId" element={<DashboardProjectLayout />}>
+              <Route index element={<DashboardProjectOverview />} />
+              <Route path="sprints/:sprintId" element={<DashboardProjectSprint />} />
+            </Route>
             <Route
               path="tasks"
               element={

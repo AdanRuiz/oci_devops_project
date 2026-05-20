@@ -1,4 +1,4 @@
-﻿import { Fragment } from 'react';
+﻿import { Fragment, createElement } from 'react';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 
 function TrendBadge({ direction, label }) {
@@ -14,11 +14,11 @@ function TrendBadge({ direction, label }) {
   );
 }
 
-function KpiCell({ icon: Icon, label, value, trend }) {
+function KpiCell({ icon, label, value, trend }) {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-4 px-2 py-5 sm:px-4 sm:py-6">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2A1814]/[0.05] text-[#2A1814]">
-        <Icon className="h-5 w-5" strokeWidth={1.75} />
+        {createElement(icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}
       </div>
       <div className="min-w-0">
         <p className="text-sm font-semibold text-[#2A1814]">{label}</p>

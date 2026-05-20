@@ -9,6 +9,27 @@ function pickActiveSprint(sprints) {
   return current || sprints[sprints.length - 1];
 }
 
+/** Sprints that appear on this team's tasks, ordered by start date. */
+export function sprintsForTeam(teamTasks, allSprints = []) {
+  const ids = [...new Set(teamTasks.map((t) => t.sprint?.id).filter(Boolean))];
+  if (ids.length === 0) return [];
+  const byId = new Map(allSprints.map((s) => [s.id, s]));
+  const merged = ids
+    .map((id) => {
+      const full = byId.get(id);
+      if (full) return full;
+      const t = teamTasks.find((x) => x.sprint?.id === id);
+      return t?.sprint || null;
+    })
+    .filter(Boolean);
+  return merged.sort((a, b) => {
+    const ta = new Date(a.startDate || 0).getTime();
+    const tb = new Date(b.startDate || 0).getTime();
+    if (ta !== tb) return ta - tb;
+    return (a.id || 0) - (b.id || 0);
+  });
+}
+
 function memberInitials(user) {
   const name = user?.name || user?.email || '?';
   const parts = name.trim().split(/\s+/);
@@ -33,6 +54,8 @@ export function mapTeamsToProjects(teams, tasks = [], sprints = []) {
       .map((t) => t.sprint?.name)
       .find(Boolean);
 
+    const projectSprints = sprintsForTeam(teamTasks, sprints);
+
     const inProgress = teamTasks.filter((t) => t.status === 'IN_PROGRESS').length;
     const isCompleted = openTasks.length === 0 && doneTasks.length > 0;
     const isActive = openTasks.length > 0 || inProgress > 0;
@@ -52,6 +75,7 @@ export function mapTeamsToProjects(teams, tasks = [], sprints = []) {
       inProgress,
       activeSprintName: sprintFromTasks || activeSprint?.name || null,
       status: isCompleted ? 'Completed' : isActive ? 'Active' : 'Planning',
+      sprints: projectSprints,
     };
   });
 }

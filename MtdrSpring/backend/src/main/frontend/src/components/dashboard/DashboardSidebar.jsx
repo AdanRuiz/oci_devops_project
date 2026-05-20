@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Activity,
@@ -44,9 +45,11 @@ function DashboardSidebar() {
 
       <nav className="mt-6 shrink-0 px-4">
         <div className="flex flex-col gap-1">
-          {mainNav.map(({ to, label, icon: Icon, end }) => (
+          {mainNav.map(({ to, label, icon, end }) => (
             <NavLink key={to} to={to} end={end} className={navLinkClass}>
-              <Icon className="h-[18px] w-[18px] shrink-0 stroke-[1.75]" />
+              {createElement(icon, {
+                className: 'h-[18px] w-[18px] shrink-0 stroke-[1.75]',
+              })}
               {label}
             </NavLink>
           ))}

@@ -202,3 +202,141 @@ export function buildMemberBarDataset(labels, data) {
     ],
   };
 }
+
+const darkRed = '#7a2419';
+const salmon = '#e07a5f';
+const sand = '#e8dcc8';
+const teal = '#0f766e';
+
+/** Line + dashed horizontal cap (constant series). */
+export function buildThresholdLineChartData(labels, actualValues, maxValue, actualLabel, maxLabel) {
+  const cap = labels.map(() => maxValue);
+  return {
+    labels,
+    datasets: [
+      {
+        label: actualLabel,
+        data: actualValues,
+        borderColor: darkRed,
+        backgroundColor: lineAreaGradient,
+        fill: true,
+        tension: 0.45,
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: darkRed,
+        pointBorderColor: CHART.surface,
+        pointBorderWidth: 2,
+      },
+      {
+        label: maxLabel,
+        data: cap,
+        borderColor: salmon,
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0,
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        pointHoverRadius: 0,
+      },
+    ],
+  };
+}
+
+export function projectThresholdLineOptions(suggestedMax) {
+  const max = Math.max(suggestedMax || 8, 4);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: chartAnimation,
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 8, right: 4, bottom: 0, left: 4 } },
+    plugins: {
+      legend: {
+        position: 'top',
+        align: 'start',
+        labels: {
+          boxWidth: 8,
+          boxHeight: 8,
+          usePointStyle: true,
+          pointStyle: 'circle',
+          color: CHART.text,
+          font: { family: fontFamily, size: 12 },
+          padding: 14,
+        },
+      },
+      tooltip: {
+        ...sharedTooltip,
+        callbacks: {
+          label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: sharedTicks,
+        border: { display: false },
+      },
+      y: {
+        beginAtZero: true,
+        suggestedMax: max,
+        grid: { color: CHART.grid, drawTicks: false },
+        ticks: {
+          ...sharedTicks,
+          stepSize: max <= 8 ? 2 : 3,
+        },
+        border: { display: false },
+      },
+    },
+  };
+}
+
+export const projectDoughnutColors = {
+  onTime: darkRed,
+  extra: salmon,
+  under: sand,
+  teal,
+};
+
+export function buildTimeConsistencyDoughnutData(shares) {
+  return {
+    labels: ['On time', 'Extra hours', 'Under hours'],
+    datasets: [
+      {
+        data: [shares.onTime, shares.extra, shares.under],
+        backgroundColor: [darkRed, salmon, sand],
+        borderWidth: 0,
+        hoverOffset: 6,
+      },
+    ],
+  };
+}
+
+export const timeConsistencyDoughnutOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '68%',
+  animation: chartAnimation,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        boxWidth: 8,
+        boxHeight: 8,
+        usePointStyle: true,
+        pointStyle: 'circle',
+        color: CHART.text,
+        font: { family: fontFamily, size: 11 },
+        padding: 12,
+      },
+    },
+    tooltip: {
+      ...sharedTooltip,
+      callbacks: {
+        label: (ctx) => `${ctx.label}: ${ctx.raw}%`,
+      },
+    },
+  },
+};

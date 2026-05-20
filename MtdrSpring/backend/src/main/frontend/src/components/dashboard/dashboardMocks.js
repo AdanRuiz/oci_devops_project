@@ -46,6 +46,9 @@ export const MOCK_TASKS = [
     status: 'IN_PROGRESS',
     assignedTo: 1,
     sprint: { id: 1, name: 'Sprint 12' },
+    hoursDone: 6,
+    expectedHours: 8,
+    isBug: false,
   },
   {
     id: 2,
@@ -53,6 +56,9 @@ export const MOCK_TASKS = [
     status: 'DONE',
     assignedTo: 2,
     sprint: { id: 1, name: 'Sprint 12' },
+    hoursDone: 8,
+    expectedHours: 8,
+    isBug: false,
   },
   {
     id: 3,
@@ -60,6 +66,9 @@ export const MOCK_TASKS = [
     status: 'TODO',
     assignedTo: 4,
     sprint: { id: 2, name: 'Sprint 4' },
+    hoursDone: 0,
+    expectedHours: 12,
+    isBug: false,
   },
   {
     id: 4,
@@ -67,6 +76,9 @@ export const MOCK_TASKS = [
     status: 'IN_PROGRESS',
     assignedTo: 6,
     sprint: { id: 3, name: 'Sprint 8' },
+    hoursDone: 4,
+    expectedHours: 6,
+    isBug: true,
   },
   {
     id: 5,
@@ -74,6 +86,9 @@ export const MOCK_TASKS = [
     status: 'DONE',
     assignedTo: 10,
     sprint: { id: 4, name: 'Sprint 2' },
+    hoursDone: 14,
+    expectedHours: 10,
+    isBug: false,
   },
   {
     id: 6,
@@ -81,6 +96,9 @@ export const MOCK_TASKS = [
     status: 'DONE',
     assignedTo: 10,
     sprint: { id: 4, name: 'Sprint 2' },
+    hoursDone: 5,
+    expectedHours: 8,
+    isBug: true,
   },
 ];
 
@@ -102,5 +120,11 @@ export const MOCK_SPRINTS = [
     name: 'Sprint 8',
     startDate: new Date(Date.now() - 14 * 86400000).toISOString(),
     endDate: new Date(Date.now() + 1 * 86400000).toISOString(),
+  },
+  {
+    id: 4,
+    name: 'Sprint 2',
+    startDate: new Date(Date.now() - 30 * 86400000).toISOString(),
+    endDate: new Date(Date.now() - 2 * 86400000).toISOString(),
   },
 ];

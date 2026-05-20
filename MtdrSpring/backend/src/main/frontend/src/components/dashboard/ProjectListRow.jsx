@@ -1,10 +1,12 @@
+import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Circle } from 'lucide-react';
 
 function ProjectListRow({ project, isLast }) {
   const isCompleted = project.status === 'Completed';
 
   return (
-    <article
+    <Link
+      to={`/dashboard/projects/${project.id}`}
       className={`group flex flex-col gap-4 py-5 transition-colors hover:bg-[#2A1814]/[0.02] sm:flex-row sm:items-center sm:justify-between sm:gap-6 ${
         isLast ? '' : 'border-b border-[#2A1814]/[0.06]'
       }`}
@@ -60,14 +62,11 @@ function ProjectListRow({ project, isLast }) {
         </div>
       </div>
 
-      <button
-        type="button"
-        className="inline-flex shrink-0 items-center gap-1.5 self-start text-sm font-medium text-[#6B6560] transition group-hover:text-[#c74634] sm:self-center"
-      >
+      <span className="inline-flex shrink-0 items-center gap-1.5 self-start text-sm font-medium text-[#6B6560] transition group-hover:text-[#c74634] sm:self-center">
         View
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-      </button>
-    </article>
+      </span>
+    </Link>
   );
 }
 
