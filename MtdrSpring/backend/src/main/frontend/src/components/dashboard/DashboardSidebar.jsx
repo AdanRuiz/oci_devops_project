@@ -17,7 +17,7 @@ const mainNav = [
   { to: '/dashboard/tasks', label: 'Tasks', icon: ClipboardList },
   { to: '/dashboard/team', label: 'Team', icon: Users },
   { to: '/dashboard/activity', label: 'Activity', icon: Activity },
-  { to: '/lumi', label: 'Lumi', iconSrc: '/lumi.svg' },
+  { to: '/lumi', label: 'Lumi', iconSrc: '/lumi-ico-b.svg', iconAlt: 'Lumi' },
 ];
 
 function navLinkClass({ isActive }) {
@@ -46,10 +46,10 @@ function DashboardSidebar() {
 
       <nav className="mt-7 shrink-0 px-4">
         <div className="flex flex-col gap-1">
-          {mainNav.map(({ to, label, icon, iconSrc, end }) => (
+          {mainNav.map(({ to, label, icon, iconSrc, iconAlt, end }) => (
             <NavLink key={to} to={to} end={end} className={navLinkClass}>
               {iconSrc ? (
-                <img src={iconSrc} alt="" aria-hidden className="h-[18px] w-[18px] shrink-0" />
+                <img src={iconSrc} alt={iconAlt ?? ''} aria-hidden={!iconAlt} className="h-[18px] w-[18px] shrink-0" />
               ) : (
                 createElement(icon, {
                   className: 'h-[18px] w-[18px] shrink-0 stroke-[1.75]',

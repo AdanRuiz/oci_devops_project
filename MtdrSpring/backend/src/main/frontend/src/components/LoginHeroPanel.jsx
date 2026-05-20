@@ -1,8 +1,7 @@
-/** Swap `backgroundImage` when the hero photo is ready — slogan stays on top. */
 export const LOGIN_HERO_SLOGAN =
   'Plan every sprint with clarity. Deliver with your team\'s momentum.';
 
-const LOGIN_HERO_IMAGE = null;
+const LOGIN_HERO_IMAGE = '/login-bg.png';
 
 function LoginHeroPanel() {
   return (

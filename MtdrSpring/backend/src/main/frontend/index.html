@@ -2,10 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link id="favicon" rel="icon" type="image/svg+xml" href="/logo-b.svg" />
+    <script>
+      (function () {
+        const link = document.getElementById('favicon');
+        const updateFavicon = () => {
+          link.href = window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? '/logo-w.svg'
+            : '/logo-b.svg';
+        };
+        updateFavicon();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateFavicon);
+      })();
+    </script>
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <title>Lumen</title>
   </head>
   <body>
     <div id="root"></div>

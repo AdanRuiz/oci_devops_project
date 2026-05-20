@@ -182,6 +182,51 @@ html:has(.dev-app-page)::-webkit-scrollbar-thumb:active {
   display: none;
 }
 
+.lumi-composer-action-btn {
+  transition:
+    background-color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lumi-composer-action-btn--filled {
+  background-color: #cf6a5d;
+  color: #fff;
+  box-shadow: 0 10px 35px -28px rgba(199, 70, 52, 0.8);
+}
+
+.lumi-composer-action-btn--filled:hover {
+  background-color: #bf5f53;
+}
+
+.lumi-composer-action-btn--ghost {
+  color: #6b6560;
+}
+
+.lumi-composer-action-btn--ghost:hover {
+  background-color: #f5f2ec;
+  color: #2a1814;
+}
+
+.lumi-composer-action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: lumiComposerActionIconEnter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes lumiComposerActionIconEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Dashboard global transitions */
 @keyframes dashboardPageEnter {
   from {
@@ -231,6 +276,94 @@ html:has(.dev-app-page)::-webkit-scrollbar-thumb:active {
 
 .dashboard-section-enter {
   animation: dashboardSectionEnter 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Landing hero showcase (Linear-style product shot) */
+.landing-hero-showcase {
+  position: relative;
+  padding-bottom: 0.5rem;
+  perspective: 1400px;
+}
+
+.landing-hero-showcase__glow {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  z-index: 0;
+  width: min(100%, 52rem);
+  height: 65%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 50%,
+    rgba(199, 70, 52, 0.16) 0%,
+    rgba(210, 207, 222, 0.22) 38%,
+    transparent 72%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.landing-hero-showcase__frame {
+  position: relative;
+  z-index: 1;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(42, 24, 20, 0.1);
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(42, 24, 20, 0.04),
+    0 20px 50px -20px rgba(42, 24, 20, 0.12),
+    0 48px 96px -32px rgba(42, 24, 20, 0.14);
+  transform: rotateX(8deg);
+  transform-origin: center top;
+}
+
+.landing-hero-showcase__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.landing-hero-img-enter {
+  animation: landingHeroShowcaseEnter 800ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+}
+
+@keyframes landingHeroShowcaseEnter {
+  from {
+    opacity: 0;
+    transform: rotateX(14deg) translateY(32px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(8deg) translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-hero-showcase {
+    perspective: none;
+  }
+
+  .landing-hero-showcase__frame {
+    transform: none;
+  }
+
+  .landing-hero-img-enter {
+    animation-name: landingHeroShowcaseEnterFlat;
+  }
+}
+
+@keyframes landingHeroShowcaseEnterFlat {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dashboard-modal-overlay-enter {

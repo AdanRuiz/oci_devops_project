@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
+  ArrowUp,
   MessageCirclePlus,
+  Mic,
   MoreHorizontal,
   PanelLeftClose,
   PanelLeftOpen,
   Pin,
   PinOff,
   Search,
-  Send,
+  Square,
   Trash2,
 } from 'lucide-react';
 
@@ -291,6 +293,106 @@ function initialsFromName(name) {
   return 'LU';
 }
 
+function LumiComposer({ draft, setDraft, loading, onSend }) {
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const recognitionRef = useRef(null);
+
+  const hasDraft = draft.trim().length > 0;
+
+  useEffect(() => {
+    setSpeechSupported(
+      typeof window !== 'undefined' &&
+        !!(window.SpeechRecognition || window.webkitSpeechRecognition)
+    );
+    return () => recognitionRef.current?.stop();
+  }, []);
+
+  const stopDictation = () => {
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    setIsListening(false);
+  };
+
+  const startDictation = () => {
+    if (isListening) {
+      stopDictation();
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = navigator.language || 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0].transcript)
+        .join('');
+      setDraft(transcript);
+    };
+
+    recognition.onerror = () => stopDictation();
+    recognition.onend = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    setIsListening(true);
+    recognition.start();
+  };
+
+  const handleDraftChange = (event) => {
+    if (isListening) stopDictation();
+    setDraft(event.target.value);
+  };
+
+  const handleAction = () => {
+    if (hasDraft) onSend();
+    else startDictation();
+  };
+
+  const actionMode = hasDraft ? 'send' : isListening ? 'listening' : 'idle';
+  const isFilled = actionMode !== 'idle';
+
+  return (
+    <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white pl-6 pr-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
+      <input
+        value={draft}
+        onChange={handleDraftChange}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            if (hasDraft) onSend();
+          }
+        }}
+        placeholder="Ask Lumi"
+        className="w-full bg-transparent text-base text-[#2A1814] placeholder:text-[#6B6560] focus:outline-none"
+      />
+      <button
+        type="button"
+        onClick={handleAction}
+        disabled={loading || (!hasDraft && !speechSupported)}
+        aria-label={
+          hasDraft ? 'Send message' : isListening ? 'Stop dictation' : 'Start dictation'
+        }
+        className={`lumi-composer-action-btn inline-flex h-10 w-10 shrink-0 aspect-square items-center justify-center rounded-full disabled:opacity-60 ${
+          isFilled ? 'lumi-composer-action-btn--filled' : 'lumi-composer-action-btn--ghost'
+        }`}
+      >
+        <span key={actionMode} className="lumi-composer-action-icon" aria-hidden>
+          {actionMode === 'send' && <ArrowUp className="h-6 w-6" strokeWidth={2.5} />}
+          {actionMode === 'listening' && (
+            <Square className="h-3.5 w-3.5 fill-current stroke-none" />
+          )}
+          {actionMode === 'idle' && <Mic className="h-6 w-6" />}
+        </span>
+      </button>
+    </div>
+  );
+}
+
 function LumiAssistant() {
   const [chats, setChats] = useState(readChats);
   const [selectedChatId, setSelectedChatId] = useState(() => readChats()[0]?.id);
@@ -304,6 +406,35 @@ function LumiAssistant() {
   const [profileName] = useState('Guest');
   const [profileEmail] = useState('');
   const [profileAvatar] = useState('');
+
+  useEffect(() => {
+    const faviconLink = document.getElementById('favicon');
+    const previousTitle = document.title;
+    const previousFavicon = faviconLink?.getAttribute('href') ?? '';
+
+    document.title = 'Lumi';
+
+    const updateFavicon = () => {
+      if (!faviconLink) return;
+      faviconLink.href = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? '/lumi-ico-w.svg'
+        : '/lumi-ico-b.svg';
+    };
+
+    updateFavicon();
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', updateFavicon);
+
+    return () => {
+      document.title = previousTitle;
+      if (faviconLink) {
+        faviconLink.href =
+          previousFavicon ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? '/logo-w.svg' : '/logo-b.svg');
+      }
+      mediaQuery.removeEventListener('change', updateFavicon);
+    };
+  }, []);
 
   const selectedChat = useMemo(
     () => chats.find((chat) => chat.id === selectedChatId) || chats[0],
@@ -400,7 +531,7 @@ function LumiAssistant() {
         <div className="mb-5">
           <div className="flex items-center justify-between gap-2.5">
             <div className="flex items-center gap-2.5">
-              <img src="/lumi.svg" alt="" aria-hidden className="h-8 w-8 shrink-0" />
+              <img src="/lumi.svg" alt="Lumi" className="h-8 w-8 shrink-0" />
               <p className="text-xl font-semibold text-[#2A1814]">Lumi</p>
             </div>
             <button
@@ -663,34 +794,19 @@ function LumiAssistant() {
             <div className="flex h-full w-full max-w-5xl flex-col">
               {activeView === VIEW_NEW ? (
                 <div className="lumi-view-enter">
-                    <div className="mx-auto mt-28 w-full max-w-4xl">
-                      <h1 className="text-center text-[46px] font-semibold leading-tight tracking-tight text-[#2A1814]">
+                    <div className="mx-auto mt-20 flex w-full max-w-4xl flex-col items-center">
+                      <img src="/lumi.svg" alt="" aria-hidden className="h-24 w-24 shrink-0" />
+                      <h1 className="mt-6 text-center text-[46px] font-semibold leading-tight tracking-tight text-[#2A1814]">
                         {heroLine}
                       </h1>
                     </div>
                     <div className="mx-auto mt-12 w-full max-w-4xl">
-                      <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white pl-6 pr-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
-                        <input
-                          value={draft}
-                          onChange={(event) => setDraft(event.target.value)}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter' && !event.shiftKey) {
-                              event.preventDefault();
-                              sendMessage();
-                            }
-                          }}
-                          placeholder="Ask Lumi"
-                          className="w-full bg-transparent text-base text-[#2A1814] placeholder:text-[#6B6560] focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={sendMessage}
-                          disabled={loading}
-                          className="inline-flex h-10 w-10 shrink-0 aspect-square items-center justify-center rounded-full bg-[#cf6a5d] text-white transition hover:bg-[#bf5f53] disabled:opacity-60"
-                        >
-                          <Send className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <LumiComposer
+                        draft={draft}
+                        setDraft={setDraft}
+                        loading={loading}
+                        onSend={sendMessage}
+                      />
                     </div>
                 </div>
               ) : (
@@ -724,28 +840,12 @@ function LumiAssistant() {
                       </div>
                     </div>
                     <div className="lumi-composer-enter mx-auto w-full max-w-4xl pb-6 pt-2">
-                      <div className="flex items-center gap-3 rounded-full border border-[#2A1814]/15 bg-white pl-6 pr-4 py-3 shadow-[0_10px_35px_-28px_rgba(199,70,52,0.8)]">
-                        <input
-                          value={draft}
-                          onChange={(event) => setDraft(event.target.value)}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter' && !event.shiftKey) {
-                              event.preventDefault();
-                              sendMessage();
-                            }
-                          }}
-                          placeholder="Ask Lumi"
-                          className="w-full bg-transparent text-base text-[#2A1814] placeholder:text-[#6B6560] focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={sendMessage}
-                          disabled={loading}
-                          className="inline-flex h-10 w-10 shrink-0 aspect-square items-center justify-center rounded-full bg-[#cf6a5d] text-white transition hover:bg-[#bf5f53] disabled:opacity-60"
-                        >
-                          <Send className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <LumiComposer
+                        draft={draft}
+                        setDraft={setDraft}
+                        loading={loading}
+                        onSend={sendMessage}
+                      />
                     </div>
                 </div>
               )}

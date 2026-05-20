@@ -76,7 +76,7 @@ function Landing() {
   return (
     <div className="landing-page-enter app-scrollbar min-h-screen w-full bg-white text-[#2a1814]">
       <div className="relative w-full">
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-screen overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 min-h-screen overflow-hidden">
           <Grainient
             color1="#fbebde"
             color2="#f66a48"
@@ -105,17 +105,27 @@ function Landing() {
 
         <LandingNavbar />
 
-        <section id="hero" className="relative z-10 h-screen w-full">
-          <div
-            className={`relative flex h-full w-full flex-col items-center justify-center py-24 ${landingContainer} md:flex-row md:items-center md:justify-start`}
-          >
-            <div className="mb-16 flex flex-col items-center text-center md:mb-0 md:w-1/2 md:items-start md:pr-16 md:text-left lg:flex-grow lg:pr-24">
-              <h1 className="landing-hero-enter title-font mb-4 text-4xl font-semibold tracking-tight text-[#2a1814] sm:text-5xl lg:text-6xl">
-                Sprints and tasks, in one place
-              </h1>
-              <p className="landing-hero-enter-delayed max-w-xl text-sm font-medium tracking-wide text-[#2a1814]/70 sm:text-base">
-                Agile planning for development teams
-              </p>
+        <section id="hero" className="relative z-10 w-full pt-28 pb-14 sm:pt-32 sm:pb-16 md:pb-20">
+          <div className={`${landingContainer} flex flex-col items-center text-center`}>
+            <h1 className="landing-hero-enter title-font mb-5 max-w-4xl text-4xl font-semibold tracking-tight text-[#2a1814] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
+              Clarity for every sprint.
+            </h1>
+            <p className="landing-hero-enter-delayed mx-auto max-w-2xl text-base leading-relaxed text-[#2a1814]/75 sm:text-lg">
+              Plan iterations, own the backlog, and see burndown and team activity in one place,
+              from the developer view your squad uses daily to the dashboard leads rely on.
+            </p>
+
+            <div className="landing-hero-showcase mt-12 w-full max-w-5xl sm:mt-14">
+              <div className="landing-hero-showcase__glow" aria-hidden />
+              <div className="landing-hero-showcase__frame landing-hero-img-enter">
+                <img
+                  src="/hero-img.png"
+                  alt="Lumen task dashboard preview"
+                  className="landing-hero-showcase__img"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
           </div>
         </section>
