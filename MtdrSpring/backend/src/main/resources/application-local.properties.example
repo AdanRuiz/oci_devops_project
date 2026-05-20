@@ -1,0 +1,8 @@
+# Copia este archivo como application-local.properties (misma carpeta).
+# Ese archivo está en .gitignore y no se sube al repositorio.
+#
+# cp application-local.properties.example application-local.properties
+# (PowerShell) Copy-Item application-local.properties.example application-local.properties
+
+TELEGRAM_KEY=tu_token_de_botfather
+GROQ_API_KEY=gsk_tu_clave_de_groq

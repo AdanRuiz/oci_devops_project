@@ -12,6 +12,7 @@ public class SpaForwardController {
              "/app",
              "/dashboard",
              "/dashboard/**",
+             "/lumi",
              "/manager"
      })
     public String forwardSpaRoutes() {

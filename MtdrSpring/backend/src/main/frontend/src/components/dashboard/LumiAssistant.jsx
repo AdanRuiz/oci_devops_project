@@ -73,7 +73,7 @@ async function fetchJson(url, options) {
 
 async function callAssistantApi(message, history) {
   const envUrl = import.meta.env.VITE_GENAI_API_URL;
-  const endpoints = [envUrl, '/api/genai/chat', '/genai/chat', '/ai/chat'].filter(Boolean);
+  const endpoints = [envUrl, '/api/genai/chat'].filter(Boolean);
   for (const endpoint of endpoints) {
     try {
       const response = await fetch(endpoint, {
@@ -265,11 +265,11 @@ async function runSmartAction(message) {
 }
 
 async function replyForMessage(message, history) {
-  const actionResult = await runSmartAction(message);
-  if (actionResult.handled) return actionResult.text;
   const apiResult = await callAssistantApi(message, history);
   if (apiResult.ok) return apiResult.text;
-  return 'I can help with teams, projects, sprints, and workload analysis. Try: "Create team Platform Crew with Alex Rivera and Jessie Park".';
+  const actionResult = await runSmartAction(message);
+  if (actionResult.handled) return actionResult.text;
+  return 'Tell me what you need in plain language — for example: "Set up a team called Platform Crew with Alex and Jessie."';
 }
 
 function dateLabel(timestamp) {
@@ -298,40 +298,12 @@ function LumiAssistant() {
   const [searchTerm, setSearchTerm] = useState('');
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
-  const [heroLine, setHeroLine] = useState('Hi Alex, how can I help you today?');
+  const [heroLine] = useState('Hi, how can I help you today?');
   const [chatMenuOpenId, setChatMenuOpenId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [profileName, setProfileName] = useState('Alex');
-  const [profileEmail, setProfileEmail] = useState('alex@lumen.app');
-  const [profileAvatar, setProfileAvatar] = useState('');
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const users = await fetchJson('/users');
-        if (cancelled) return;
-        const primary = users?.[0];
-        const name = primary?.name || primary?.username || 'Alex';
-        const resolvedFirstName = name.split(/\s+/)[0] || 'Alex';
-        setProfileName(name);
-        setProfileEmail(primary?.email || 'alex@lumen.app');
-        setProfileAvatar(primary?.avatarUrl || primary?.imageUrl || '');
-        const lines = [
-          `Hi ${resolvedFirstName}, how can I help you today?`,
-          `What can I help with, ${resolvedFirstName}?`,
-          `Welcome back ${resolvedFirstName}, what are we building today?`,
-          `Hey ${resolvedFirstName}, ready to plan this sprint?`,
-        ];
-        setHeroLine(lines[Math.floor(Math.random() * lines.length)]);
-      } catch {
-        // keep fallback
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const [profileName] = useState('Guest');
+  const [profileEmail] = useState('');
+  const [profileAvatar] = useState('');
 
   const selectedChat = useMemo(
     () => chats.find((chat) => chat.id === selectedChatId) || chats[0],

@@ -15,11 +15,20 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '/users': { target: 'http://localhost:8080', changeOrigin: true },
+      '/teams': { target: 'http://localhost:8080', changeOrigin: true },
+      '/team-members': { target: 'http://localhost:8080', changeOrigin: true },
+      '/sprints': { target: 'http://localhost:8080', changeOrigin: true },
+      '/tasks': { target: 'http://localhost:8080', changeOrigin: true },
       '/todolist': {
         target: 'http://localhost:8080',
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     outDir: 'build'

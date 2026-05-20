@@ -50,3 +50,4 @@ frontend/yarn-debug.log*
 frontend/yarn-error.log*
 /MtdrSpring/backend/wallet
 MtdrSpring/backend/DockerfileDev
+MtdrSpring/backend/src/main/resources/application-local.properties
