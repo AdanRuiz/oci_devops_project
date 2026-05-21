@@ -11,16 +11,20 @@ public class AgentOrchestrator {
 
     private final LlmIntentParser llmIntentParser;
     private final ProjectWorkspaceService workspaceService;
-
+    /** Create an orchestrator using an LLM-based parser and a workspace service. */
     public AgentOrchestrator(LlmIntentParser llmIntentParser, ProjectWorkspaceService workspaceService) {
         this.llmIntentParser = llmIntentParser;
         this.workspaceService = workspaceService;
     }
-
+    /** Convenience overload: handle a message without specifying a user role. */
     public String handleMessage(String messageText) {
         return handleMessage(messageText, null);
     }
 
+    /**
+     * Process an incoming message and route it to the appropriate action.
+     * Returns a user-facing response string based on the parsed intent.
+     */
     public String handleMessage(String messageText, String userRole) {
         ParsedIntent parsedIntent = llmIntentParser.parse(messageText);
 
@@ -48,6 +52,7 @@ public class AgentOrchestrator {
         };
     }
 
+    /** Create a new task from the parsed intent and return a confirmation message. */
     private String createTask(ParsedIntent parsedIntent) {
         if (parsedIntent.getTitle() == null || parsedIntent.getTitle().isBlank()) {
             return "Necesito el titulo de la tarea para poder crearla.";
@@ -82,6 +87,7 @@ public class AgentOrchestrator {
                 task.getSprintName());
     }
 
+    /** Build a deletion command hint based on provided id or title. */
     private String deleteTaskResponse(ParsedIntent parsedIntent) {
         if (parsedIntent.getTaskId() == null && parsedIntent.getTitle() == null) {
             return "Necesito el ID o nombre de la tarea para poder eliminarla.";
@@ -91,6 +97,7 @@ public class AgentOrchestrator {
             + (parsedIntent.getTaskId() != null ? parsedIntent.getTaskId() : parsedIntent.getTitle());
     }
 
+    /** Return guidance on how to request developer KPIs based on the intent. */
     private String getDeveloperKpiResponse(ParsedIntent parsedIntent) {
         if (parsedIntent.getTaskId() == null && parsedIntent.getDeveloperName() == null) {
             return "Necesito el ID o nombre del desarrollador para ver sus KPIs.";
@@ -100,6 +107,7 @@ public class AgentOrchestrator {
             + (parsedIntent.getTaskId() != null ? parsedIntent.getTaskId() : parsedIntent.getDeveloperName());
     }
 
+    /** Produce a human readable summary for the current sprint (tasks and hours). */
     private String sprintSummary() {
         SprintInfo sprint = workspaceService.getCurrentSprint();
         if (sprint == null) {
@@ -142,6 +150,7 @@ public class AgentOrchestrator {
                 doneHours);
     }
 
+    /** Summarize team load (story points) grouped and sorted by assignee. */
     private String teamLoadSummary() {
         Map<String, Integer> totals = workspaceService.storyPointsByAssignee();
         StringJoiner joiner = new StringJoiner("\n", "Carga actual del equipo\n", "");
@@ -151,6 +160,7 @@ public class AgentOrchestrator {
         return joiner.toString().trim();
     }
 
+    /** Format a list of tasks into a readable multiline string with the given title. */
     private String formatTasks(String title, List<TaskItem> tasks) {
         if (tasks.isEmpty()) {
             return title + "\nNo encontré tareas para ese criterio.";
@@ -172,6 +182,7 @@ public class AgentOrchestrator {
         return joiner.toString().trim();
     }
 
+    /** Return contextual help text; includes extra manager commands if role is MANAGER. */
     private String helpText(String userRole) {
         String help = """
             Puedo ayudarte con consultas y acciones del proyecto, incluso en lenguaje natural.
@@ -205,6 +216,7 @@ public class AgentOrchestrator {
         return help;
     }
 
+    /** Safe display helper: returns a friendly placeholder when the value is null/blank. */
     private String safe(String value) {
         return value == null || value.isBlank() ? "sin filtro" : value;
     }

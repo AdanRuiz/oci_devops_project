@@ -22,6 +22,7 @@ public class LlmIntentParser implements IntentParser {
     private final ObjectMapper objectMapper;
     private final RuleBasedIntentParser fallbackParser;
 
+    /** Initialize the parser with configuration, JSON mapper and a rule-based fallback. */
     public LlmIntentParser(AiProps aiProps, ObjectMapper objectMapper, RuleBasedIntentParser fallbackParser) {
         this.aiProps = aiProps;
         this.objectMapper = objectMapper;
@@ -29,6 +30,10 @@ public class LlmIntentParser implements IntentParser {
     }
 
     @Override
+    /**
+     * Use LLM-based classification to parse the message when enabled; falls back to rules.
+     * Returns a ParsedIntent which may include intent, responseText, or clarification request.
+     */
     public ParsedIntent parse(String messageText) {
         ParsedIntent basicIntent = fallbackParser.parse(messageText);
         if (basicIntent.getIntent() != IntentType.UNKNOWN || basicIntent.getResponseText() != null) {
@@ -70,6 +75,10 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private ParsedIntent requestIntentClassification(String messageText) throws Exception {
+        /**
+         * Send a classification request to the configured LLM endpoint and parse the JSON response
+         * into a ParsedIntent instance. Returns null on unexpected or empty replies.
+         */
         RestClient client = createClient();
         String endpoint = aiProps.getBaseUrl().replaceAll("/$", "") + "/chat/completions";
 
@@ -136,6 +145,10 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private String requestGeneralResponse(String messageText) throws Exception {
+        /**
+         * Ask the LLM for a general short human response (used when no actionable intent
+         * is extracted but a helpful reply is desired).
+         */
         RestClient client = createClient();
         String endpoint = aiProps.getBaseUrl().replaceAll("/$", "") + "/chat/completions";
 
@@ -170,6 +183,7 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private RestClient createClient() {
+        /** Build an HTTP client with authorization and JSON content headers. */
         return RestClient.builder()
             .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + aiProps.getApiKey())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -177,6 +191,7 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private List<Map<String, Object>> buildMessages(String systemPrompt, String messageText) {
+        /** Compose the messages payload for the chat completion API. */
         return List.of(
             buildMessage("system", systemPrompt),
             buildMessage("user", messageText == null ? "" : messageText)
@@ -184,6 +199,7 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private Map<String, Object> buildMessage(String role, String content) {
+        /** Create a single message entry for the chat API payload. */
         Map<String, Object> message = new HashMap<>();
         message.put("role", role);
         message.put("content", content);
@@ -191,6 +207,7 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private String commandCatalog() {
+        /** Return a textual catalog of supported canonical commands for prompts. */
         return "- /start: muestra el mensaje de bienvenida.\n"
             + "- /register: valida al usuario Telegram actual.\n"
             + "- /addtask \"<titulo>\" | \"<descripcion>\" | <horas esperadas> | <prioridad (LOW, MEDIUM, HIGH)> | <es bug (true/false)> | <ID o nombre de usuario>: crea una tarea.\n"
@@ -211,6 +228,10 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private String extractJsonPayload(String content) {
+        /**
+         * Extract the first JSON object found in a text block. Handles code fences and
+         * searches for balanced braces while ignoring strings and escapes.
+         */
         String trimmed = content == null ? "" : content.trim();
         if (trimmed.isEmpty()) {
             return trimmed;
@@ -241,6 +262,7 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private int findJsonStart(String content) {
+        // Find the first '{' character (start of JSON object) or -1 if none.
         for (int index = 0; index < content.length(); index++) {
             if (content.charAt(index) == '{') {
                 return index;
@@ -250,6 +272,8 @@ public class LlmIntentParser implements IntentParser {
     }
 
     private int findJsonEnd(String content, int startIndex) {
+        // Walk the content from startIndex to find the matching closing '}' taking
+        // into account nested objects, quoted strings and escape sequences.
         int depth = 0;
         boolean inString = false;
         boolean escaped = false;

@@ -15,6 +15,10 @@ public class RuleBasedIntentParser implements IntentParser {
         Pattern.compile("(\\d+)\\s*horas?\\s*(?:esperadas?|estimadas?)", Pattern.CASE_INSENSITIVE);
 
     @Override
+    /**
+     * Parse the provided message using rule-based patterns and return a ParsedIntent.
+     * This is a best-effort local fallback that recognizes common Spanish commands.
+     */
     public ParsedIntent parse(String messageText) {
         String text = messageText == null ? "" : messageText.trim();
         String normalized = text.toLowerCase(Locale.ROOT);
@@ -126,6 +130,7 @@ public class RuleBasedIntentParser implements IntentParser {
     }
 
     private String capitalize(String value) {
+        // Capitalize the first character of a non-empty string using locale-safe rules.
         if (value == null || value.isBlank()) {
             return value;
         }
@@ -133,6 +138,7 @@ public class RuleBasedIntentParser implements IntentParser {
     }
 
     private boolean isKpiQuery(String normalized) {
+        // Heuristic: consider it a KPI query when 'kpi' appears along with user/developer mention.
         return normalized.contains("kpi")
             && (normalized.contains("usuario") || normalized.contains("desarrollador"));
     }
