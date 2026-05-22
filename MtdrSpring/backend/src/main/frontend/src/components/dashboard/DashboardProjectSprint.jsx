@@ -144,7 +144,7 @@ function buildVelocityData(rows, sprint) {
     const dayEnd = dayStart.clone().endOf('day');
     return rows.filter((task) => {
       if (task.status !== 'DONE') return false;
-      const date = task.updatedAt || task.createdAt;
+      const date = task.completedDate || task.updatedAt || task.createdAt;
       if (!date) return false;
       const m = moment(date);
       return m.isBetween(dayStart, dayEnd, null, '[]');

@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Task;
+import com.springboot.MyTodoList.model.enums.TaskStatus;
 import com.springboot.MyTodoList.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class TaskService {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent()) {
             Task current = task.get();
+            TaskStatus previousStatus = current.getStatus();
             current.setTitle(updated.getTitle());
             current.setDescription(updated.getDescription());
             current.setStatus(updated.getStatus());
@@ -46,6 +48,13 @@ public class TaskService {
             current.setIsBug(updated.getIsBug());
             if (updated.getCreatedAt() != null) {
                 current.setCreatedAt(updated.getCreatedAt());
+            }
+            if (TaskStatus.DONE.equals(updated.getStatus())) {
+                if (current.getCompletedDate() == null || !TaskStatus.DONE.equals(previousStatus)) {
+                    current.setCompletedDate(LocalDateTime.now());
+                }
+            } else {
+                current.setCompletedDate(null);
             }
             current.setUpdatedAt(LocalDateTime.now());
             current.setVector(updated.getVector());

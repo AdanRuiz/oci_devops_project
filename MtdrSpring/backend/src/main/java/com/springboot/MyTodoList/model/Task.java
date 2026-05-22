@@ -51,6 +51,9 @@ public class Task {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
 
+    @Column(name = "COMPLETED_DATE")
+    private LocalDateTime completedDate;
+
     @Column(name = "VECTOR", nullable = false, length = 255)
     private String vector;
 
@@ -154,6 +157,14 @@ public class Task {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDateTime completedDate) {
+        this.completedDate = completedDate;
     }
 
     public String getVector() {

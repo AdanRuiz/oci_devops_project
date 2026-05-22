@@ -3,7 +3,7 @@ package com.springboot.MyTodoList.util;
 public enum BotMessages {
 	
 	WELCOME(
-	"Hola! Soy MyTodoList Bot!\n Ingrese alguno de los comandos disponibles: \n /register - para validar el usuario \n /addtask - para agregar una tarea a la lista (formato: /addtask \"<titulo>\" | \"<descripcion>\" | <horas esperadas> | <prioridad (LOW, MEDIUM, HIGH)> | <es bug (true/false)> | <ID de Usuario>) \n /deletetask - para eliminar una tarea (formato: /deletetask <ID o titulo>) \n /assigntask - para asignar una tarea a un sprint \n /completetask - para marcar una tarea como completada \n /mytasks - para ver todas las tareas"),
+	"Hola! Soy el chatbot para JavaPlan!\n Ingrese alguno de los comandos disponibles: \n /register - para validar el usuario \n /addtask - para agregar una tarea a la lista \n /deletetask - para eliminar una tarea \n /assigntask - para asignar una tarea a un sprint \n /completetask - para marcar una tarea como completada \n /mytasks - para ver todas las tareas"),
 	USER_OK("Usuario reconocido, bienvenido"),
 	USER_NOT_FOUND("Usuario no encontrado."),
 

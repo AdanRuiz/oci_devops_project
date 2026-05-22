@@ -208,7 +208,7 @@ function DashboardTasks() {
                   <th className="px-1 py-3">Task</th>
                   <th className="px-1 py-3">Sprint</th>
                   <th className="px-1 py-3">Status</th>
-                  <th className="px-1 py-3">Updated</th>
+                  <th className="px-1 py-3">Completed Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#2A1814]/[0.06]">
@@ -233,8 +233,8 @@ function DashboardTasks() {
                       </span>
                     </td>
                     <td className="px-1 py-3.5 text-xs text-[#6B6560]">
-                      {task.updatedAt || task.createdAt
-                        ? moment(task.updatedAt || task.createdAt).format('MMM D, YYYY')
+                      {task.completedDate || task.updatedAt || task.createdAt
+                        ? moment(task.completedDate || task.updatedAt || task.createdAt).format('MMM D, YYYY')
                         : '—'}
                     </td>
                   </tr>

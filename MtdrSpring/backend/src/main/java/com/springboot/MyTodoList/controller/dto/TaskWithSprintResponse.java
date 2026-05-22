@@ -15,6 +15,7 @@ public class TaskWithSprintResponse {
     private Long createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime completedDate;
     private String vector;
     private Integer hoursDone;
     private Integer expectedHours;
@@ -34,6 +35,7 @@ public class TaskWithSprintResponse {
         this.createdBy = task.getCreatedBy();
         this.createdAt = task.getCreatedAt();
         this.updatedAt = task.getUpdatedAt();
+        this.completedDate = task.getCompletedDate();
         this.vector = task.getVector();
         this.hoursDone = task.getHoursDone();
         this.expectedHours = task.getExpectedHours();
@@ -136,6 +138,14 @@ public class TaskWithSprintResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDateTime completedDate) {
+        this.completedDate = completedDate;
     }
 
     public String getVector() {
