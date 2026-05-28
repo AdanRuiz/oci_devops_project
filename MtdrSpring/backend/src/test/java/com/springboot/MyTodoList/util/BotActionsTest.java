@@ -1,10 +1,23 @@
 package com.springboot.MyTodoList.util;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.Captor;
+import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import com.springboot.MyTodoList.agent.AgentOrchestrator;
 import com.springboot.MyTodoList.model.Sprint;
@@ -12,7 +25,6 @@ import com.springboot.MyTodoList.model.SprintTask;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.model.Team;
 import com.springboot.MyTodoList.model.TeamMember;
-import com.springboot.MyTodoList.model.TeamMemberId;
 import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.model.enums.TaskPriority;
 import com.springboot.MyTodoList.model.enums.TaskStatus;
@@ -20,21 +32,9 @@ import com.springboot.MyTodoList.service.DeepSeekService;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.SprintTaskService;
 import com.springboot.MyTodoList.service.TaskService;
-import com.springboot.MyTodoList.service.TeamService;
 import com.springboot.MyTodoList.service.TeamMemberService;
+import com.springboot.MyTodoList.service.TeamService;
 import com.springboot.MyTodoList.service.UserService;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @ExtendWith(MockitoExtension.class)
 class BotActionsTest {
@@ -176,6 +176,50 @@ class BotActionsTest {
     }
 
     @Test
+    void fnAddTaskInvalidFormatShowsError() throws Exception {
+        botActions.setRequestText("/addtask \"Tarea incompleta\"");
+
+        botActions.fnAddTask();
+
+        verify(telegramClient).execute(sendMessageCaptor.capture());
+        assertThat(sendMessageCaptor.getValue().getText())
+                .isEqualTo(BotMessages.TASK_ERROR.getMessage());
+    }
+
+    @Test
+    void fnAssignTaskInvalidFormatShowsError() throws Exception {
+        botActions.setRequestText("/assigntask 11");
+
+        botActions.fnAssignTask();
+
+        verify(telegramClient).execute(sendMessageCaptor.capture());
+        assertThat(sendMessageCaptor.getValue().getText())
+                .isEqualTo(BotMessages.TASK_ASSIGN_ERROR.getMessage());
+    }
+
+    @Test
+    void fnCompleteTaskInvalidFormatShowsError() throws Exception {
+        botActions.setRequestText("/completetask 21");
+
+        botActions.fnCompleteTask();
+
+        verify(telegramClient).execute(sendMessageCaptor.capture());
+        assertThat(sendMessageCaptor.getValue().getText())
+                .isEqualTo(BotMessages.TASK_COMPLETE_ERROR.getMessage());
+    }
+
+    @Test
+    void fnDeleteTaskEmptyInputShowsError() throws Exception {
+        botActions.setRequestText("/deletetask ");
+
+        botActions.fnDeleteTask();
+
+        verify(telegramClient).execute(sendMessageCaptor.capture());
+        assertThat(sendMessageCaptor.getValue().getText())
+                .isEqualTo(BotMessages.TASK_DELETE_ERROR.getMessage());
+    }
+
+    @Test
     void fnAssignToSprint() throws Exception {
         Task task = new Task();
         task.setId(11L);
@@ -264,6 +308,19 @@ class BotActionsTest {
 
         verify(telegramClient).execute(sendMessageCaptor.capture());
         assertThat(sendMessageCaptor.getValue().getText()).isEqualTo("Hola DEVELOPER");
+    }
+
+    @Test
+    void fnElseHandlesAgentFailure() throws Exception {
+        when(agentOrchestrator.handleMessage(any(String.class), any(String.class)))
+                .thenThrow(new RuntimeException("boom"));
+        botActions.setRequestText("hola bot");
+
+        botActions.fnElse();
+
+        verify(telegramClient).execute(sendMessageCaptor.capture());
+        assertThat(sendMessageCaptor.getValue().getText())
+                .isEqualTo(BotMessages.UNKNOWN_COMMAND.getMessage());
     }
 
     private User userWithTelegramId(Long id, Long telegramId, String name) {

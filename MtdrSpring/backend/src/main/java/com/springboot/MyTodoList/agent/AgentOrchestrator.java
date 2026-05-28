@@ -3,18 +3,21 @@ package com.springboot.MyTodoList.agent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AgentOrchestrator {
 
+    private static final String DEFAULT_RESPONSE = "No pude interpretar la solicitud. Escribe ayuda para ver ejemplos.";
+
     private final LlmIntentParser llmIntentParser;
     private final ProjectWorkspaceService workspaceService;
     /** Create an orchestrator using an LLM-based parser and a workspace service. */
     public AgentOrchestrator(LlmIntentParser llmIntentParser, ProjectWorkspaceService workspaceService) {
-        this.llmIntentParser = llmIntentParser;
-        this.workspaceService = workspaceService;
+        this.llmIntentParser = Objects.requireNonNull(llmIntentParser, "llmIntentParser must not be null");
+        this.workspaceService = Objects.requireNonNull(workspaceService, "workspaceService must not be null");
     }
     /** Convenience overload: handle a message without specifying a user role. */
     public String handleMessage(String messageText) {
@@ -26,7 +29,14 @@ public class AgentOrchestrator {
      * Returns a user-facing response string based on the parsed intent.
      */
     public String handleMessage(String messageText, String userRole) {
+        if (messageText == null || messageText.isBlank()) {
+            return DEFAULT_RESPONSE;
+        }
+
         ParsedIntent parsedIntent = llmIntentParser.parse(messageText);
+        if (parsedIntent == null) {
+            return DEFAULT_RESPONSE;
+        }
 
         if (parsedIntent.getResponseText() != null && !parsedIntent.getResponseText().isBlank()) {
             return parsedIntent.getResponseText();
@@ -38,17 +48,17 @@ public class AgentOrchestrator {
 
         return switch (parsedIntent.getIntent()) {
             case HELP -> helpText(userRole);
-            case LIST_TASKS -> formatTasks("Estas son las tareas registradas:", workspaceService.findAllTasks());
+            case LIST_TASKS -> formatTasks("Estas son las tareas registradas:", safeTasks(workspaceService.findAllTasks()));
             case LIST_TASKS_BY_ASSIGNEE -> formatTasks("Estas son las tareas de " + safe(parsedIntent.getAssignee()) + ":",
-                workspaceService.findTasksByAssignee(parsedIntent.getAssignee()));
+                safeTasks(workspaceService.findTasksByAssignee(parsedIntent.getAssignee())));
             case LIST_TASKS_BY_STATUS -> formatTasks("Estas son las tareas con estado " + safe(parsedIntent.getStatus()) + ":",
-                workspaceService.findTasksByStatus(parsedIntent.getStatus()));
+                safeTasks(workspaceService.findTasksByStatus(parsedIntent.getStatus())));
             case CREATE_TASK -> createTask(parsedIntent);
             case DELETE_TASK -> deleteTaskResponse(parsedIntent);
             case GET_DEVELOPER_KPI -> getDeveloperKpiResponse(parsedIntent);
             case CURRENT_SPRINT_SUMMARY -> sprintSummary();
             case TEAM_LOAD_SUMMARY -> teamLoadSummary();
-            default -> "No pude interpretar la solicitud. Escribe ayuda para ver ejemplos.";
+            default -> DEFAULT_RESPONSE;
         };
     }
 
@@ -65,6 +75,10 @@ public class AgentOrchestrator {
             parsedIntent.getSprintName(),
             Boolean.TRUE.equals(parsedIntent.getIsBug())
         );
+
+        if (task == null) {
+            return DEFAULT_RESPONSE;
+        }
 
         return """
             Tarea creada correctamente.
@@ -114,8 +128,8 @@ public class AgentOrchestrator {
             return "No hay un sprint activo en este momento.";
         }
 
-        List<TaskItem> sprintTasks = workspaceService.findAllTasks().stream()
-            .filter(task -> sprint.getName().equals(task.getSprintName()))
+        List<TaskItem> sprintTasks = safeTasks(workspaceService.findAllTasks()).stream()
+            .filter(task -> Objects.equals(sprint.getName(), task.getSprintName()))
             .collect(java.util.stream.Collectors.toList());
 
         long done = sprintTasks.stream().filter(task -> "DONE".equals(task.getStatus())).count();
@@ -152,7 +166,7 @@ public class AgentOrchestrator {
 
     /** Summarize team load (story points) grouped and sorted by assignee. */
     private String teamLoadSummary() {
-        Map<String, Integer> totals = workspaceService.storyPointsByAssignee();
+        Map<String, Integer> totals = safeTotals(workspaceService.storyPointsByAssignee());
         StringJoiner joiner = new StringJoiner("\n", "Carga actual del equipo\n", "");
         totals.entrySet().stream()
             .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
@@ -162,7 +176,7 @@ public class AgentOrchestrator {
 
     /** Format a list of tasks into a readable multiline string with the given title. */
     private String formatTasks(String title, List<TaskItem> tasks) {
-        if (tasks.isEmpty()) {
+        if (tasks == null || tasks.isEmpty()) {
             return title + "\nNo encontré tareas para ese criterio.";
         }
 
@@ -219,5 +233,15 @@ public class AgentOrchestrator {
     /** Safe display helper: returns a friendly placeholder when the value is null/blank. */
     private String safe(String value) {
         return value == null || value.isBlank() ? "sin filtro" : value;
+    }
+
+    /** Normalize a potentially null task list into an empty list. */
+    private List<TaskItem> safeTasks(List<TaskItem> tasks) {
+        return tasks == null ? List.of() : tasks;
+    }
+
+    /** Normalize a potentially null totals map into an empty map. */
+    private Map<String, Integer> safeTotals(Map<String, Integer> totals) {
+        return totals == null ? Map.of() : totals;
     }
 }

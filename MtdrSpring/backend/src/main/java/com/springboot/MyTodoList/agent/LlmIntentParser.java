@@ -6,6 +6,7 @@ import com.springboot.MyTodoList.config.AiProps;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +25,9 @@ public class LlmIntentParser implements IntentParser {
 
     /** Initialize the parser with configuration, JSON mapper and a rule-based fallback. */
     public LlmIntentParser(AiProps aiProps, ObjectMapper objectMapper, RuleBasedIntentParser fallbackParser) {
-        this.aiProps = aiProps;
-        this.objectMapper = objectMapper;
-        this.fallbackParser = fallbackParser;
+        this.aiProps = Objects.requireNonNull(aiProps, "aiProps must not be null");
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
+        this.fallbackParser = Objects.requireNonNull(fallbackParser, "fallbackParser must not be null");
     }
 
     @Override
@@ -36,6 +37,10 @@ public class LlmIntentParser implements IntentParser {
      */
     public ParsedIntent parse(String messageText) {
         ParsedIntent basicIntent = fallbackParser.parse(messageText);
+        if (basicIntent == null) {
+            basicIntent = new ParsedIntent();
+        }
+
         if (basicIntent.getIntent() != IntentType.UNKNOWN || basicIntent.getResponseText() != null) {
             return basicIntent;
         }

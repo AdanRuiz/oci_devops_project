@@ -9,6 +9,14 @@ class RuleBasedIntentParserTest {
     private final RuleBasedIntentParser parser = new RuleBasedIntentParser();
 
     @Test
+    void parseNullMessageFallsBackToClarification() {
+        ParsedIntent intent = parser.parse(null);
+
+        assertThat(intent.getIntent()).isEqualTo(IntentType.UNKNOWN);
+        assertThat(intent.isClarificationNeeded()).isTrue();
+    }
+
+    @Test
     void parseKpiByDeveloperId() {
         ParsedIntent intent = parser.parse("Muestrame los KPIs del usuario con ID 6");
 

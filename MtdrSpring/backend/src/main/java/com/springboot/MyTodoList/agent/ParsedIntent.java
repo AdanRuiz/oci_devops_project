@@ -22,7 +22,7 @@ public class ParsedIntent {
 
     public void setIntent(IntentType intent) {
     /** Set the detected intent type. */
-        this.intent = intent;
+        this.intent = intent == null ? IntentType.UNKNOWN : intent;
     }
 
     public String getAssignee() {
