@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
         - name: todolistapp-springboot
-          image: %DOCKER_REGISTRY%/todolistapp-springboot:0.1
+          image: %DOCKER_REGISTRY%/todolistapp-springboot:latest
           imagePullPolicy: Always
           env:
             - name: db_user
