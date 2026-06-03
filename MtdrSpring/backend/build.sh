@@ -1,7 +1,7 @@
 #!/bin/bash
-
+TAG=$(git rev-parse --short HEAD)
 export IMAGE_NAME=todolistapp-springboot
-export IMAGE_VERSION=0.1
+export IMAGE_VERSION=$TAG
 
 
 if [ -z "$DOCKER_REGISTRY" ]; then

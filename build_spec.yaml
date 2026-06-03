@@ -23,12 +23,10 @@ steps:
   - type: Command
     name: "Docker Login"
     command:  cd MtdrSpring;
-              oci os object get --bucket-name reacttodo-phyvg --name deployment_config.tgz --file deployment_config.tgz;
+              oci os object get --bucket-name "reacttodo-ysmiy" --name deployment_config.tgz --file deployment_config.tgz;
               tar -xzvf deployment_config.tgz;
               source env.sh;
-              docker logout;
-              docker logout mx-queretaro-1.ocir.io;
-              cat at.cfg | docker login -u "axp83b76n6pp/a01741660@tec.mx" --password-stdin mx-queretaro-1.ocir.io
+              cat at.cfg | docker login -u "$(cat $OCI_PRIMARY_SOURCE_DIR/MtdrSpring/state/NAMESPACE)/$(cat $OCI_PRIMARY_SOURCE_DIR/MtdrSpring/state/USERNAME)" --password-stdin $(cat $OCI_PRIMARY_SOURCE_DIR/MtdrSpring/state/HOME_REGION).ocir.io
 
   - type: Command
     name: "Build"

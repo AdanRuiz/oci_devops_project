@@ -3,6 +3,7 @@ package com.springboot.MyTodoList.model;
 
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 
 /*
     representation of the TODOITEM table that exists already
@@ -20,6 +21,11 @@ public class ToDoItem {
     OffsetDateTime creation_ts;
     @Column(name = "done")
     boolean done;
+
+    //ALTER TABLE TODOITEM ADD (INSIGHT VECTOR);
+    @Transient
+    float[] insight;
+
     public ToDoItem(){
 
     }
@@ -42,6 +48,10 @@ public class ToDoItem {
         return description;
     }
 
+    public float[] getInsight() {
+        return insight;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -62,6 +72,10 @@ public class ToDoItem {
         this.done = done;
     }
 
+    public void setInsight(float[] insight) {
+        this.insight = insight;
+    }
+
     @Override
     public String toString() {
         return "ToDoItem{" +
@@ -69,6 +83,7 @@ public class ToDoItem {
                 ", description='" + description + '\'' +
                 ", creation_ts=" + creation_ts +
                 ", done=" + done +
+                ", insight=" + Arrays.toString(insight) +
                 '}';
     }
 }
