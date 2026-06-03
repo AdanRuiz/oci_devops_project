@@ -57,7 +57,7 @@ public class TaskService {
                 current.setCompletedDate(null);
             }
             current.setUpdatedAt(LocalDateTime.now());
-            current.setVector(updated.getVector());
+            current.setInsight(updated.getInsight());
             return taskRepository.save(current);
         }
         return null;

@@ -139,7 +139,6 @@ class BotActionsTest {
         assertThat(savedTask.getAssignedTo()).isEqualTo(USER_ID_DEVELOPER);
         assertThat(savedTask.getCreatedBy()).isEqualTo(USER_ID_DEVELOPER);
         assertThat(savedTask.getStatus()).isEqualTo(TaskStatus.PENDING);
-        assertThat(savedTask.getVector()).isEqualTo("TELEGRAM");
 
         verify(telegramClient).execute(sendMessageCaptor.capture());
         assertThat(sendMessageCaptor.getValue().getText())

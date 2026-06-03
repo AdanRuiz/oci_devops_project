@@ -103,7 +103,6 @@ public class DatabaseProjectWorkspaceService implements ProjectWorkspaceService 
         task.setPriority(hoursToPriority(expectedHours));
         task.setAssignedTo(assignedToId);
         task.setCreatedBy(assignedToId);
-        task.setVector("TELEGRAM_AGENT");
         task.setExpectedHours(expectedHours);
         task.setHoursDone(0);
         task.setIsBug(bug);

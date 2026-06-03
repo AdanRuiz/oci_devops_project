@@ -197,7 +197,6 @@ public class BotActions{
             task.setAssignedTo(assignedUserId);
             task.setCreatedBy(user.getId());
             task.setStatus(TaskStatus.PENDING);
-            task.setVector("TELEGRAM");
 
             taskService.add(task);
 

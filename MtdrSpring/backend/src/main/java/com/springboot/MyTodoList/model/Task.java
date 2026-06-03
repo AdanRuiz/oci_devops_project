@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import java.time.LocalDateTime;
 
@@ -54,8 +55,8 @@ public class Task {
     @Column(name = "COMPLETED_DATE")
     private LocalDateTime completedDate;
 
-    @Column(name = "VECTOR", nullable = false, length = 255)
-    private String vector;
+    @Transient
+    float[] insight;
 
     @Column(name = "HOURS_DONE")
     private Integer hoursDone;
@@ -167,12 +168,12 @@ public class Task {
         this.completedDate = completedDate;
     }
 
-    public String getVector() {
-        return vector;
+    public float[] getInsight() {
+        return insight;
     }
 
-    public void setVector(String vector) {
-        this.vector = vector;
+    public void setInsight(float[] insight) {
+        this.insight = insight;
     }
 
     public Integer getHoursDone() {

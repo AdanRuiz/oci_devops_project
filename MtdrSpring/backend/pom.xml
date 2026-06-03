@@ -14,10 +14,10 @@
 	<name>MyTodoList</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>22</java.version>
 		<version.lib.ojdbc>21.1.0.0</version.lib.ojdbc>
 		<frontend-src-dir>${project.basedir}/src/main/frontend</frontend-src-dir>
-		<node.version>v23.9.0</node.version>
+		<node.version>v24.0.0</node.version>
 		<npm.version>8.1.2</npm.version>
 	</properties>
 	<dependencies>
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-community-dialects</artifactId>
-			<version>6.6.22.Final</version>
+			<version>6.6.29.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>

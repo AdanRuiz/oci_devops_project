@@ -16,7 +16,7 @@ public class TaskWithSprintResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime completedDate;
-    private String vector;
+    private float[] insight;
     private Integer hoursDone;
     private Integer expectedHours;
     private Boolean isBug;
@@ -36,7 +36,7 @@ public class TaskWithSprintResponse {
         this.createdAt = task.getCreatedAt();
         this.updatedAt = task.getUpdatedAt();
         this.completedDate = task.getCompletedDate();
-        this.vector = task.getVector();
+        this.insight = task.getInsight();
         this.hoursDone = task.getHoursDone();
         this.expectedHours = task.getExpectedHours();
         this.isBug = task.getIsBug();
@@ -148,12 +148,12 @@ public class TaskWithSprintResponse {
         this.completedDate = completedDate;
     }
 
-    public String getVector() {
-        return vector;
+    public float[] getInsight() {
+        return insight;
     }
 
-    public void setVector(String vector) {
-        this.vector = vector;
+    public void setInsight(float[] insight) {
+        this.insight = insight;
     }
 
     public SprintSummaryResponse getSprint() {
