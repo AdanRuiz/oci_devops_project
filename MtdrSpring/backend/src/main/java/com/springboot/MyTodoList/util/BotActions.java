@@ -3,10 +3,10 @@ package com.springboot.MyTodoList.util;
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.DeepSeekService;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import org.springframework.jdbc.core.JdbcTemplate;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -24,12 +24,14 @@ public class BotActions{
 
     ToDoItemService todoService;
     DeepSeekService deepSeekService;
+    JdbcTemplate jdbcTemplate;
 
-    public BotActions(TelegramClient tc,ToDoItemService ts, DeepSeekService ds){
+    public BotActions(TelegramClient tc, ToDoItemService ts, DeepSeekService ds, JdbcTemplate jt){
         telegramClient = tc;
         todoService = ts;
         deepSeekService = ds;
-        exit  = false;
+        jdbcTemplate = jt;
+        exit = false;
     }
 
     public void setRequestText(String cmd){
@@ -149,59 +151,47 @@ public class BotActions{
 				|| requestText.equals(BotLabels.LIST_ALL_ITEMS.getLabel())
 				|| requestText.equals(BotLabels.MY_TODO_LIST.getLabel())) || exit)
             return;
-        logger.info("todoSvc: "+todoService);
-        List<ToDoItem> allItems = todoService.findAll();
-        ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder()
-            .resizeKeyboard(true)
-            .oneTimeKeyboard(false)
-            .selective(true)
-            .build();
 
-        List<KeyboardRow> keyboard = new ArrayList<>();
+        String telegramUserId = String.valueOf(chatId);
 
-        // command back to main screen
-        KeyboardRow mainScreenRowTop = new KeyboardRow();
-        mainScreenRowTop.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
-        keyboard.add(mainScreenRowTop);
-
-        KeyboardRow firstRow = new KeyboardRow();
-        firstRow.add(BotLabels.ADD_NEW_ITEM.getLabel());
-        keyboard.add(firstRow);
-
-        KeyboardRow myTodoListTitleRow = new KeyboardRow();
-        myTodoListTitleRow.add(BotLabels.MY_TODO_LIST.getLabel());
-        keyboard.add(myTodoListTitleRow);
-
-        List<ToDoItem> activeItems = allItems.stream().filter(item -> item.isDone() == false)
-                .collect(Collectors.toList());
-
-        for (ToDoItem item : activeItems) {
-            KeyboardRow currentRow = new KeyboardRow();
-            currentRow.add(item.getDescription());
-            currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
-            keyboard.add(currentRow);
+        // Buscar tasks asignadas a este usuario via TELEGRAM_USER_ID
+        List<Map<String, Object>> myTasks = List.of();
+        try {
+            String sql =
+                "SELECT wi.WORK_ITEM_ID, wi.TITLE, wi.STATUS, s.NAME AS SPRINT_NAME " +
+                "FROM CHATBOT_USER.WORK_ITEM wi " +
+                "JOIN CHATBOT_USER.WORK_ITEM_ASSIGNMENT wia ON wi.WORK_ITEM_ID = wia.WORK_ITEM_ID " +
+                "  AND wia.UNASSIGNED_AT IS NULL " +
+                "JOIN CHATBOT_USER.APP_USER u ON wia.USER_ID = u.USER_ID " +
+                "LEFT JOIN CHATBOT_USER.SPRINT s ON wi.SPRINT_ID = s.SPRINT_ID " +
+                "WHERE u.TELEGRAM_USER_ID = ? " +
+                "ORDER BY wi.CREATED_AT DESC";
+            myTasks = jdbcTemplate.queryForList(sql, telegramUserId);
+        } catch (Exception e) {
+            logger.warn("Could not query WORK_ITEM for user {}: {}", telegramUserId, e.getMessage());
         }
 
-        List<ToDoItem> doneItems = allItems.stream().filter(item -> item.isDone() == true)
-                .collect(Collectors.toList());
-
-        for (ToDoItem item : doneItems) {
-            KeyboardRow currentRow = new KeyboardRow();
-            currentRow.add(item.getDescription());
-            currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
-            currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
-            keyboard.add(currentRow);
+        if (myTasks.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId,
+                "You have no tasks assigned yet. Ask your manager to assign tasks to you.", telegramClient);
+            exit = true;
+            return;
         }
 
-        // command back to main screen
-        KeyboardRow mainScreenRowBottom = new KeyboardRow();
-        mainScreenRowBottom.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
-        keyboard.add(mainScreenRowBottom);
+        StringBuilder sb = new StringBuilder("📋 *Your Tasks:*\n\n");
+        for (Map<String, Object> task : myTasks) {
+            String status = String.valueOf(task.get("STATUS"));
+            String emoji = status.equals("DONE") || status.equals("COMPLETED") ? "✅" :
+                           status.equals("IN_PROGRESS") ? "🔄" :
+                           status.equals("BLOCKED") ? "🚫" : "⏳";
+            sb.append(emoji).append(" *").append(task.get("TITLE")).append("*");
+            if (task.get("SPRINT_NAME") != null) {
+                sb.append(" — ").append(task.get("SPRINT_NAME"));
+            }
+            sb.append(" `[").append(status).append("]`\n");
+        }
 
-        keyboardMarkup.setKeyboard(keyboard);
-
-        //
-        BotHelper.sendMessageToTelegram(chatId, BotLabels.MY_TODO_LIST.getLabel(), telegramClient,  keyboardMarkup);//
+        BotHelper.sendMessageToTelegram(chatId, sb.toString(), telegramClient);
         exit = true;
     }
 

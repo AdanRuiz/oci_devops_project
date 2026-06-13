@@ -8,7 +8,7 @@ resource "oci_containerengine_cluster" "mtdrworkshop_cluster" {
     ]
     subnet_id = oci_core_subnet.endpoint.id
   }
-  kubernetes_version  = "v1.35.0"
+  kubernetes_version  = "v1.34.2"
   name                = "mtdrworkshopcluster-${var.mtdrKey}"
   vcn_id              = oci_core_vcn.okevcn.id
   #optional
@@ -31,18 +31,12 @@ resource "oci_containerengine_cluster" "mtdrworkshop_cluster" {
       services_cidr                  = "10.96.0.0/16"
     }
   }
-  lifecycle {
-    precondition {
-      condition     = contains(data.oci_containerengine_cluster_option.mtdrworkshop_cluster_option.kubernetes_versions, "v1.35.0")
-      error_message = "La versión de Kubernetes v1.35.0 no es soportada por OCI en esta región. Versiones disponibles: ${join(", ", data.oci_containerengine_cluster_option.mtdrworkshop_cluster_option.kubernetes_versions)}"
-    }
-  }
 }
 resource "oci_containerengine_node_pool" "oke_node_pool" {
   #Required
   cluster_id         = oci_containerengine_cluster.mtdrworkshop_cluster.id
   compartment_id     = var.ociCompartmentOcid
-  kubernetes_version = "v1.35.0"
+  kubernetes_version = "v1.34.2"
   name               = "Pool"
   #node_shape        = "VM.Standard.A1.Flex"  #Always Free Option
   node_shape         = "VM.Standard.E3.Flex"
@@ -78,13 +72,6 @@ resource "oci_containerengine_node_pool" "oke_node_pool" {
   //quantity_per_subnet = 1
   ssh_public_key      = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsXyGATqdTnvEDe0aYHGL+QQDjUXf6EIBlKiNLYR4gZhStp4yfn/MEWmCMGg3cbne04HlaeO3zGrUnrtfAQE90XccW9Dc4WkhLYf2vucja9NezAVQZE2qBYiwdZSF9G/FwPI1DzfbXF2UAAN3ix/IwJSWN3KZnd1FOcHOA052QMa7jGOIbi8+skKqkys3gcTaor7eXe/wONimkpPevF30FTQZpsQFU7ZzYcFM3C+XVZ2/UVtZ/MaDf73ub6mYNMpDtDCTMo9FyujzK84EKWIytAKofNwJ/Og3Wqr+CKAeLgCMtWp0926w+ff8dJRDuOxlxgJB48YaFSvjIr4lAv/aX rafael_a_g@6ab23190fb98"
   //ssh_public_key =  var.resUserPublicKey
-
-  lifecycle {
-    precondition {
-      condition     = contains(data.oci_containerengine_node_pool_option.mtdrworkshop_node_pool_option.kubernetes_versions, "v1.35.0")
-      error_message = "La versión de Kubernetes v1.35.0 no es válida para el Node Pool. Versiones disponibles: ${join(", ", data.oci_containerengine_node_pool_option.mtdrworkshop_node_pool_option.kubernetes_versions)}"
-    }
-  }
 }
 data "oci_containerengine_cluster_option" "mtdrworkshop_cluster_option" {
   cluster_option_id = "all"

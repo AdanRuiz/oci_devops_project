@@ -1,0 +1,40 @@
+import type { WorkItemCommentDto } from '@/features/work-items/dtos/work-item-comment.dto';
+
+export const mockWorkItemComments: WorkItemCommentDto[] = [
+    {
+        commentId: 'comment-001',
+        workItemId: 'work-item-001',
+        authorUserId: 'user-002',
+        authorName: 'Ana Torres',
+        authorEmail: 'ana@company.com',
+        authorTelegramUserId: 'ana_torres_dev',
+        parentCommentId: null,
+        content: 'I already reproduced the issue in staging. The problem appears after saving twice.',
+        createdAt: '2026-04-15T09:10:00Z',
+        editedAt: null,
+    },
+    {
+        commentId: 'comment-002',
+        workItemId: 'work-item-001',
+        authorUserId: 'user-001',
+        authorName: 'Bernardo Marin',
+        authorEmail: 'bernardo@company.com',
+        authorTelegramUserId: 'bernardo_pm',
+        parentCommentId: 'comment-001',
+        content: 'Perfect. Please add the exact repro steps in the issue detail afterwards.',
+        createdAt: '2026-04-15T09:18:00Z',
+        editedAt: null,
+    },
+    {
+        commentId: 'comment-003',
+        workItemId: 'work-item-002',
+        authorUserId: 'user-003',
+        authorName: 'Luis Vega',
+        authorEmail: 'luis@company.com',
+        authorTelegramUserId: 'luis_backend',
+        parentCommentId: null,
+        content: 'The endpoint contract is ready. Frontend can start consuming the mock shape.',
+        createdAt: '2026-04-14T16:45:00Z',
+        editedAt: '2026-04-14T17:00:00Z',
+    },
+];

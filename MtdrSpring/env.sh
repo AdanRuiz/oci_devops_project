@@ -73,3 +73,7 @@ alias sshpod1='kubectl exec -i -t $(kubectl get pod --namespace mtdrworkshop --s
 
 
 export PATH=$PATH:$MTDRWORKSHOP_LOCATION/utils/
+
+# OCI Configuration
+export OCI_USER_OCID="ocid1.user.oc1..aaaaaaaaidyv7v7atn4dauxulsktv636wnbu5t2h4ibogrbosiim5fkadlmq"
+export TEST_USER_OCID=$OCI_USER_OCID

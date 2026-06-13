@@ -1,0 +1,36 @@
+import type { WorkItemLinkDto } from '@/features/work-items/dtos/work-item-link.dto';
+
+export const mockWorkItemLinks: WorkItemLinkDto[] = [
+    {
+        linkId: 'link-001',
+        type: 'blocks',
+        fromWorkItemId: 'work-item-001',
+        fromWorkItemTitle: 'Implement Telegram sprint summary command',
+        fromWorkItemType: 'feature',
+        fromWorkItemStatus: 'in_progress',
+        fromWorkItemPriority: 'high',
+        toWorkItemId: 'work-item-004',
+        toWorkItemTitle: 'Fix sprint metrics aggregation bug',
+        toWorkItemType: 'bug',
+        toWorkItemStatus: 'open',
+        toWorkItemPriority: 'critical',
+        createdAt: '2026-04-15T08:00:00Z',
+        createdByUserId: 'user-001',
+    },
+    {
+        linkId: 'link-002',
+        type: 'relates_to',
+        fromWorkItemId: 'work-item-002',
+        fromWorkItemTitle: 'Create work item detail page',
+        fromWorkItemType: 'feature',
+        fromWorkItemStatus: 'todo',
+        fromWorkItemPriority: 'medium',
+        toWorkItemId: 'work-item-003',
+        toWorkItemTitle: 'Design comment thread card UI',
+        toWorkItemType: 'task',
+        toWorkItemStatus: 'todo',
+        toWorkItemPriority: 'medium',
+        createdAt: '2026-04-14T11:30:00Z',
+        createdByUserId: 'user-002',
+    },
+];

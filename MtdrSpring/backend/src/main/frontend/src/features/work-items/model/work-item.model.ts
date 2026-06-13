@@ -1,0 +1,32 @@
+import type { Tag } from '@/shared/models/tag.model';
+import type { UserSummary } from '@/shared/models/user-summary.model';
+import type { WorkItemPriority } from '../enums/work-item-priority.enum';
+import type { WorkItemStatus } from '../enums/work-item-status.enum';
+import type { WorkItemType } from '../enums/work-item-type.enum';
+import type { BugDetails } from './bug-details.model';
+import type { FeatureDetails } from './feature-details.model';
+import type { IssueDetails } from './issue-details.model';
+import type { WorkItemAssignee } from './work-item-assignee.model';
+
+export type WorkItem = {
+    id: string;
+    sprintId?: string;
+    title: string;
+    description?: string;
+    type: WorkItemType;
+    status: WorkItemStatus;
+    priority: WorkItemPriority;
+    externalLink?: string;
+    estimatedMinutes?: number;
+    totalLoggedMinutes: number;
+    dueDate?: string;
+    createdAt: string;
+    updatedAt: string;
+    completedAt?: string;
+    createdBy: UserSummary;
+    assignees: WorkItemAssignee[];
+    tags: Tag[];
+    featureDetails?: FeatureDetails;
+    issueDetails?: IssueDetails;
+    bugDetails?: BugDetails;
+};
